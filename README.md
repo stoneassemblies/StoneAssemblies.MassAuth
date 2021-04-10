@@ -26,7 +26,7 @@ Local deployment with with Tye
         > tye run
 
 
-2) With this command you can test how all rules passed.
+2) With this command you can test how all rules pass.
 
         >  curl http://localhost:6001/api/balance?PrimaryAccountNumber=12345
 
@@ -40,7 +40,7 @@ Output:
         }
 
 
-3) With the following command you can test how if a rule fails. You will get an __unauthorized__ result.
+3) With the following command you can test how if a rule fails. You will get an __unauthorized__ result. In this case The `primaryAccountNumber` length is not equals to 5. 
 
         > curl http://localhost:6001/api/balance?PrimaryAccountNumber=123456
 

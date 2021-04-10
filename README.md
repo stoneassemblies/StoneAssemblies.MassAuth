@@ -40,7 +40,7 @@ Output:
         }
 
 
-3) With the following command you can test how if a rule fails. You will get an __unauthorized__ result. In this case The `primaryAccountNumber` length is not equals to 5. 
+3) With the following command you can test how a rule fails. Notice the __unauthorized__ result. In this case the rule checks if the `primaryAccountNumber` length is not equals to 5. 
 
         > curl http://localhost:6001/api/balance?PrimaryAccountNumber=123456
 

@@ -2,3 +2,5 @@
 
 Stone Assemblies MassAuth
 =========================
+
+MassAuth is a _free_, _open source_ distributed, extensible message based authorization framework built on top of MassTransit.

@@ -1,0 +1,35 @@
+{
+  "iisSettings": {
+    "windowsAuthentication": false,
+    "anonymousAuthentication": true,
+    "iisExpress": {
+      "applicationUrl": "http://localhost:28879",
+      "sslPort": 0
+    }
+  },
+  "$schema": "http://json.schemastore.org/launchsettings.json",
+  "profiles": {
+    "IIS Express": {
+      "commandName": "Project",
+      "launchBrowser": true,
+      "launchUrl": "weatherforecast",
+      "environmentVariables": {
+        "RabbitMQ:Password": "Password123!",
+        "RabbitMQ:Username": "admin",
+        "ASPNETCORE_ENVIRONMENT": "Development"
+      }
+    },
+    "StoneAssemblies.MassAuth.Bank.Balance.Services": {
+      "commandName": "Project",
+      "launchBrowser": true,
+      "launchUrl": "weatherforecast",
+      "environmentVariables": {
+        "RabbitMQ:Password": "Password123!",
+        "MARATHON_APP_ID": "1234",
+        "RabbitMQ:Username": "admin",
+        "ASPNETCORE_ENVIRONMENT": "Development"
+      },
+      "applicationUrl": "http://localhost:5000"
+    }
+  }
+}

@@ -8,21 +8,43 @@ namespace StoneAssemblies.MassAuth.Services
     using Microsoft.AspNetCore.Mvc;
     using Microsoft.AspNetCore.Mvc.Filters;
 
-    using Serilog;
-
     using StoneAssemblies.MassAuth.Extensions;
     using StoneAssemblies.MassAuth.Messages;
     using StoneAssemblies.MassAuth.Services.Extensions;
 
+    /// <summary>
+    ///     The authorize by rule filter.
+    /// </summary>
     public class AuthorizeByRuleFilter : IAsyncActionFilter
     {
-        private readonly IClientFactory _clientFactory;
+        /// <summary>
+        ///     The client factory.
+        /// </summary>
+        private readonly IClientFactory clientFactory;
 
+        /// <summary>
+        ///     Initializes a new instance of the <see cref="AuthorizeByRuleFilter" /> class.
+        /// </summary>
+        /// <param name="clientFactory">
+        ///     The client factory.
+        /// </param>
         public AuthorizeByRuleFilter(IClientFactory clientFactory)
         {
-            this._clientFactory = clientFactory;
+            this.clientFactory = clientFactory;
         }
 
+        /// <summary>
+        ///     On action execution async.
+        /// </summary>
+        /// <param name="context">
+        ///     The context.
+        /// </param>
+        /// <param name="next">
+        ///     The next.
+        /// </param>
+        /// <returns>
+        ///     The <see cref="Task" />.
+        /// </returns>
         public async Task OnActionExecutionAsync(ActionExecutingContext context, ActionExecutionDelegate next)
         {
             var message = context.ActionArguments.Values.OfType<MessageBase>().FirstOrDefault();
@@ -30,23 +52,10 @@ namespace StoneAssemblies.MassAuth.Services
             {
                 var authorizationMessage = AuthorizationRequestMessageFactory.From(message);
 
-                var clientRequest = this._clientFactory.CreateRequestClient(authorizationMessage.GetType());
+                var clientRequest = this.clientFactory.CreateRequestClient(authorizationMessage.GetType());
 
-                authorizationMessage.Username = context.HttpContext.User.GetUserId();
+                authorizationMessage.UserId = context.HttpContext.User.GetUserId();
                 authorizationMessage.Claims = context.HttpContext.User.Claims;
-
-                // TODO: Add all useful information in HttpContext 
-                // context.HttpContext.Connection
-
-                // TODO: Remove this later, for debug purpose only.
-                foreach (var userClaim in context.HttpContext.User.Claims)
-                {
-                    Log.Information("{ClaimType}  {ClaimValue}", userClaim.Type, userClaim.Value);
-                }
-
-                Log.Information(
-                    "Sending authorization request message for user {Username}",
-                    authorizationMessage.Username);
 
                 var response = await clientRequest.GetResponse<AuthorizationResponseMessage>(authorizationMessage);
                 if (!response.Message.IsAuthorized)

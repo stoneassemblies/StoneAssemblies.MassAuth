@@ -6,6 +6,7 @@ namespace StoneAssemblies.MassAuth.Rules.Interfaces
     ///     The Rule interface.
     /// </summary>
     /// <typeparam name="TMessage">
+    ///     The message type
     /// </typeparam>
     public interface IRule<TMessage>
     {

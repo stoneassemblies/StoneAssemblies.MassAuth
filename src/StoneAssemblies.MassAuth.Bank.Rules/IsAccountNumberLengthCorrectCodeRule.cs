@@ -54,7 +54,7 @@ namespace StoneAssemblies.MassAuth.Bank.Rules
         /// <summary>
         ///     Gets a value indicating whether is enabled.
         /// </summary>
-        public bool IsEnabled => this.delegateRule == null;
+        public bool IsEnabled => this.delegateRule != null;
 
         /// <summary>
         ///     The name.

@@ -1,4 +1,10 @@
-namespace StoneAssemblies.MassAuth.Engine
+// --------------------------------------------------------------------------------------------------------------------
+// <copyright file="Program.cs" company="Stone Assemblies">
+// Copyright © 2021 - 2021 Stone Assemblies. All rights reserved.
+// </copyright>
+// --------------------------------------------------------------------------------------------------------------------
+
+namespace StoneAssemblies.MassAuth.Server
 {
     using System;
     using System.IO;
@@ -9,8 +15,20 @@ namespace StoneAssemblies.MassAuth.Engine
 
     using Serilog;
 
-    public class Program
+    /// <summary>
+    ///     The program.
+    /// </summary>
+    public static class Program
     {
+        /// <summary>
+        ///     Creates the host builder.
+        /// </summary>
+        /// <param name="args">
+        ///     The args.
+        /// </param>
+        /// <returns>
+        ///     The <see cref="IHostBuilder" />.
+        /// </returns>
         public static IHostBuilder CreateHostBuilder(string[] args)
         {
             Log.Logger = new LoggerConfiguration().WriteTo.Console().CreateLogger();
@@ -19,6 +37,12 @@ namespace StoneAssemblies.MassAuth.Engine
                 webBuilder => webBuilder.UseStartup<Startup>());
         }
 
+        /// <summary>
+        ///     The main entry point.
+        /// </summary>
+        /// <param name="args">
+        ///     The args.
+        /// </param>
         public static void Main(string[] args)
         {
             Log.Logger = new LoggerConfiguration().WriteTo.Console().CreateLogger();

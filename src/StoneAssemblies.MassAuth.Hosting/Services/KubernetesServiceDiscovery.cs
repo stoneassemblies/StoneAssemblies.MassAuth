@@ -1,23 +1,33 @@
-﻿namespace StoneAssemblies.MassAuth.Hosting.Services
+﻿// --------------------------------------------------------------------------------------------------------------------
+// <copyright file="KubernetesServiceDiscovery.cs" company="Stone Assemblies">
+// Copyright © 2021 - 2021 Stone Assemblies. All rights reserved.
+// </copyright>
+// --------------------------------------------------------------------------------------------------------------------
+
+namespace StoneAssemblies.MassAuth.Hosting.Services
 {
     using System;
+    using System.Diagnostics.CodeAnalysis;
     using System.Threading.Tasks;
 
     using StoneAssemblies.MassAuth.Hosting.Services.Interfaces;
 
+    /// <summary>
+    ///     The kubernetes service discovery.
+    /// </summary>
     public class KubernetesServiceDiscovery : IServiceDiscovery
     {
         /// <summary>
-        /// Gets the service end point address async.
+        ///     Gets the service end point address async.
         /// </summary>
         /// <param name="serviceName">
-        /// The service name.
+        ///     The service name.
         /// </param>
         /// <param name="protocol">
-        /// The protocol.
+        ///     The protocol.
         /// </param>
         /// <returns>
-        /// The <see cref="Task"/>.
+        ///     The <see cref="Task" />.
         /// </returns>
         public async Task<string> GetServiceEndPointAddressAsync(string serviceName, string protocol)
         {
@@ -27,19 +37,19 @@
         }
 
         /// <summary>
-        /// Gets service end point address async.
+        ///     Gets service end point address async.
         /// </summary>
         /// <param name="serviceName">
-        /// The service name.
+        ///     The service name.
         /// </param>
         /// <param name="bindingName">
-        /// The binding name.
+        ///     The binding name.
         /// </param>
         /// <param name="protocol">
-        /// The protocol.
+        ///     The protocol.
         /// </param>
         /// <returns>
-        /// The <see cref="Task"/>.
+        ///     The <see cref="Task" />.
         /// </returns>
         public async Task<string> GetServiceEndPointAddressAsync(
             string serviceName,
@@ -51,6 +61,15 @@
             return $"{protocol}://{endPoint}";
         }
 
+        /// <summary>
+        ///     Gets the service end point.
+        /// </summary>
+        /// <param name="serviceName">
+        ///     The service name.
+        /// </param>
+        /// <returns>
+        ///     The <see cref="Task" />.
+        /// </returns>
         public Task<string> GetServiceEndPointAsync(string serviceName)
         {
             var serviceHost = Environment.GetEnvironmentVariable($"{serviceName.ToUpper()}_SERVICE_HOST");
@@ -59,6 +78,18 @@
             return Task.FromResult($"{serviceHost}:{servicePort}");
         }
 
+        /// <summary>
+        ///     Gets the service end point.
+        /// </summary>
+        /// <param name="serviceName">
+        ///     The service name.
+        /// </param>
+        /// <param name="bindingName">
+        ///     The binding name.
+        /// </param>
+        /// <returns>
+        ///     The <see cref="Task" />.
+        /// </returns>
         public Task<string> GetServiceEndPointAsync(string serviceName, string bindingName)
         {
             var serviceHost = Environment.GetEnvironmentVariable($"{serviceName.ToUpper()}_SERVICE_HOST")

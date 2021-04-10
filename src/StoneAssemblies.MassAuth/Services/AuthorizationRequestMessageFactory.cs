@@ -1,4 +1,10 @@
-﻿namespace StoneAssemblies.MassAuth.Services
+﻿// --------------------------------------------------------------------------------------------------------------------
+// <copyright file="AuthorizationRequestMessageFactory.cs" company="Stone Assemblies">
+// Copyright © 2021 - 2021 Stone Assemblies. All rights reserved.
+// </copyright>
+// --------------------------------------------------------------------------------------------------------------------
+
+namespace StoneAssemblies.MassAuth.Services
 {
     using System;
     using System.Reflection;

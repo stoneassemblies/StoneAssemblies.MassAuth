@@ -1,3 +1,9 @@
+// --------------------------------------------------------------------------------------------------------------------
+// <copyright file="IsAccountNumberLengthCorrectCodeRule.cs" company="Stone Assemblies">
+// Copyright © 2021 - 2021 Stone Assemblies. All rights reserved.
+// </copyright>
+// --------------------------------------------------------------------------------------------------------------------
+
 namespace StoneAssemblies.MassAuth.Bank.Rules
 {
     using System;
@@ -9,6 +15,7 @@ namespace StoneAssemblies.MassAuth.Bank.Rules
 
     using Serilog;
 
+    using StoneAssemblies.MassAuth.Bank.Messages;
     using StoneAssemblies.MassAuth.Messages;
     using StoneAssemblies.MassAuth.Rules.Extensions;
     using StoneAssemblies.MassAuth.Rules.Interfaces;
@@ -57,7 +64,7 @@ namespace StoneAssemblies.MassAuth.Bank.Rules
         public bool IsEnabled => this.delegateRule != null;
 
         /// <summary>
-        ///     The name.
+        ///     Gets the name.
         /// </summary>
         public string Name => $"Is Account Number Length Correct Code Rule '{Code}'";
 

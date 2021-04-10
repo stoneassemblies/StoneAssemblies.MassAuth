@@ -1,3 +1,9 @@
+// --------------------------------------------------------------------------------------------------------------------
+// <copyright file="MarathonServiceDiscovery.cs" company="Stone Assemblies">
+// Copyright © 2021 - 2021 Stone Assemblies. All rights reserved.
+// </copyright>
+// --------------------------------------------------------------------------------------------------------------------
+
 namespace StoneAssemblies.MassAuth.Hosting.Services.MarathonClient
 {
     using System;
@@ -12,17 +18,38 @@ namespace StoneAssemblies.MassAuth.Hosting.Services.MarathonClient
     using StoneAssemblies.MassAuth.Hosting.Services.Interfaces;
     using StoneAssemblies.MassAuth.Hosting.Services.MarathonClient.Models;
 
+    /// <summary>
+    ///     The marathon service discovery.
+    /// </summary>
     public class MarathonServiceDiscovery : IServiceDiscovery
     {
+        /// <summary>
+        ///     The service end point.
+        /// </summary>
         private const string ServiceEndPoint = "/service/marathon/v2";
 
+        /// <summary>
+        ///     The marathon service end point.
+        /// </summary>
         private readonly string marathonServiceEndPoint;
 
+        /// <summary>
+        ///     Initializes a new instance of the <see cref="MarathonServiceDiscovery" /> class.
+        /// </summary>
         public MarathonServiceDiscovery()
             : this("http://master.mesos")
         {
         }
 
+        /// <summary>
+        ///     Initializes a new instance of the <see cref="MarathonServiceDiscovery" /> class.
+        /// </summary>
+        /// <param name="marathonServiceBaseUrl">
+        ///     The marathon service base url.
+        /// </param>
+        /// <exception cref="ArgumentException">
+        ///     Invalid arguments.
+        /// </exception>
         public MarathonServiceDiscovery(string marathonServiceBaseUrl)
         {
             if (string.IsNullOrWhiteSpace(marathonServiceBaseUrl))
@@ -34,11 +61,38 @@ namespace StoneAssemblies.MassAuth.Hosting.Services.MarathonClient
                 new Uri(new Uri(marathonServiceBaseUrl.TrimEnd(' ', '/')), ServiceEndPoint).AbsoluteUri;
         }
 
+        /// <summary>
+        ///     Gets the service end point.
+        /// </summary>
+        /// <param name="serviceName">
+        ///     The service name.
+        /// </param>
+        /// <param name="bindingName">
+        ///     The binding name.
+        /// </param>
+        /// <returns>
+        ///     The <see cref="Task" />.
+        /// </returns>
+        /// <exception cref="NotImplementedException">
+        ///     This method is not implemented.
+        /// </exception>
         public Task<string> GetServiceEndPoint(string serviceName, string bindingName)
         {
             throw new NotImplementedException();
         }
 
+        /// <summary>
+        ///     Gets service end point address async.
+        /// </summary>
+        /// <param name="serviceName">
+        ///     The service name.
+        /// </param>
+        /// <param name="protocol">
+        ///     The protocol.
+        /// </param>
+        /// <returns>
+        ///     The <see cref="Task" />.
+        /// </returns>
         public async Task<string> GetServiceEndPointAddressAsync(string serviceName, string protocol)
         {
             var endPoint = await this.GetServiceEndPointAsync(serviceName);
@@ -46,6 +100,21 @@ namespace StoneAssemblies.MassAuth.Hosting.Services.MarathonClient
             return $"{protocol}://{endPoint}";
         }
 
+        /// <summary>
+        ///     Gets service end point address async.
+        /// </summary>
+        /// <param name="serviceName">
+        ///     The service name.
+        /// </param>
+        /// <param name="bindingName">
+        ///     The binding name.
+        /// </param>
+        /// <param name="protocol">
+        ///     The protocol.
+        /// </param>
+        /// <returns>
+        ///     The <see cref="Task" />.
+        /// </returns>
         public async Task<string> GetServiceEndPointAddressAsync(
             string serviceName,
             string bindingName,
@@ -56,16 +125,52 @@ namespace StoneAssemblies.MassAuth.Hosting.Services.MarathonClient
             return $"{protocol}://{endPoint}";
         }
 
+        /// <summary>
+        ///     Gets the service end point async.
+        /// </summary>
+        /// <param name="serviceName">
+        ///     The service name.
+        /// </param>
+        /// <returns>
+        ///     The <see cref="Task" />.
+        /// </returns>
         public async Task<string> GetServiceEndPointAsync(string serviceName)
         {
             return await this.GetServiceEndPointAsync(serviceName, string.Empty);
         }
 
+        /// <summary>
+        ///     Gets the service end point async.
+        /// </summary>
+        /// <param name="serviceName">
+        ///     The service name.
+        /// </param>
+        /// <param name="bindingName">
+        ///     The binding name.
+        /// </param>
+        /// <returns>
+        ///     The <see cref="Task" />.
+        /// </returns>
         public async Task<string> GetServiceEndPointAsync(string serviceName, string bindingName)
         {
             return await this.GetServiceEndPointFrom(this.marathonServiceEndPoint, serviceName, bindingName);
         }
 
+        /// <summary>
+        ///     Gets the binding name index async.
+        /// </summary>
+        /// <param name="endPoint">
+        ///     The end point.
+        /// </param>
+        /// <param name="serviceName">
+        ///     The service name.
+        /// </param>
+        /// <param name="bindingName">
+        ///     The binding name.
+        /// </param>
+        /// <returns>
+        ///     The <see cref="Task" />.
+        /// </returns>
         private Task<int> GetBindingNameIndexAsync(string endPoint, string serviceName, string bindingName)
         {
             // TODO: Implement this correctly?
@@ -74,6 +179,24 @@ namespace StoneAssemblies.MassAuth.Hosting.Services.MarathonClient
             return Task.FromResult(0);
         }
 
+        /// <summary>
+        ///     Gets the service end point from.
+        /// </summary>
+        /// <param name="marathonEndPoint">
+        ///     The marathon end point.
+        /// </param>
+        /// <param name="serviceName">
+        ///     The service name.
+        /// </param>
+        /// <param name="bindingName">
+        ///     The binding name.
+        /// </param>
+        /// <returns>
+        ///     The <see cref="Task" />.
+        /// </returns>
+        /// <exception cref="ArgumentException">
+        ///     Incorrect arguments.
+        /// </exception>
         private async Task<string> GetServiceEndPointFrom(
             string marathonEndPoint,
             string serviceName,
@@ -111,6 +234,21 @@ namespace StoneAssemblies.MassAuth.Hosting.Services.MarathonClient
             return string.Empty;
         }
 
+        /// <summary>
+        ///     Gets tasks.
+        /// </summary>
+        /// <param name="endPoint">
+        ///     The end point.
+        /// </param>
+        /// <param name="groupId">
+        ///     The group id.
+        /// </param>
+        /// <param name="instanceId">
+        ///     The instance id.
+        /// </param>
+        /// <returns>
+        ///     The <see cref="Task" />.
+        /// </returns>
         private async Task<List<ServiceTask>> GetTasksAsync(string endPoint, string groupId, string instanceId)
         {
             var httpClient = new HttpClient();

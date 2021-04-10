@@ -1,8 +1,16 @@
+// --------------------------------------------------------------------------------------------------------------------
+// <copyright file="ClientFactoryExtensions.cs" company="Stone Assemblies">
+// Copyright © 2021 - 2021 Stone Assemblies. All rights reserved.
+// </copyright>
+// --------------------------------------------------------------------------------------------------------------------
+
 namespace StoneAssemblies.MassAuth.Services.Extensions
 {
     using System;
 
     using MassTransit;
+
+    using StoneAssemblies.MassAuth.Extensions;
 
     /// <summary>
     ///     The client factory extensions.

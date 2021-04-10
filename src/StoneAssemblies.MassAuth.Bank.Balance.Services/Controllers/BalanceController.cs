@@ -1,4 +1,10 @@
-﻿namespace StoneAssemblies.MassAuth.Bank.Balance.Services.Controllers
+﻿// --------------------------------------------------------------------------------------------------------------------
+// <copyright file="BalanceController.cs" company="Stone Assemblies">
+// Copyright © 2021 - 2021 Stone Assemblies. All rights reserved.
+// </copyright>
+// --------------------------------------------------------------------------------------------------------------------
+
+namespace StoneAssemblies.MassAuth.Bank.Balance.Services.Controllers
 {
     using System;
     using System.Threading.Tasks;
@@ -6,8 +12,12 @@
     using Microsoft.AspNetCore.Mvc;
 
     using StoneAssemblies.MassAuth.Bank.Balance.Services.Models;
+    using StoneAssemblies.MassAuth.Bank.Messages;
     using StoneAssemblies.MassAuth.Services.Attributes;
 
+    /// <summary>
+    /// The balance controller.
+    /// </summary>
     [ApiController]
     [Route("api/[controller]")]
     public class BalanceController : ControllerBase
@@ -32,7 +42,7 @@
                                      {
                                          PrimaryAccountNumber = accountBalanceRequestMessage.PrimaryAccountNumber,
                                          Balance = random.NextDouble() * random.Next(0, 1000),
-                                         DateTime = DateTime.Now
+                                         DateTime = DateTime.Now,
                                      };
 
             return Task.FromResult(accountBalance);

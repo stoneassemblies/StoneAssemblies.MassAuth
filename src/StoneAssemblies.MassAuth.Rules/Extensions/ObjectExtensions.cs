@@ -1,3 +1,9 @@
+// --------------------------------------------------------------------------------------------------------------------
+// <copyright file="ObjectExtensions.cs" company="Stone Assemblies">
+// Copyright © 2021 - 2021 Stone Assemblies. All rights reserved.
+// </copyright>
+// --------------------------------------------------------------------------------------------------------------------
+
 namespace StoneAssemblies.MassAuth.Rules.Extensions
 {
     using System.Collections.Concurrent;
@@ -52,7 +58,7 @@ namespace StoneAssemblies.MassAuth.Rules.Extensions
         /// The value type.
         /// </typeparam>
         /// <returns>
-        /// The <see cref="TValue"/>.
+        /// A value as <typeparamref name="TValue"/>.
         /// </returns>
         public static TValue GetPropertyValue<TValue>(this object @this, string propertyName)
         {

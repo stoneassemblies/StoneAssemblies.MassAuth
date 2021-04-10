@@ -1,4 +1,10 @@
-namespace StoneAssemblies.MassAuth.Engine
+// --------------------------------------------------------------------------------------------------------------------
+// <copyright file="Startup.cs" company="Stone Assemblies">
+// Copyright © 2021 - 2021 Stone Assemblies. All rights reserved.
+// </copyright>
+// --------------------------------------------------------------------------------------------------------------------
+
+namespace StoneAssemblies.MassAuth.Server
 {
     using GreenPipes;
 
@@ -15,24 +21,42 @@ namespace StoneAssemblies.MassAuth.Engine
 
     using Serilog;
 
-    using StoneAssemblies.MassAuth.Engine.Extensions;
-    using StoneAssemblies.MassAuth.Engine.Services;
     using StoneAssemblies.MassAuth.Hosting.Extensions;
     using StoneAssemblies.MassAuth.Hosting.Services;
-    using StoneAssemblies.MassAuth.Hosting.Services.Interfaces;
-    using StoneAssemblies.MassAuth.Messages;
     using StoneAssemblies.MassAuth.Messages.Extensions;
+    using StoneAssemblies.MassAuth.Server.Extensions;
+    using StoneAssemblies.MassAuth.Server.Services;
 
+    /// <summary>
+    ///     The startup.
+    /// </summary>
     public class Startup
     {
+        /// <summary>
+        ///     Initializes a new instance of the <see cref="Startup" /> class.
+        /// </summary>
+        /// <param name="configuration">
+        ///     The configuration.
+        /// </param>
         public Startup(IConfiguration configuration)
         {
             this.Configuration = configuration;
         }
 
-        public IConfiguration Configuration { get; }
+        /// <summary>
+        ///     Gets the configuration.
+        /// </summary>
+        private IConfiguration Configuration { get; }
 
-        // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
+        /// <summary>
+        ///     This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
+        /// </summary>
+        /// <param name="app">
+        ///     The app.
+        /// </param>
+        /// <param name="env">
+        ///     The env.
+        /// </param>
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
         {
             if (env.IsDevelopment())
@@ -51,8 +75,15 @@ namespace StoneAssemblies.MassAuth.Engine
                     });
         }
 
-        // This method gets called by the runtime. Use this method to add services to the container.
-        // For more information on how to configure your application, visit https://go.microsoft.com/fwlink/?LinkID=398940
+        /// <summary>
+        ///     This method gets called by the runtime. Use this method to add services to the container.
+        /// </summary>
+        /// <param name="serviceCollection">
+        ///     The service collection.
+        /// </param>
+        /// <remarks>
+        ///     For more information on how to configure your application, visit https://go.microsoft.com/fwlink/?LinkID=398940.
+        /// </remarks>
         public void ConfigureServices(IServiceCollection serviceCollection)
         {
             serviceCollection.AddHealthChecks();
@@ -94,7 +125,7 @@ namespace StoneAssemblies.MassAuth.Engine
                                                     s.ReferenceLoopHandling = ReferenceLoopHandling.Ignore;
                                                     return s;
                                                 });
-                                        
+
                                         cfg.ConfigureJsonDeserializer(
                                             s =>
                                                 {

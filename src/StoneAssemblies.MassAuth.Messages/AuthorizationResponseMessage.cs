@@ -1,4 +1,10 @@
-﻿namespace StoneAssemblies.MassAuth.Messages
+﻿// --------------------------------------------------------------------------------------------------------------------
+// <copyright file="AuthorizationResponseMessage.cs" company="Stone Assemblies">
+// Copyright © 2021 - 2021 Stone Assemblies. All rights reserved.
+// </copyright>
+// --------------------------------------------------------------------------------------------------------------------
+
+namespace StoneAssemblies.MassAuth.Messages
 {
     /// <summary>
     ///     The authorization response message.
@@ -8,7 +14,7 @@
         /// <summary>
         ///     Gets or sets a value indicating whether is authorized.
         /// </summary>
-        public bool IsAuthorized { get; set; }
+        public bool IsAuthorized { get; set; } = true;
 
         /// <summary>
         ///     Gets or sets the reason.

@@ -1,8 +1,11 @@
+// --------------------------------------------------------------------------------------------------------------------
+// <copyright file="RequestClient.cs" company="Stone Assemblies">
+// Copyright © 2021 - 2021 Stone Assemblies. All rights reserved.
+// </copyright>
+// --------------------------------------------------------------------------------------------------------------------
+
 namespace StoneAssemblies.MassAuth.Services
 {
-    using System;
-    using System.Collections.Concurrent;
-    using System.Reflection;
     using System.Threading;
     using System.Threading.Tasks;
 
@@ -53,6 +56,5 @@ namespace StoneAssemblies.MassAuth.Services
                 new[] { message, default(CancellationToken), default(RequestTimeout) });
             return invoke != null ? await invoke : null;
         }
-
     }
 }

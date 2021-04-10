@@ -1,5 +1,13 @@
-﻿namespace StoneAssemblies.MassAuth.Messages
+﻿// --------------------------------------------------------------------------------------------------------------------
+// <copyright file="AuthorizationRequestMessage.generic.cs" company="Stone Assemblies">
+// Copyright © 2021 - 2021 Stone Assemblies. All rights reserved.
+// </copyright>
+// --------------------------------------------------------------------------------------------------------------------
+
+namespace StoneAssemblies.MassAuth.Messages
 {
+    using StoneAssemblies.MassAuth.Messages.Interfaces;
+
     /// <summary>
     ///     The authorization request message.
     /// </summary>
@@ -14,16 +22,5 @@
         ///     Gets or sets the payload.
         /// </summary>
         public TPayload Payload { get; set; }
-
-        /// <summary>
-        ///     The get payload.
-        /// </summary>
-        /// <returns>
-        ///     The <see cref="TPayload" />.
-        /// </returns>
-        public TPayload GetPayload()
-        {
-            return this.Payload;
-        }
     }
 }

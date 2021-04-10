@@ -1,3 +1,9 @@
+// --------------------------------------------------------------------------------------------------------------------
+// <copyright file="IRule.cs" company="Stone Assemblies">
+// Copyright © 2021 - 2021 Stone Assemblies. All rights reserved.
+// </copyright>
+// --------------------------------------------------------------------------------------------------------------------
+
 namespace StoneAssemblies.MassAuth.Rules.Interfaces
 {
     using System.Threading.Tasks;
@@ -6,7 +12,7 @@ namespace StoneAssemblies.MassAuth.Rules.Interfaces
     ///     The Rule interface.
     /// </summary>
     /// <typeparam name="TMessage">
-    ///     The message type
+    ///     The message type.
     /// </typeparam>
     public interface IRule<TMessage>
     {
@@ -26,7 +32,7 @@ namespace StoneAssemblies.MassAuth.Rules.Interfaces
         int Priority { get; }
 
         /// <summary>
-        ///     The evaluate async.
+        ///     Evaluate the rule asynchronously.
         /// </summary>
         /// <param name="message">
         ///     The message.

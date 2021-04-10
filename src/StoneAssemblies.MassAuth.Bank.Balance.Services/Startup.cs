@@ -1,3 +1,9 @@
+// --------------------------------------------------------------------------------------------------------------------
+// <copyright file="Startup.cs" company="Stone Assemblies">
+// Copyright © 2021 - 2021 Stone Assemblies. All rights reserved.
+// </copyright>
+// --------------------------------------------------------------------------------------------------------------------
+
 namespace StoneAssemblies.MassAuth.Bank.Balance.Services
 {
     using System;
@@ -13,22 +19,43 @@ namespace StoneAssemblies.MassAuth.Bank.Balance.Services
 
     using Newtonsoft.Json;
 
+    using StoneAssemblies.MassAuth.Bank.Messages;
     using StoneAssemblies.MassAuth.Hosting;
     using StoneAssemblies.MassAuth.Hosting.Services;
     using StoneAssemblies.MassAuth.Messages;
     using StoneAssemblies.MassAuth.Messages.Extensions;
     using StoneAssemblies.MassAuth.Services;
 
+    /// <summary>
+    ///     The startup.
+    /// </summary>
     public class Startup
     {
+        /// <summary>
+        ///     Initializes a new instance of the <see cref="Startup" /> class.
+        /// </summary>
+        /// <param name="configuration">
+        ///     The configuration.
+        /// </param>
         public Startup(IConfiguration configuration)
         {
             this.Configuration = configuration;
         }
 
-        public IConfiguration Configuration { get; }
+        /// <summary>
+        ///     Gets the configuration.
+        /// </summary>
+        private IConfiguration Configuration { get; }
 
-        // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
+        /// <summary>
+        ///     This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
+        /// </summary>
+        /// <param name="app">
+        ///     The app.
+        /// </param>
+        /// <param name="env">
+        ///     The env.
+        /// </param>
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
         {
             IdentityModelEventSource.ShowPII = true;
@@ -48,7 +75,12 @@ namespace StoneAssemblies.MassAuth.Bank.Balance.Services
             app.UseEndpoints(endpoints => { endpoints.MapControllers(); });
         }
 
-        // This method gets called by the runtime. Use this method to add services to the container.
+        /// <summary>
+        ///     This method gets called by the runtime. Use this method to add services to the container.
+        /// </summary>
+        /// <param name="services">
+        ///     The services.
+        /// </param>
         public void ConfigureServices(IServiceCollection services)
         {
             services.AddHealthChecks();

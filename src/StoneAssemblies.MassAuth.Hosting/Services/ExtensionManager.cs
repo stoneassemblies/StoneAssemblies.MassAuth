@@ -1,4 +1,9 @@
-﻿#nullable enable
+﻿// --------------------------------------------------------------------------------------------------------------------
+// <copyright file="ExtensionManager.cs" company="Stone Assemblies">
+// Copyright © 2021 - 2021 Stone Assemblies. All rights reserved.
+// </copyright>
+// --------------------------------------------------------------------------------------------------------------------
+
 namespace StoneAssemblies.MassAuth.Hosting.Services
 {
     using System;
@@ -50,7 +55,8 @@ namespace StoneAssemblies.MassAuth.Hosting.Services
         /// </summary>
         private static readonly string[] PackageLibraryDirectoryNames =
             {
-                Path.Combine("runtimes", "$(Platform)"), "lib"
+                Path.Combine("runtimes", "$(Platform)"),
+                "lib",
             };
 
         /// <summary>
@@ -58,7 +64,10 @@ namespace StoneAssemblies.MassAuth.Hosting.Services
         /// </summary>
         private static readonly string[] TargetFrameworkDependencies =
             {
-                ".NETCoreApp,Version=v5.0", ".NETCoreApp,Version=v3.1", ".NetStandard,Version=v2.1", ".NetStandard,Version=v2.0"
+                ".NETCoreApp,Version=v5.0",
+                ".NETCoreApp,Version=v3.1",
+                ".NetStandard,Version=v2.1",
+                ".NetStandard,Version=v2.0",
             };
 
         /// <summary>
@@ -66,7 +75,11 @@ namespace StoneAssemblies.MassAuth.Hosting.Services
         /// </summary>
         private static readonly string[] TargetFrameworks =
             {
-                "net5.0", "netcoreapp3.1", "netstandard2.1", "netstandard2.0", "net46"
+                "net5.0",
+                "netcoreapp3.1",
+                "netstandard2.1",
+                "netstandard2.0",
+                "net46",
             };
 
         /// <summary>
@@ -82,7 +95,7 @@ namespace StoneAssemblies.MassAuth.Hosting.Services
         /// <summary>
         ///     The repository.
         /// </summary>
-        private readonly SourceRepository? repository;
+        private readonly SourceRepository repository;
 
         /// <summary>
         ///     Initializes a new instance of the <see cref="ExtensionManager" /> class.
@@ -166,7 +179,7 @@ namespace StoneAssemblies.MassAuth.Hosting.Services
                 foreach (var id in packageIds)
                 {
                     var packageId = id;
-                    NuGetVersion? packageVersion = null;
+                    NuGetVersion packageVersion = null;
 
                     var packageIdParts = id.Split(':');
                     if (packageIdParts.Length == 2)
@@ -405,9 +418,9 @@ namespace StoneAssemblies.MassAuth.Hosting.Services
         ///     The args.
         /// </param>
         /// <returns>
-        ///     The <see cref="Assembly?" />.
+        ///     The <see cref="Assembly" />.
         /// </returns>
-        private Assembly? OnCurrentAppDomainAssemblyResolve(object? sender, ResolveEventArgs args)
+        private Assembly OnCurrentAppDomainAssemblyResolve(object sender, ResolveEventArgs args)
         {
             // TODO: Take in account culture for resource assemblies.
             var fileName = args.Name.Split(',')[0];
@@ -417,7 +430,7 @@ namespace StoneAssemblies.MassAuth.Hosting.Services
                     f => f.Substring(0, f.IndexOf(Path.DirectorySeparatorChar, dependencyDirectoryFullPath.Length + 1)))
                 .ToList();
 
-            foreach (IGrouping<string, string> grouping in packageDirectories)
+            foreach (var grouping in packageDirectories)
             {
                 var packageDirectory = grouping.Key;
                 foreach (var directoryName in PackageLibraryDirectoryNames)

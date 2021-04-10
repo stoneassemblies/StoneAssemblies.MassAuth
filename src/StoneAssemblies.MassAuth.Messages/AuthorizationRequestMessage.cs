@@ -1,7 +1,15 @@
-﻿namespace StoneAssemblies.MassAuth.Messages
+﻿// --------------------------------------------------------------------------------------------------------------------
+// <copyright file="AuthorizationRequestMessage.cs" company="Stone Assemblies">
+// Copyright © 2021 - 2021 Stone Assemblies. All rights reserved.
+// </copyright>
+// --------------------------------------------------------------------------------------------------------------------
+
+namespace StoneAssemblies.MassAuth.Messages
 {
     using System.Collections.Generic;
     using System.Security.Claims;
+
+    using StoneAssemblies.MassAuth.Messages.Interfaces;
 
     /// <summary>
     /// The authorization request message.

@@ -1,3 +1,9 @@
+// --------------------------------------------------------------------------------------------------------------------
+// <copyright file="Program.cs" company="Stone Assemblies">
+// Copyright © 2021 - 2021 Stone Assemblies. All rights reserved.
+// </copyright>
+// --------------------------------------------------------------------------------------------------------------------
+
 namespace StoneAssemblies.MassAuth.Bank.Balance.Services
 {
     using System;
@@ -9,14 +15,32 @@ namespace StoneAssemblies.MassAuth.Bank.Balance.Services
 
     using Serilog;
 
-    public class Program
+    /// <summary>
+    /// The program.
+    /// </summary>
+    public static class Program
     {
+        /// <summary>
+        /// Creates host builder.
+        /// </summary>
+        /// <param name="args">
+        /// The args.
+        /// </param>
+        /// <returns>
+        /// The <see cref="IHostBuilder"/>.
+        /// </returns>
         public static IHostBuilder CreateHostBuilder(string[] args)
         {
             return Host.CreateDefaultBuilder(args)
                 .ConfigureWebHostDefaults(webBuilder => { webBuilder.UseStartup<Startup>(); });
         }
 
+        /// <summary>
+        /// The main entry point.
+        /// </summary>
+        /// <param name="args">
+        /// The args.
+        /// </param>
         public static void Main(string[] args)
         {
             Log.Logger = new LoggerConfiguration().WriteTo.Console().CreateLogger();

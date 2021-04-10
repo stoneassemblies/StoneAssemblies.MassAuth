@@ -1,4 +1,10 @@
-﻿namespace StoneAssemblies.MassAuth.Engine.Extensions
+﻿// --------------------------------------------------------------------------------------------------------------------
+// <copyright file="ServiceCollectionExtensions.cs" company="Stone Assemblies">
+// Copyright © 2021 - 2021 Stone Assemblies. All rights reserved.
+// </copyright>
+// --------------------------------------------------------------------------------------------------------------------
+
+namespace StoneAssemblies.MassAuth.Server.Extensions
 {
     using System;
     using System.Collections.Generic;
@@ -9,14 +15,25 @@
     using Serilog;
 
     using StoneAssemblies.MassAuth.Hosting.Extensions;
-    using StoneAssemblies.MassAuth.Hosting.Services;
     using StoneAssemblies.MassAuth.Hosting.Services.Interfaces;
     using StoneAssemblies.MassAuth.Rules.Interfaces;
 
-    public static class IServiceCollectionExtensions
+    /// <summary>
+    ///     The service collection extensions.
+    /// </summary>
+    public static class ServiceCollectionExtensions
     {
+        /// <summary>
+        ///     The discovered messages types.
+        /// </summary>
         private static readonly HashSet<Type> DiscoveredMessagesTypes = new HashSet<Type>();
 
+        /// <summary>
+        ///     The add auto discovered rules.
+        /// </summary>
+        /// <param name="serviceCollection">
+        ///     The service collection.
+        /// </param>
         public static void AddAutoDiscoveredRules(this IServiceCollection serviceCollection)
         {
             var extensionManager = serviceCollection.GetRegisteredInstance<IExtensionManager>();
@@ -33,15 +50,38 @@
             }
         }
 
+        /// <summary>
+        ///     Gets discovered message types.
+        /// </summary>
+        /// <param name="serviceCollection">
+        ///     The service collection.
+        /// </param>
+        /// <returns>
+        ///     The <see cref="HashSet{Type}" />.
+        /// </returns>
         public static HashSet<Type> GetDiscoveredMessageTypes(this IServiceCollection serviceCollection)
         {
             return DiscoveredMessagesTypes;
         }
 
+        /// <summary>
+        ///     Add rules from assembly.
+        /// </summary>
+        /// <param name="serviceCollection">
+        ///     The service collection.
+        /// </param>
+        /// <param name="assembly">
+        ///     The assembly.
+        /// </param>
+        /// <returns>
+        ///     The <see cref="IEnumerable{Type}" />.
+        /// </returns>
         private static IEnumerable<Type> AddRulesFromAssembly(
             this IServiceCollection serviceCollection,
             Assembly assembly)
         {
+            var fullName = typeof(IRule<>).FullName;
+
             foreach (var type in assembly.GetTypes())
             {
                 var interfaces = type.GetInterfaces();
@@ -49,8 +89,8 @@
                 {
                     foreach (var ruleInterfaceType in interfaces)
                     {
-                        if (ruleInterfaceType.FullName != null
-                            && ruleInterfaceType.FullName.StartsWith(typeof(IRule<>).FullName))
+                        if (!string.IsNullOrWhiteSpace(ruleInterfaceType.FullName)
+                            && !string.IsNullOrWhiteSpace(fullName) && ruleInterfaceType.FullName.StartsWith(fullName))
                         {
                             // TODO: Improve this?
                             var genericArguments = ruleInterfaceType.GetGenericArguments();

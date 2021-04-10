@@ -1,0 +1,53 @@
+name: stoneassemblies-massauth
+network: stoneassemblies-massauth-network
+services:
+- name: stoneassemblies-massauth-bank-balance-services
+  project: ../../src/StoneAssemblies.MassAuth.Bank.Balance.Services/StoneAssemblies.MassAuth.Bank.Balance.Services.csproj
+  buildProperties: 
+  - name: Configuration
+    value: Debug
+  env:
+  - name: ASPNETCORE_ENVIRONMENT
+    value: Development
+  - name: RabbitMQ:Address
+    value: rabbitmq://localhost:6002
+  - name: RabbitMQ:Username
+    value: queuedemo
+  - name: RabbitMQ:Password
+    value: queuedemo
+  bindings:
+  - port: 6001
+- name: stoneassemblies-massauth-server
+  project: ../../src/StoneAssemblies.MassAuth.Server/StoneAssemblies.MassAuth.Server.csproj
+  buildProperties: 
+  - name: Configuration
+    value: Debug
+  env:
+  - name: ASPNETCORE_ENVIRONMENT
+    value: Development
+  - name: RabbitMQ:Address
+    value: rabbitmq://localhost:6002
+  - name: RabbitMQ:Username
+    value: queuedemo
+  - name: RabbitMQ:Password
+    value: queuedemo
+  - name: Extensions:RepositoryUrl
+    value: https://api.nuget.org/v3/index.json
+  - name: Extensions:Packages:0
+    value: StoneAssemblies.MassAuth.Bank.Rules
+- name: stoneassemblies-massauth-rabbitmq
+  image: rabbitmq:3.8.3-management
+  bindings:
+  - name: rabbitmq
+    port: 6002
+    containerPort: 5672
+    protocol: tcp
+  - name: https
+    port: 6003
+    containerPort: 15672
+    protocol: http
+  env:
+  - name: RABBITMQ_DEFAULT_USER
+    value: queuedemo
+  - name: RABBITMQ_DEFAULT_PASS
+    value: queuedemo

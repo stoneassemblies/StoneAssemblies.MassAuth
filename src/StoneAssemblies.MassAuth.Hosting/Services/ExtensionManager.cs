@@ -25,35 +25,71 @@ namespace StoneAssemblies.MassAuth.Hosting.Services
 
     using StoneAssemblies.MassAuth.Hosting.Services.Interfaces;
 
+    /// <summary>
+    ///     The extension manager.
+    /// </summary>
     public class ExtensionManager : IExtensionManager
     {
+        /// <summary>
+        ///     The cache directory folder name.
+        /// </summary>
         private const string CacheDirectoryFolderName = "cache";
 
+        /// <summary>
+        ///     The dependencies directory folder name.
+        /// </summary>
         private const string DependenciesDirectoryFolderName = "lib";
 
+        /// <summary>
+        ///     The plugins directory folder name.
+        /// </summary>
         private const string PluginsDirectoryFolderName = "plugins";
 
+        /// <summary>
+        ///     The package library directory names.
+        /// </summary>
         private static readonly string[] PackageLibraryDirectoryNames =
             {
                 Path.Combine("runtimes", "$(Platform)"), "lib"
             };
 
+        /// <summary>
+        ///     The target framework dependencies.
+        /// </summary>
         private static readonly string[] TargetFrameworkDependencies =
             {
-                ".NETCoreApp,Version=v3.1", ".NetStandard,Version=v2.1", ".NetStandard,Version=v2.0"
+                ".NETCoreApp,Version=v5.0", ".NETCoreApp,Version=v3.1", ".NetStandard,Version=v2.1", ".NetStandard,Version=v2.0"
             };
 
+        /// <summary>
+        ///     The target frameworks.
+        /// </summary>
         private static readonly string[] TargetFrameworks =
             {
-                "netcoreapp3.1", "netstandard2.1", "netstandard2.0", "net46"
+                "net5.0", "netcoreapp3.1", "netstandard2.1", "netstandard2.0", "net46"
             };
 
+        /// <summary>
+        ///     The configuration.
+        /// </summary>
         private readonly IConfiguration configuration;
 
+        /// <summary>
+        ///     The extensions.
+        /// </summary>
         private readonly List<Assembly> extensions = new List<Assembly>();
 
+        /// <summary>
+        ///     The repository.
+        /// </summary>
         private readonly SourceRepository? repository;
 
+        /// <summary>
+        ///     Initializes a new instance of the <see cref="ExtensionManager" /> class.
+        /// </summary>
+        /// <param name="configuration">
+        ///     The configuration.
+        /// </param>
         private ExtensionManager(IConfiguration configuration)
         {
             AssemblyLoadContext.Default.ResolvingUnmanagedDll += this.OnAssemblyLoadContextResolvingUnmanagedDll;
@@ -72,11 +108,26 @@ namespace StoneAssemblies.MassAuth.Hosting.Services
             }
         }
 
+        /// <summary>
+        ///     Creates an extension manager from a configuration.
+        /// </summary>
+        /// <param name="configuration">
+        ///     The configuration.
+        /// </param>
+        /// <returns>
+        ///     The <see cref="IExtensionManager" />.
+        /// </returns>
         public static IExtensionManager From(IConfiguration configuration)
         {
             return new ExtensionManager(configuration);
         }
 
+        /// <summary>
+        ///     Gets the extension assemblies.
+        /// </summary>
+        /// <returns>
+        ///     The <see cref="IEnumerable{Assembly}" />.
+        /// </returns>
         public IEnumerable<Assembly> GetExtensionAssemblies()
         {
             foreach (var extension in this.extensions)
@@ -85,6 +136,12 @@ namespace StoneAssemblies.MassAuth.Hosting.Services
             }
         }
 
+        /// <summary>
+        ///     Loads the extensions.
+        /// </summary>
+        /// <returns>
+        ///     The <see cref="Task" />.
+        /// </returns>
         public async Task LoadExtensionsAsync()
         {
             var packageIds = new List<string>();
@@ -92,6 +149,15 @@ namespace StoneAssemblies.MassAuth.Hosting.Services
             await this.LoadExtensionsAsync(packageIds);
         }
 
+        /// <summary>
+        ///     Loads the extensions from package ids.
+        /// </summary>
+        /// <param name="packageIds">
+        ///     The package ids.
+        /// </param>
+        /// <returns>
+        ///     The <see cref="Task" />.
+        /// </returns>
         public async Task LoadExtensionsAsync(List<string> packageIds)
         {
             if (this.repository != null)
@@ -116,6 +182,7 @@ namespace StoneAssemblies.MassAuth.Hosting.Services
                                            new NullSourceCacheContext(),
                                            NullLogger.Instance,
                                            CancellationToken.None);
+
                         packageVersion = versions.ToList().LastOrDefault();
                     }
 
@@ -165,12 +232,33 @@ namespace StoneAssemblies.MassAuth.Hosting.Services
             }
         }
 
+        /// <summary>
+        ///     Gets the runtime id.
+        /// </summary>
+        /// <returns>
+        ///     The runtime id.
+        /// </returns>
         private static string GetRuntimeId()
         {
             //// TODO: Add runtime ids if required.
             return RuntimeInformation.IsOSPlatform(OSPlatform.Windows) ? "win" : "unix";
         }
 
+        /// <summary>
+        ///     Downloads the package async.
+        /// </summary>
+        /// <param name="package">
+        ///     The package.
+        /// </param>
+        /// <param name="resource">
+        ///     The resource.
+        /// </param>
+        /// <param name="destination">
+        ///     The destination.
+        /// </param>
+        /// <returns>
+        ///     The <see cref="Task" />.
+        /// </returns>
         private async Task DownloadPackageAsync(
             PackageDependency package,
             FindPackageByIdResource resource,
@@ -255,6 +343,18 @@ namespace StoneAssemblies.MassAuth.Hosting.Services
             }
         }
 
+        /// <summary>
+        ///     Called on assembly load context resolving unmanaged library.
+        /// </summary>
+        /// <param name="assembly">
+        ///     The assembly.
+        /// </param>
+        /// <param name="libraryFileName">
+        ///     The library file name.
+        /// </param>
+        /// <returns>
+        ///     The <see cref="IntPtr" />.
+        /// </returns>
         private IntPtr OnAssemblyLoadContextResolvingUnmanagedDll(Assembly assembly, string libraryFileName)
         {
             var dependencyDirectoryFullPath = Path.GetFullPath(DependenciesDirectoryFolderName);
@@ -295,65 +395,73 @@ namespace StoneAssemblies.MassAuth.Hosting.Services
             return unmanagedDll;
         }
 
+        /// <summary>
+        ///     The on current app domain assembly resolve.
+        /// </summary>
+        /// <param name="sender">
+        ///     The sender.
+        /// </param>
+        /// <param name="args">
+        ///     The args.
+        /// </param>
+        /// <returns>
+        ///     The <see cref="Assembly?" />.
+        /// </returns>
         private Assembly? OnCurrentAppDomainAssemblyResolve(object? sender, ResolveEventArgs args)
         {
-            if (args.Name != null)
+            // TODO: Take in account culture for resource assemblies.
+            var fileName = args.Name.Split(',')[0];
+            var dependencyDirectoryFullPath = Path.GetFullPath(DependenciesDirectoryFolderName);
+            var packageDirectories = Directory
+                .EnumerateFiles(dependencyDirectoryFullPath, fileName + ".dll", SearchOption.AllDirectories).GroupBy(
+                    f => f.Substring(0, f.IndexOf(Path.DirectorySeparatorChar, dependencyDirectoryFullPath.Length + 1)))
+                .ToList();
+
+            foreach (IGrouping<string, string> grouping in packageDirectories)
             {
-                //// TODO: Take in account culture for resource assemblies.
-                var fileName = args.Name.Split(',')[0];
-                var dependencyDirectoryFullPath = Path.GetFullPath(DependenciesDirectoryFolderName);
-                var packageDirectories = Directory
-                    .EnumerateFiles(dependencyDirectoryFullPath, fileName + ".dll", SearchOption.AllDirectories)
-                    .GroupBy(
-                        f => f.Substring(
-                            0,
-                            f.IndexOf(Path.DirectorySeparatorChar, dependencyDirectoryFullPath.Length + 1))).ToList();
-
-                foreach (IGrouping<string, string> grouping in packageDirectories)
+                var packageDirectory = grouping.Key;
+                foreach (var directoryName in PackageLibraryDirectoryNames)
                 {
-                    var packageDirectory = grouping.Key;
-                    foreach (var directoryName in PackageLibraryDirectoryNames)
+                    var packageLibraryDirectoryName = directoryName.Replace("$(Platform)", GetRuntimeId());
+                    var packageLibraryDirectoryPath = Path.Combine(packageDirectory, packageLibraryDirectoryName);
+                    if (Directory.Exists(packageLibraryDirectoryPath))
                     {
-                        var packageLibraryDirectoryName = directoryName.Replace("$(Platform)", GetRuntimeId());
-                        var packageLibraryDirectoryPath = Path.Combine(packageDirectory, packageLibraryDirectoryName);
-                        if (Directory.Exists(packageLibraryDirectoryPath))
+                        var assemblyFiles = Directory.EnumerateFiles(
+                            packageLibraryDirectoryPath,
+                            fileName + ".dll",
+                            SearchOption.AllDirectories).ToList();
+
+                        foreach (var targetFramework in TargetFrameworks)
                         {
-                            var assemblyFiles = Directory.EnumerateFiles(
-                                packageLibraryDirectoryPath,
-                                fileName + ".dll",
-                                SearchOption.AllDirectories).ToList();
-
-                            foreach (var targetFramework in TargetFrameworks)
+                            foreach (var assemblyFile in assemblyFiles)
                             {
-                                foreach (var assemblyFile in assemblyFiles)
+                                try
                                 {
-                                    try
+                                    Log.Information(
+                                        "Loading assembly '{AssemblyName}' from {AssemblyFile}",
+                                        args.Name,
+                                        assemblyFile);
+
+                                    if (assemblyFile.Contains(
+                                        $"{Path.DirectorySeparatorChar}{targetFramework}{Path.DirectorySeparatorChar}"))
                                     {
+                                        var assembly = Assembly.LoadFrom(assemblyFile);
+
                                         Log.Information(
-                                            "Loading assembly '{AssemblyName}' from {AssemblyFile}",
+                                            "Assembly '{AssemblyName}' was loaded successfully from '{AssemblyFile} ",
                                             args.Name,
                                             assemblyFile);
 
-                                        if (assemblyFile.Contains($"{Path.DirectorySeparatorChar}{targetFramework}{Path.DirectorySeparatorChar}"))
-                                        {
-                                            var assembly = Assembly.LoadFrom(assemblyFile);
-
-                                            Log.Information(
-                                                "Assembly '{AssemblyName}' was loaded successfully from '{AssemblyFile} ",
-                                                args.Name,
-                                                assemblyFile);
-
-                                            return assembly;
-                                        }
+                                        return assembly;
                                     }
-                                    catch (Exception ex)
-                                    {
-                                        Log.Warning(
-                                            ex,
-                                            "Error loading assembly '{AssemblyName}' file {AssemblyFile}",
-                                            args.Name,
-                                            assemblyFile);
-                                    }
+                                }
+                                catch (Exception ex)
+                                {
+                                    Log.Warning(
+                                        ex,
+                                        "Error loading assembly '{AssemblyName}' file {AssemblyFile}",
+                                        args.Name,
+                                        assemblyFile);
                                 }
                             }
                         }

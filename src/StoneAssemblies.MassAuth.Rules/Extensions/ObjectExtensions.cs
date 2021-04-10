@@ -11,7 +11,8 @@ namespace StoneAssemblies.MassAuth.Rules.Extensions
         /// <summary>
         ///     The property info cache.
         /// </summary>
-        private static readonly ConcurrentDictionary<string, PropertyInfo> PropertyInfoCache = new ConcurrentDictionary<string, PropertyInfo>();
+        private static readonly ConcurrentDictionary<string, PropertyInfo> PropertyInfoCache =
+            new ConcurrentDictionary<string, PropertyInfo>();
 
         /// <summary>
         ///     Gets a property value.
@@ -36,6 +37,26 @@ namespace StoneAssemblies.MassAuth.Rules.Extensions
                     BindingFlags.Public | BindingFlags.Instance | BindingFlags.FlattenHierarchy));
 
             return propertyInfo?.GetValue(@this);
+        }
+
+        /// <summary>
+        /// Gets the property value.
+        /// </summary>
+        /// <param name="this">
+        /// The this.
+        /// </param>
+        /// <param name="propertyName">
+        /// The property name.
+        /// </param>
+        /// <typeparam name="TValue">
+        /// The value type.
+        /// </typeparam>
+        /// <returns>
+        /// The <see cref="TValue"/>.
+        /// </returns>
+        public static TValue GetPropertyValue<TValue>(this object @this, string propertyName)
+        {
+            return (TValue)@this.GetPropertyValue(propertyName);
         }
     }
 }

@@ -4,7 +4,7 @@
 // </copyright>
 // --------------------------------------------------------------------------------------------------------------------
 
-namespace StoneAssemblies.MassAuth.Hosting.Services
+namespace StoneAssemblies.MassAuth.Services
 {
     using System.Threading;
     using System.Threading.Tasks;

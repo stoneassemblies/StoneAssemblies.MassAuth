@@ -22,10 +22,10 @@ namespace StoneAssemblies.MassAuth.Server
     using Serilog;
 
     using StoneAssemblies.MassAuth.Hosting.Extensions;
-    using StoneAssemblies.MassAuth.Hosting.Services;
     using StoneAssemblies.MassAuth.Messages.Extensions;
     using StoneAssemblies.MassAuth.Server.Extensions;
     using StoneAssemblies.MassAuth.Server.Services;
+    using StoneAssemblies.MassAuth.Services;
 
     /// <summary>
     ///     The startup.

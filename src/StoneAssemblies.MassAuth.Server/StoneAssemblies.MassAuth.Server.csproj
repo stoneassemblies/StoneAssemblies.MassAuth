@@ -16,7 +16,7 @@
 
 	<ItemGroup>
 		<ProjectReference Include="..\StoneAssemblies.MassAuth.Hosting\StoneAssemblies.MassAuth.Hosting.csproj" />
-		<ProjectReference Include="..\StoneAssemblies.MassAuth.Messages\StoneAssemblies.MassAuth.Messages.csproj" />
 		<ProjectReference Include="..\StoneAssemblies.MassAuth.Rules\StoneAssemblies.MassAuth.Rules.csproj" />
+		<ProjectReference Include="..\StoneAssemblies.MassAuth\StoneAssemblies.MassAuth.csproj" />
 	</ItemGroup>
 </Project>

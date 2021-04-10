@@ -23,3 +23,11 @@ steps:
   displayName: 'Docker Push'
   env:
     DOCKER_REPOSITORY_PASSWORD: $(DOCKER_REPOSITORY_PASSWORD)
+
+- script: dotnet cake --target=NuGetPack
+  displayName: 'NuGet Pack'
+
+- script: dotnet cake --target=NuGetPush
+  displayName: 'NuGet Push'
+  env:
+    NUGET_API_KEY: $(NUGET_API_KEY)

@@ -66,12 +66,12 @@ namespace StoneAssemblies.MassAuth.Hosting.Services.MarathonClient
             return await this.GetServiceEndPointFrom(this.marathonServiceEndPoint, serviceName, bindingName);
         }
 
-        private async Task<int> GetBindingNameIndexAsync(string endPoint, string serviceName, string bindingName)
+        private Task<int> GetBindingNameIndexAsync(string endPoint, string serviceName, string bindingName)
         {
             // TODO: Implement this correctly?
             // var httpClient = new HttpClient();
             // var stringAsync = await httpClient.GetStringAsync($"{endPoint}/apps/{instanceId}/tasks");
-            return 0;
+            return Task.FromResult(0);
         }
 
         private async Task<string> GetServiceEndPointFrom(

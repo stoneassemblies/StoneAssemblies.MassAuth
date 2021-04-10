@@ -18,3 +18,8 @@ steps:
 
 - script: dotnet cake --target=DockerBuild
   displayName: 'Docker Build'
+
+- script: dotnet cake --target=DockerPush
+  displayName: 'Docker Push'
+  env:
+    DOCKER_REPOSITORY_PASSWORD: $(DOCKER_REPOSITORY_PASSWORD)

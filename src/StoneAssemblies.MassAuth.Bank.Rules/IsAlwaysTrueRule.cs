@@ -9,7 +9,7 @@ namespace StoneAssemblies.MassAuth.Bank.Rules
     {
         public bool IsEnabled => true;
 
-        public string Name => "Example of valid rule";
+        public string Name => "Is Always True Rule";
 
         public int Priority { get; }
 

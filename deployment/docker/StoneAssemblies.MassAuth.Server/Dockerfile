@@ -3,7 +3,7 @@ ARG DOTNET_SDK_VERSION=${DOTNET_SDK_VERSION:-5.0}
 ARG DOTNET_ASP_NETCORE_RUNTIME_VERSION=${DOTNET_ASP_NETCORE_RUNTIME_VERSION:-5.0}
 ARG DOCKER_REPOSITORY_PROXY=${DOCKER_REPOSITORY_PROXY:-mcr.microsoft.com}
 
-FROM mcr.microsoft.com/dotnet/core/sdk:$DOTNET_SDK_VERSION AS build
+FROM mcr.microsoft.com/dotnet/sdk:$DOTNET_SDK_VERSION AS build
 
 ARG NUGET_REPOSITORY_PROXY=${NUGET_REPOSITORY_PROXY:-https://www.nuget.org/api/v2/}
 
@@ -17,7 +17,7 @@ RUN dotnet publish -c Release -o ../../output/Release/StoneAssemblies.MassAuth.S
 
 WORKDIR /build
 
-FROM mcr.microsoft.com/dotnet/core/aspnet:$DOTNET_ASP_NETCORE_RUNTIME_VERSION
+FROM mcr.microsoft.com/dotnet/aspnet:$DOTNET_ASP_NETCORE_RUNTIME_VERSION
 ENV ASPNETCORE_URLS=http://0.0.0.0:80
 WORKDIR /app
 

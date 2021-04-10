@@ -7,7 +7,8 @@ string[] DockerFiles = new [] {
 };
 
 string[] OutputImages = new [] { 
-	"stoneassemblies/massauth-server" 
+	"stoneassemblies/massauth-server",
+	"stoneassemblies/massauth-bank-balance-services"
 };
 
 string[] ComponentProjects  = new [] {

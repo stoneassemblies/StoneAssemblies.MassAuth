@@ -16,11 +16,6 @@ namespace StoneAssemblies.MassAuth.Services
     public class RequestClient
     {
         /// <summary>
-        ///     Cache for the get response methods.
-        /// </summary>
-        private static readonly ConcurrentDictionary<Type, MethodInfo> GetResponseMethods = new ConcurrentDictionary<Type, MethodInfo>();
-
-        /// <summary>
         ///     The request client.
         /// </summary>
         private readonly object requestClient;
@@ -52,10 +47,7 @@ namespace StoneAssemblies.MassAuth.Services
             where TMessage : class
         {
             var requestClientType = this.requestClient.GetType();
-            var methodInfo = GetResponseMethods.GetOrAdd(
-                requestClientType,
-                type => requestClientType.GetResponseMethodInfoForAuthorizationResponseMessage(message.GetType()));
-
+            var methodInfo = requestClientType.GetResponseMethodInfoFromMessageType(message.GetType());
             var invoke = (Task<Response<TMessage>>)methodInfo?.Invoke(
                 this.requestClient,
                 new[] { message, default(CancellationToken), default(RequestTimeout) });

@@ -25,7 +25,7 @@
             var authorizationMessage = Activator.CreateInstance(makeGenericType);
             var propertyInfo = makeGenericType.GetProperty("Payload", BindingFlags.Instance | BindingFlags.Public);
             propertyInfo?.SetValue(authorizationMessage, payload);
-            return (AuthorizationRequestMessage) authorizationMessage;
+            return (AuthorizationRequestMessage)authorizationMessage;
         }
     }
 }

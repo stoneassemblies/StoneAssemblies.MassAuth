@@ -14,7 +14,7 @@ namespace StoneAssemblies.MassAuth.Rules.Interfaces
     /// <typeparam name="TMessage">
     ///     The message type.
     /// </typeparam>
-    public interface IRule<TMessage>
+    public interface IRule<in TMessage>
     {
         /// <summary>
         ///     Gets a value indicating whether is enabled.

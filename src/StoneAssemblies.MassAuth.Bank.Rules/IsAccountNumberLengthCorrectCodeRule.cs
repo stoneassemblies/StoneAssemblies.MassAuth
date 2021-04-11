@@ -17,7 +17,6 @@ namespace StoneAssemblies.MassAuth.Bank.Rules
 
     using StoneAssemblies.MassAuth.Bank.Messages;
     using StoneAssemblies.MassAuth.Messages;
-    using StoneAssemblies.MassAuth.Rules.Extensions;
     using StoneAssemblies.MassAuth.Rules.Interfaces;
 
     /// <summary>
@@ -28,28 +27,37 @@ namespace StoneAssemblies.MassAuth.Bank.Rules
         /// <summary>
         ///     The sample code.
         /// </summary>
-        private const string Code =
-            "m => m.GetPropertyValue(\"Payload\").GetPropertyValue<string>(\"PrimaryAccountNumber\").Length == 5";
+        private const string Code = "m => m.Payload.PrimaryAccountNumber.Length == 5";
 
         /// <summary>
         ///     The delegate of the rule.
         /// </summary>
-        private readonly Func<object, bool> delegateRule;
+        private readonly Func<AuthorizationRequestMessage<AccountBalanceRequestMessage>, bool> delegateRule;
 
         /// <summary>
         ///     Initializes a new instance of the <see cref="IsAccountNumberLengthCorrectCodeRule" /> class.
         /// </summary>
         public IsAccountNumberLengthCorrectCodeRule()
         {
-            var options = ScriptOptions.Default
-                .AddReferences(typeof(Expression).Assembly, typeof(ObjectExtensions).Assembly).AddImports(
-                    "System",
-                    "System.Linq",
-                    typeof(ObjectExtensions).Namespace);
+            var scriptOptions = ScriptOptions.Default;
+
+            scriptOptions = scriptOptions.AddReferences(
+                typeof(Expression).Assembly,
+                typeof(AuthorizationRequestMessage<>).Assembly,
+                typeof(AccountBalanceRequestMessage).Assembly);
+
+            scriptOptions = scriptOptions.AddImports(
+                "System",
+                "System.Linq",
+                typeof(AuthorizationRequestMessage<>).Namespace,
+                typeof(AccountBalanceRequestMessage).Namespace);
 
             try
             {
-                var script = CSharpScript.Create<Func<object, bool>>(Code, options);
+                var script =
+                    CSharpScript.Create<Func<AuthorizationRequestMessage<AccountBalanceRequestMessage>, bool>>(
+                        Code,
+                        scriptOptions);
                 this.delegateRule = script.CreateDelegate().Invoke().Result;
             }
             catch (Exception e)
@@ -71,7 +79,7 @@ namespace StoneAssemblies.MassAuth.Bank.Rules
         /// <summary>
         ///     Gets the priority.
         /// </summary>
-        public int Priority { get; }
+        public int Priority { get; } = 1;
 
         /// <summary>
         ///     Evaluates the rule.

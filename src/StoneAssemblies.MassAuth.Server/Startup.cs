@@ -25,6 +25,7 @@ namespace StoneAssemblies.MassAuth.Server
     using StoneAssemblies.MassAuth.Messages.Extensions;
     using StoneAssemblies.MassAuth.Server.Extensions;
     using StoneAssemblies.MassAuth.Server.Services;
+    using StoneAssemblies.MassAuth.Server.Services.Interfaces;
     using StoneAssemblies.MassAuth.Services;
 
     /// <summary>
@@ -90,6 +91,8 @@ namespace StoneAssemblies.MassAuth.Server
             serviceCollection.AddServiceDiscovery();
 
             serviceCollection.AddExtensionManager(this.Configuration, true);
+
+            serviceCollection.AddSingleton(typeof(IRulesContainer<>), typeof(RulesContainer<>));
             serviceCollection.AddAutoDiscoveredRules();
 
             // TODO: Use service discovery to resolve address from service name.

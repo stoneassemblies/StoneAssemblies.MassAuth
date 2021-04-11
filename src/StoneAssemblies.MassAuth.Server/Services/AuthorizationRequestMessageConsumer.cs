@@ -7,8 +7,6 @@
 namespace StoneAssemblies.MassAuth.Server.Services
 {
     using System;
-    using System.Collections.Generic;
-    using System.Linq;
     using System.Threading.Tasks;
 
     using MassTransit;
@@ -16,7 +14,7 @@ namespace StoneAssemblies.MassAuth.Server.Services
     using Serilog;
 
     using StoneAssemblies.MassAuth.Messages;
-    using StoneAssemblies.MassAuth.Rules.Interfaces;
+    using StoneAssemblies.MassAuth.Server.Services.Interfaces;
 
     /// <summary>
     ///     The authorization request message consumer.
@@ -28,19 +26,19 @@ namespace StoneAssemblies.MassAuth.Server.Services
         where TMessage : class
     {
         /// <summary>
-        ///     The rules.
+        /// The rules container.
         /// </summary>
-        private readonly List<IRule<TMessage>> rules;
+        private readonly IRulesContainer<TMessage> rulesContainer;
 
         /// <summary>
         ///     Initializes a new instance of the <see cref="AuthorizationRequestMessageConsumer{TMessage}" /> class.
         /// </summary>
-        /// <param name="rules">
+        /// <param name="rulesContainer">
         ///     The rules.
         /// </param>
-        public AuthorizationRequestMessageConsumer(IEnumerable<IRule<TMessage>> rules)
+        public AuthorizationRequestMessageConsumer(IRulesContainer<TMessage> rulesContainer)
         {
-            this.rules = rules.ToList();
+            this.rulesContainer = rulesContainer;
         }
 
         /// <summary>
@@ -55,7 +53,8 @@ namespace StoneAssemblies.MassAuth.Server.Services
         public async Task Consume(ConsumeContext<TMessage> context)
         {
             var message = new AuthorizationResponseMessage();
-            foreach (var rule in this.rules.Where(r => r.IsEnabled))
+            var rules = this.rulesContainer.Rules;
+            foreach (var rule in rules)
             {
                 var succeeded = false;
                 try

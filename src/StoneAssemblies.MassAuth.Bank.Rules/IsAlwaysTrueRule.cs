@@ -30,7 +30,7 @@ namespace StoneAssemblies.MassAuth.Bank.Rules
         /// <summary>
         ///     Gets the priority.
         /// </summary>
-        public int Priority { get; }
+        public int Priority { get; } = 0;
 
         /// <summary>
         ///     Evaluate the rule asynchronously.

@@ -14,7 +14,7 @@ namespace StoneAssemblies.MassAuth.Messages
         /// <summary>
         ///     Gets or sets a value indicating whether is authorized.
         /// </summary>
-        public bool IsAuthorized { get; set; } = true;
+        public bool IsAuthorized { get; set; }
 
         /// <summary>
         ///     Gets or sets the reason.

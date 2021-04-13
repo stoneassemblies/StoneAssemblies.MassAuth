@@ -32,8 +32,8 @@ services:
   - name: RabbitMQ:Password
     value: queuedemo
   - name: Extensions:RepositoryUrl
-    value: https://api.nuget.org/v3/index.json
-  #  value: ../../output/nuget-symbols/
+  #  value: https://api.nuget.org/v3/index.json
+    value: ../../output/nuget-symbols/
   - name: Extensions:Packages:0
     value: StoneAssemblies.MassAuth.Bank.Rules
 - name: stoneassemblies-massauth-rabbitmq

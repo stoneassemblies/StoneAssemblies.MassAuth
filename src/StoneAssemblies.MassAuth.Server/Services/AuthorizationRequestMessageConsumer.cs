@@ -52,7 +52,11 @@ namespace StoneAssemblies.MassAuth.Server.Services
         /// </returns>
         public async Task Consume(ConsumeContext<TMessage> context)
         {
-            var message = new AuthorizationResponseMessage();
+            var message = new AuthorizationResponseMessage
+                              {
+                                  IsAuthorized = true,
+                              };
+
             var rules = this.rulesContainer.Rules;
             foreach (var rule in rules)
             {

@@ -1,5 +1,5 @@
 ﻿// --------------------------------------------------------------------------------------------------------------------
-// <copyright file="BalanceController.cs" company="Stone Assemblies">
+// <copyright file="AuthorizeController.cs" company="Stone Assemblies">
 // Copyright © 2021 - 2021 Stone Assemblies. All rights reserved.
 // </copyright>
 // --------------------------------------------------------------------------------------------------------------------

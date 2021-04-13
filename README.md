@@ -31,7 +31,7 @@ Local deployment with with Tye
         >  curl http://localhost:6001/api/balance?PrimaryAccountNumber=12345
 
 
-Output:
+Output (Status: 200):
 
         {
             "balance": 22.729830474001275,
@@ -44,7 +44,7 @@ Output:
 
         > curl http://localhost:6001/api/balance?PrimaryAccountNumber=123456
 
-Output:
+Output (Status: 401 Unauthorized):
 
         {
             "type": "https://tools.ietf.org/html/rfc7235#section-3.1",
@@ -84,3 +84,47 @@ Stone Assemblies MassAuth Server is distributed as docker image. So, you can use
         > docker run -d --name massauth-server {...} stoneassemblies/massauth-server:latest
 
 The configuration could be passed using environment variables or mounting appsettings.json file.
+
+
+Interop from not .NET techology
+--------------------------------
+
+Stone Assemblies MassAuth Proxy enables interoperability from not .NET techology. There is also a docker image for this proxy service.
+
+	> docker run -d --name massauth-proxy {...} stoneassemblies/massauth-proxy:latest
+
+
+Message packages must be specified as part for the extensibility configuration section. 
+
+
+        {
+            "Extensions": {
+                "RepositoryUrl": "https://api.nuget.org/v3/index.json",
+                "Packages" : ["StoneAssemblies.MassAuth.Bank.Messages"]
+            }
+        }
+
+
+In order to test the proxy server you can use the following commands:
+
+
+1) With this command you can request authorization and notice how all tests pass.
+
+	>  curl http://localhost:6004/api/Authorize/AccountBalanceRequestMessage?PrimaryAccountNumber=12345
+
+Ouput (Status: 200):
+	1
+
+
+2) With this command you can request authorization and also noticed how a rule fails.
+
+ 	>  curl http://localhost:6004/api/Authorize/AccountBalanceRequestMessage?PrimaryAccountNumber=123456
+
+Ouput (Status: 401 Unauthorized):
+
+	{
+	    "type": "https://tools.ietf.org/html/rfc7235#section-3.1",
+	    "title": "Unauthorized",
+	    "status": 401,
+	    "traceId": "00-cb87958e866dac4aad9713c6e143da96-d517606cb9632149-00"
+	}

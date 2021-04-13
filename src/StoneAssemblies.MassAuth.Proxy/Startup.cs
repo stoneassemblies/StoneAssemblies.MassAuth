@@ -4,9 +4,10 @@
 // </copyright>
 // --------------------------------------------------------------------------------------------------------------------
 
-namespace StoneAssemblies.MassAuth.Bank.Balance.Services
+namespace StoneAssemblies.MassAuth.Proxy
 {
     using System;
+    using System.Linq;
 
     using MassTransit;
 
@@ -19,10 +20,13 @@ namespace StoneAssemblies.MassAuth.Bank.Balance.Services
 
     using Newtonsoft.Json;
 
-    using StoneAssemblies.MassAuth.Bank.Messages;
+    using StoneAssemblies.Extensibility.Extensions;
+    using StoneAssemblies.Extensibility.Services.Interfaces;
     using StoneAssemblies.MassAuth.Hosting;
+    using StoneAssemblies.MassAuth.Hosting.Extensions;
     using StoneAssemblies.MassAuth.Messages;
     using StoneAssemblies.MassAuth.Messages.Extensions;
+    using StoneAssemblies.MassAuth.Proxy.Services;
     using StoneAssemblies.MassAuth.Services;
 
     /// <summary>
@@ -77,17 +81,20 @@ namespace StoneAssemblies.MassAuth.Bank.Balance.Services
         /// <summary>
         ///     This method gets called by the runtime. Use this method to add services to the container.
         /// </summary>
-        /// <param name="services">
+        /// <param name="serviceCollection">
         ///     The services.
         /// </param>
-        public void ConfigureServices(IServiceCollection services)
+        public void ConfigureServices(IServiceCollection serviceCollection)
         {
-            services.AddHealthChecks();
+            serviceCollection.AddHealthChecks();
 
             var serviceDiscovery = ServiceDiscoveryFactory.GetServiceDiscovery();
-            services.AddSingleton(serviceDiscovery);
+            serviceCollection.AddSingleton(serviceDiscovery);
 
-            services.AddScoped<AuthorizeByRuleFilter>();
+            serviceCollection.AddExtensionManager(this.Configuration, true);
+            var extensionManager = serviceCollection.GetRegisteredInstance<IExtensionManager>();
+
+            serviceCollection.AddScoped<AuthorizeByRuleFilter>();
 
             // TODO: Use service discovery to resolve address from service name.
             // var serviceDiscovery = serviceCollection.GetRegisteredInstance<IServiceDiscovery>();
@@ -95,7 +102,7 @@ namespace StoneAssemblies.MassAuth.Bank.Balance.Services
             var password = this.Configuration.GetSection("RabbitMQ")?["Password"] ?? "queuedemo";
             var messageQueueAddress = this.Configuration.GetSection("RabbitMQ")?["Address"] ?? "rabbitmq://localhost";
 
-            services.AddMassTransit(
+            serviceCollection.AddMassTransit(
                 sc =>
                     {
                         sc.AddBus(
@@ -125,13 +132,24 @@ namespace StoneAssemblies.MassAuth.Bank.Balance.Services
                                                 });
                                     }));
 
-                        sc.AddRequestClient<AuthorizationRequestMessage<AccountBalanceRequestMessage>>(
-                            new Uri(
-                                $"queue:{typeof(AuthorizationRequestMessage<AccountBalanceRequestMessage>).GetFlatName()}"));
+                        var extensionAssemblies = extensionManager.GetExtensionAssemblies();
+                        foreach (var extensionAssembly in extensionAssemblies)
+                        {
+                            var messageTypes = extensionAssembly.GetTypes()
+                                .Where(type => typeof(MessageBase).IsAssignableFrom(type)).ToList();
+                            foreach (var type in messageTypes)
+                            {
+                                var makeGenericType = typeof(AuthorizationRequestMessage<>).MakeGenericType(type);
+                                sc.AddRequestClient(makeGenericType, new Uri($"queue:{makeGenericType.GetFlatName()}"));
+                            }
+                        }
                     });
 
-            services.AddControllers();
-            services.AddHostedService<BusHostedService>();
+            // serviceCollection.AddControllers();
+            serviceCollection
+                .AddMvc(options => options.Conventions.Add(new GenericAuthorizeControllerRouteConvention()))
+                .ConfigureApplicationPartManager(manager => manager.FeatureProviders.Add(new MessageTypeGenericAuthorizeControllerFeatureProvider(extensionManager)));
+            serviceCollection.AddHostedService<BusHostedService>();
         }
     }
 }

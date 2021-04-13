@@ -52,3 +52,24 @@ services:
     value: queuedemo
   - name: RABBITMQ_DEFAULT_PASS
     value: queuedemo
+- name: stoneassemblies-massauth-proxy
+  project: ../../src/StoneAssemblies.MassAuth.Proxy/StoneAssemblies.MassAuth.Proxy.csproj
+  buildProperties: 
+  - name: Configuration
+    value: Debug
+  env:
+  - name: ASPNETCORE_ENVIRONMENT
+    value: Development
+  - name: RabbitMQ:Address
+    value: rabbitmq://localhost:6002
+  - name: RabbitMQ:Username
+    value: queuedemo
+  - name: RabbitMQ:Password
+    value: queuedemo
+  - name: Extensions:RepositoryUrl
+  #  value: https://api.nuget.org/v3/index.json
+    value: ../../output/nuget-symbols/
+  - name: Extensions:Packages:0
+    value: StoneAssemblies.MassAuth.Bank.Messages
+  bindings:
+  - port: 6004

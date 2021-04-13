@@ -23,6 +23,8 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "StoneAssemblies.MassAuth.Ba
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "StoneAssemblies.MassAuth.Bank.Rules", "StoneAssemblies.MassAuth.Bank.Rules\StoneAssemblies.MassAuth.Bank.Rules.csproj", "{B944E883-908F-4388-8998-DAC7D190C511}"
 EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "StoneAssemblies.MassAuth.Proxy", "StoneAssemblies.MassAuth.Proxy\StoneAssemblies.MassAuth.Proxy.csproj", "{344054D3-6947-4A13-9EC1-2FAF8DE5E941}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -61,6 +63,10 @@ Global
 		{B944E883-908F-4388-8998-DAC7D190C511}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{B944E883-908F-4388-8998-DAC7D190C511}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{B944E883-908F-4388-8998-DAC7D190C511}.Release|Any CPU.Build.0 = Release|Any CPU
+		{344054D3-6947-4A13-9EC1-2FAF8DE5E941}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{344054D3-6947-4A13-9EC1-2FAF8DE5E941}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{344054D3-6947-4A13-9EC1-2FAF8DE5E941}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{344054D3-6947-4A13-9EC1-2FAF8DE5E941}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -74,6 +80,7 @@ Global
 		{52D247AF-6E61-4FCE-BDA2-DC151D4F4ED7} = {02309875-9DEF-4F08-9053-4522066F11A0}
 		{1B532399-A947-49A0-92D1-236937AB5A35} = {02309875-9DEF-4F08-9053-4522066F11A0}
 		{B944E883-908F-4388-8998-DAC7D190C511} = {02309875-9DEF-4F08-9053-4522066F11A0}
+		{344054D3-6947-4A13-9EC1-2FAF8DE5E941} = {81CC7634-7D2D-4B0D-A7CA-1D7BF3AB4649}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {DC4F2C75-83F6-47DF-96F8-B205162A1E70}

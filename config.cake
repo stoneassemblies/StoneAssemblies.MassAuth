@@ -3,11 +3,13 @@ string SolutionFileName = "src/StoneAssemblies.MassAuth.sln";
 
 string[] DockerFiles = new [] { 
 	"./deployment/docker/StoneAssemblies.MassAuth.Server/Dockerfile",
+	"./deployment/docker/StoneAssemblies.MassAuth.Proxy/Dockerfile",
 	"./deployment/docker/StoneAssemblies.MassAuth.Bank.Balance.Services/Dockerfile" 
 };
 
 string[] OutputImages = new [] { 
 	"stoneassemblies/massauth-server",
+	"stoneassemblies/massauth-proxy",
 	"stoneassemblies/massauth-bank-balance-services"
 };
 

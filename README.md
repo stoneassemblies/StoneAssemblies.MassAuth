@@ -91,7 +91,7 @@ Interop from not .NET techology
 
 Stone Assemblies MassAuth Proxy enables interoperability from not .NET techology. There is also a docker image for this proxy service.
 
-	> docker run -d --name massauth-proxy {...} stoneassemblies/massauth-proxy:latest
+        > docker run -d --name massauth-proxy {...} stoneassemblies/massauth-proxy:latest
 
 
 Message packages must be specified as part for the extensibility configuration section. 
@@ -110,7 +110,7 @@ In order to test the proxy server you can use the following commands:
 
 1) With this command you can request authorization and notice how all tests pass.
 
-	>  curl http://localhost:6004/api/Authorize/AccountBalanceRequestMessage?PrimaryAccountNumber=12345
+        >  curl http://localhost:6004/api/Authorize/AccountBalanceRequestMessage?PrimaryAccountNumber=12345
 
 Ouput (Status: 200):
 	1
@@ -118,7 +118,7 @@ Ouput (Status: 200):
 
 2) With this command you can request authorization and also noticed how a rule fails.
 
- 	>  curl http://localhost:6004/api/Authorize/AccountBalanceRequestMessage?PrimaryAccountNumber=123456
+        >  curl http://localhost:6004/api/Authorize/AccountBalanceRequestMessage?PrimaryAccountNumber=123456
 
 Ouput (Status: 401 Unauthorized):
 

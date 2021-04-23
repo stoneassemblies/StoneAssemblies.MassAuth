@@ -6,13 +6,11 @@
 
 namespace StoneAssemblies.MassAuth.Bank.Rules
 {
-    using System.Threading;
-
     using Microsoft.Extensions.Configuration;
     using Microsoft.Extensions.DependencyInjection;
 
     /// <summary>
-    /// The startup type.
+    ///     The startup type.
     /// </summary>
     public class Startup
     {
@@ -28,19 +26,19 @@ namespace StoneAssemblies.MassAuth.Bank.Rules
         }
 
         /// <summary>
-        /// Gets the configuration.
+        ///     Gets the configuration.
         /// </summary>
         public IConfiguration Configuration { get; }
 
         /// <summary>
-        /// The configure services.
+        ///     The configure services.
         /// </summary>
         /// <param name="serviceCollection">
-        /// The service collection.
+        ///     The service collection.
         /// </param>
         public void ConfigureServices(IServiceCollection serviceCollection)
         {
-            Thread.Sleep(0);
+            // TODO: Register plugin service here!!
         }
     }
 }

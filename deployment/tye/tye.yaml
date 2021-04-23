@@ -19,6 +19,7 @@ services:
   - port: 6001
 - name: stoneassemblies-massauth-server
   project: ../../src/StoneAssemblies.MassAuth.Server/StoneAssemblies.MassAuth.Server.csproj
+  replicas: 1
   buildProperties: 
   - name: Configuration
     value: Debug
@@ -31,9 +32,10 @@ services:
     value: queuedemo
   - name: RabbitMQ:Password
     value: queuedemo
-  - name: Extensions:RepositoryUrl
-  #  value: https://api.nuget.org/v3/index.json
+  - name: Extensions:Sources:0
     value: ../../output/nuget-symbols/
+  - name: Extensions:Sources:1
+    value: http://localhost:8081/repository/nuget-all/
   - name: Extensions:Packages:0
     value: StoneAssemblies.MassAuth.Bank.Rules
 - name: stoneassemblies-massauth-rabbitmq
@@ -66,9 +68,10 @@ services:
     value: queuedemo
   - name: RabbitMQ:Password
     value: queuedemo
-  - name: Extensions:RepositoryUrl
-  #  value: https://api.nuget.org/v3/index.json
+  - name: Extensions:Sources:0
     value: ../../output/nuget-symbols/
+  - name: Extensions:Sources:1
+    value: http://localhost:8081/repository/nuget-all/
   - name: Extensions:Packages:0
     value: StoneAssemblies.MassAuth.Bank.Messages
   bindings:

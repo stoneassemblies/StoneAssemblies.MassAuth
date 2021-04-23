@@ -7,7 +7,10 @@
 namespace StoneAssemblies.MassAuth.Server.Services
 {
     using System;
+    using System.Linq;
     using System.Threading.Tasks;
+
+    using Dasync.Collections;
 
     using MassTransit;
 
@@ -26,7 +29,7 @@ namespace StoneAssemblies.MassAuth.Server.Services
         where TMessage : class
     {
         /// <summary>
-        /// The rules container.
+        ///     The rules container.
         /// </summary>
         private readonly IRulesContainer<TMessage> rulesContainer;
 
@@ -58,6 +61,8 @@ namespace StoneAssemblies.MassAuth.Server.Services
                               };
 
             var rules = this.rulesContainer.Rules;
+            var tasks = rules.Select(rule => rule.EvaluateAsync(context.Message));
+
             foreach (var rule in rules)
             {
                 var succeeded = false;

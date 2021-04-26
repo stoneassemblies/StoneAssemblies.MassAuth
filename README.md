@@ -71,7 +71,7 @@ Since rules packages are distribued as NuGet package, rules packages must be spe
 
         {
             "Extensions": {
-                "RepositoryUrl": "https://api.nuget.org/v3/index.json",
+                "Sources": ["https://api.nuget.org/v3/index.json"],
                 "Packages" : ["StoneAssemblies.MassAuth.Bank.Rules"]
             }
         }

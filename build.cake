@@ -161,7 +161,7 @@ Task("DockerBuild")
                                                   $"NUGET_REPOSITORY_PROXY={nugetRepositoryProxy}",
                                                   $"PACKAGE_VERSION={NuGetVersionV2}"},
               Tag = new[] { $"{DockerRepositoryPrefix}{outputImage}:{NuGetVersionV2}", $"{DockerRepositoryPrefix}{outputImage}:latest" },
-              Network = "stoneassemblies-massauth-network"
+              // Network = "stoneassemblies-massauth-network"
           };
           DockerBuild(settings, "./");
       }

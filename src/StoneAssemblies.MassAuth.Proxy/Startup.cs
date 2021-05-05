@@ -91,7 +91,7 @@ namespace StoneAssemblies.MassAuth.Proxy
             var serviceDiscovery = ServiceDiscoveryFactory.GetServiceDiscovery();
             serviceCollection.AddSingleton(serviceDiscovery);
 
-            serviceCollection.AddExtensionManager(this.Configuration, true);
+            serviceCollection.AddExtensions(this.Configuration);
             var extensionManager = serviceCollection.GetRegisteredInstance<IExtensionManager>();
 
             serviceCollection.AddScoped<AuthorizeByRuleFilter>();

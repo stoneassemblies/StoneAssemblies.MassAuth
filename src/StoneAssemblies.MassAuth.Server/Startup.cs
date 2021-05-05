@@ -89,7 +89,7 @@ namespace StoneAssemblies.MassAuth.Server
         {
             serviceCollection.AddHealthChecks();
             serviceCollection.AddServiceDiscovery();
-            serviceCollection.AddExtensionManager(this.Configuration, true);
+            serviceCollection.AddExtensions(this.Configuration);
             serviceCollection.AddRules();
 
             // TODO: Use service discovery to resolve address from service name.

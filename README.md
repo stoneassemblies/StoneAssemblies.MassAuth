@@ -99,7 +99,7 @@ Message packages must be specified as part for the extensibility configuration s
 
         {
             "Extensions": {
-                "RepositoryUrl": "https://api.nuget.org/v3/index.json",
+                "Sources": ["https://api.nuget.org/v3/index.json"],
                 "Packages" : ["StoneAssemblies.MassAuth.Bank.Messages"]
             }
         }

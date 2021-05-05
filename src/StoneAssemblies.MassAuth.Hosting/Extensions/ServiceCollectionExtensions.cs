@@ -16,6 +16,8 @@ namespace StoneAssemblies.MassAuth.Hosting.Extensions
 
     using StoneAssemblies.Extensibility.Services.Interfaces;
     using StoneAssemblies.Hosting.Extensions;
+    using StoneAssemblies.MassAuth.Hosting.Services;
+    using StoneAssemblies.MassAuth.Hosting.Services.Interfaces;
     using StoneAssemblies.MassAuth.Rules.Interfaces;
 
     /// <summary>
@@ -34,17 +36,25 @@ namespace StoneAssemblies.MassAuth.Hosting.Extensions
         /// <param name="serviceCollection">
         ///     The service collection.
         /// </param>
-        public static void AddAutoDiscoveredRules(this IServiceCollection serviceCollection)
+        /// <param name="autoDiscoverRules">
+        ///     Auto discover rules.
+        /// </param>
+        public static void AddRules(this IServiceCollection serviceCollection, bool autoDiscoverRules = true)
         {
-            var extensionManager = serviceCollection.GetRegisteredInstance<IExtensionManager>();
+            serviceCollection.AddSingleton(typeof(IRulesContainer<>), typeof(RulesContainer<>));
 
-            foreach (var assembly in extensionManager.GetExtensionAssemblies())
+            if (autoDiscoverRules)
             {
-                foreach (var messageType in serviceCollection.AddRulesFromAssembly(assembly))
+                var extensionManager = serviceCollection.GetRegisteredInstance<IExtensionManager>();
+
+                foreach (var assembly in extensionManager.GetExtensionAssemblies())
                 {
-                    if (!DiscoveredMessagesTypes.Contains(messageType))
+                    foreach (var messageType in serviceCollection.AddRulesFromAssembly(assembly))
                     {
-                        DiscoveredMessagesTypes.Add(messageType);
+                        if (!DiscoveredMessagesTypes.Contains(messageType))
+                        {
+                            DiscoveredMessagesTypes.Add(messageType);
+                        }
                     }
                 }
             }

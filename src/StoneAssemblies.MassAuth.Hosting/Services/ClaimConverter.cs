@@ -4,7 +4,7 @@
 // </copyright>
 // --------------------------------------------------------------------------------------------------------------------
 
-namespace StoneAssemblies.MassAuth.Server.Services
+namespace StoneAssemblies.MassAuth.Hosting.Services
 {
     using System;
     using System.Security.Claims;
@@ -15,7 +15,7 @@ namespace StoneAssemblies.MassAuth.Server.Services
     /// <summary>
     ///     The claim converter.
     /// </summary>
-    internal class ClaimConverter : JsonConverter
+    public class ClaimConverter : JsonConverter
     {
         /// <summary>
         ///     Gets a value indicating whether the converter can write.

@@ -4,20 +4,18 @@
 // </copyright>
 // --------------------------------------------------------------------------------------------------------------------
 
-namespace StoneAssemblies.MassAuth.Server.Services
+namespace StoneAssemblies.MassAuth.Hosting.Services
 {
     using System;
     using System.Linq;
     using System.Threading.Tasks;
 
-    using Dasync.Collections;
-
     using MassTransit;
 
     using Serilog;
 
+    using StoneAssemblies.MassAuth.Hosting.Services.Interfaces;
     using StoneAssemblies.MassAuth.Messages;
-    using StoneAssemblies.MassAuth.Server.Services.Interfaces;
 
     /// <summary>
     ///     The authorization request message consumer.

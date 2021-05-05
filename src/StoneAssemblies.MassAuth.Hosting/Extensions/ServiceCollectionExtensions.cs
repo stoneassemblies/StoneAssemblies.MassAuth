@@ -6,9 +6,17 @@
 
 namespace StoneAssemblies.MassAuth.Hosting.Extensions
 {
-    using System.Linq;
+    using System;
+    using System.Collections.Generic;
+    using System.Reflection;
 
     using Microsoft.Extensions.DependencyInjection;
+
+    using Serilog;
+
+    using StoneAssemblies.Extensibility.Services.Interfaces;
+    using StoneAssemblies.Hosting.Extensions;
+    using StoneAssemblies.MassAuth.Rules.Interfaces;
 
     /// <summary>
     ///     The service collection extensions.
@@ -16,37 +24,92 @@ namespace StoneAssemblies.MassAuth.Hosting.Extensions
     public static class ServiceCollectionExtensions
     {
         /// <summary>
-        ///     Adds service discovery.
+        ///     The discovered messages types.
+        /// </summary>
+        private static readonly HashSet<Type> DiscoveredMessagesTypes = new HashSet<Type>();
+
+        /// <summary>
+        ///     The add auto discovered rules.
         /// </summary>
         /// <param name="serviceCollection">
         ///     The service collection.
         /// </param>
-        public static void AddServiceDiscovery(this IServiceCollection serviceCollection)
+        public static void AddAutoDiscoveredRules(this IServiceCollection serviceCollection)
         {
-            var serviceDiscovery = ServiceDiscoveryFactory.GetServiceDiscovery();
-            serviceCollection.AddSingleton(serviceDiscovery);
+            var extensionManager = serviceCollection.GetRegisteredInstance<IExtensionManager>();
+
+            foreach (var assembly in extensionManager.GetExtensionAssemblies())
+            {
+                foreach (var messageType in serviceCollection.AddRulesFromAssembly(assembly))
+                {
+                    if (!DiscoveredMessagesTypes.Contains(messageType))
+                    {
+                        DiscoveredMessagesTypes.Add(messageType);
+                    }
+                }
+            }
         }
 
         /// <summary>
-        ///     Gets a registered instance.
+        ///     Gets discovered message types.
         /// </summary>
-        /// <param name="services">
-        ///     The services.
+        /// <param name="serviceCollection">
+        ///     The service collection.
         /// </param>
-        /// <typeparam name="TServiceType">
-        ///     The service type.
-        /// </typeparam>
         /// <returns>
-        ///     A registered instance of <typeparamref name="TServiceType" />.
+        ///     The <see cref="HashSet{Type}" />.
         /// </returns>
-        public static TServiceType GetRegisteredInstance<TServiceType>(this IServiceCollection services)
+        public static HashSet<Type> GetDiscoveredMessageTypes(this IServiceCollection serviceCollection)
         {
-            var type = typeof(TServiceType);
-            var serviceDescriptor = services.FirstOrDefault(
-                descriptor => descriptor.ServiceType == type && descriptor.ImplementationInstance != null);
-            var implementationInstance = serviceDescriptor?.ImplementationInstance;
+            return DiscoveredMessagesTypes;
+        }
 
-            return (TServiceType)implementationInstance;
+        /// <summary>
+        ///     Add rules from assembly.
+        /// </summary>
+        /// <param name="serviceCollection">
+        ///     The service collection.
+        /// </param>
+        /// <param name="assembly">
+        ///     The assembly.
+        /// </param>
+        /// <returns>
+        ///     The <see cref="IEnumerable{Type}" />.
+        /// </returns>
+        private static IEnumerable<Type> AddRulesFromAssembly(
+            this IServiceCollection serviceCollection,
+            Assembly assembly)
+        {
+            var fullName = typeof(IRule<>).FullName;
+
+            foreach (var type in assembly.GetTypes())
+            {
+                var interfaces = type.GetInterfaces();
+                if (!type.IsAbstract && interfaces.Length > 0)
+                {
+                    foreach (var ruleInterfaceType in interfaces)
+                    {
+                        if (!string.IsNullOrWhiteSpace(ruleInterfaceType.FullName)
+                            && !string.IsNullOrWhiteSpace(fullName) && ruleInterfaceType.FullName.StartsWith(fullName))
+                        {
+                            // TODO: Improve this?
+                            var genericArguments = ruleInterfaceType.GetGenericArguments();
+                            if (genericArguments.Length != 1)
+                            {
+                                continue;
+                            }
+
+                            var messageType = genericArguments[0];
+
+                            Log.Information("Registering rule {RuleType}", type);
+
+                            serviceCollection.AddSingleton(ruleInterfaceType, type);
+
+                            yield return messageType;
+                        }
+                    }
+                }
+            }
         }
     }
 }

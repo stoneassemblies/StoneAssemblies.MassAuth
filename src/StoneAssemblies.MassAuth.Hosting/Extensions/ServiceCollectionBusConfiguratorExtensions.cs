@@ -4,7 +4,7 @@
 // </copyright>
 // --------------------------------------------------------------------------------------------------------------------
 
-namespace StoneAssemblies.MassAuth.Server.Extensions
+namespace StoneAssemblies.MassAuth.Hosting.Extensions
 {
     using System;
     using System.Collections.Generic;
@@ -13,7 +13,7 @@ namespace StoneAssemblies.MassAuth.Server.Extensions
 
     using Serilog;
 
-    using StoneAssemblies.MassAuth.Server.Services;
+    using StoneAssemblies.MassAuth.Hosting.Services;
 
     /// <summary>
     /// The service collection bus configurator extensions.

@@ -4,7 +4,7 @@
 // </copyright>
 // --------------------------------------------------------------------------------------------------------------------
 
-namespace StoneAssemblies.MassAuth.Server.Services.Interfaces
+namespace StoneAssemblies.MassAuth.Hosting.Services.Interfaces
 {
     using System.Collections.ObjectModel;
 

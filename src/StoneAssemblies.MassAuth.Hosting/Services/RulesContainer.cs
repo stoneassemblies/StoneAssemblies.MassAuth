@@ -4,14 +4,14 @@
 // </copyright>
 // --------------------------------------------------------------------------------------------------------------------
 
-namespace StoneAssemblies.MassAuth.Server.Services
+namespace StoneAssemblies.MassAuth.Hosting.Services
 {
     using System.Collections.Generic;
     using System.Collections.ObjectModel;
     using System.Linq;
 
+    using StoneAssemblies.MassAuth.Hosting.Services.Interfaces;
     using StoneAssemblies.MassAuth.Rules.Interfaces;
-    using StoneAssemblies.MassAuth.Server.Services.Interfaces;
 
     /// <summary>
     ///     The rules container.

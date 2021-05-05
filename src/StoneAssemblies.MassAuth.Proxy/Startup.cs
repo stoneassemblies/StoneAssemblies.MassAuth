@@ -22,8 +22,8 @@ namespace StoneAssemblies.MassAuth.Proxy
 
     using StoneAssemblies.Extensibility.Extensions;
     using StoneAssemblies.Extensibility.Services.Interfaces;
-    using StoneAssemblies.MassAuth.Hosting;
-    using StoneAssemblies.MassAuth.Hosting.Extensions;
+    using StoneAssemblies.Hosting.Extensions;
+    using StoneAssemblies.Hosting.Services;
     using StoneAssemblies.MassAuth.Messages;
     using StoneAssemblies.MassAuth.Messages.Extensions;
     using StoneAssemblies.MassAuth.Proxy.Services;

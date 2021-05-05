@@ -25,7 +25,6 @@ namespace StoneAssemblies.MassAuth.Server
     using StoneAssemblies.Hosting.Extensions;
     using StoneAssemblies.MassAuth.Hosting.Extensions;
     using StoneAssemblies.MassAuth.Hosting.Services;
-    using StoneAssemblies.MassAuth.Hosting.Services.Interfaces;
     using StoneAssemblies.MassAuth.Messages.Extensions;
     using StoneAssemblies.MassAuth.Services;
 

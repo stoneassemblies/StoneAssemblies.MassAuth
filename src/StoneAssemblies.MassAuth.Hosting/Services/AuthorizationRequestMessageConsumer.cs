@@ -59,8 +59,7 @@ namespace StoneAssemblies.MassAuth.Hosting.Services
                               };
 
             var rules = this.rulesContainer.Rules;
-            var tasks = rules.Select(rule => rule.EvaluateAsync(context.Message));
-
+            
             foreach (var rule in rules)
             {
                 var succeeded = false;

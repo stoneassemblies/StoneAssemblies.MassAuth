@@ -1,5 +1,5 @@
 ﻿// --------------------------------------------------------------------------------------------------------------------
-// <copyright file="AuthorizationRequestMessage.generic.cs" company="Stone Assemblies">
+// <copyright file="AuthorizationRequestMessage.cs" company="Stone Assemblies">
 // Copyright © 2021 - 2021 Stone Assemblies. All rights reserved.
 // </copyright>
 // --------------------------------------------------------------------------------------------------------------------

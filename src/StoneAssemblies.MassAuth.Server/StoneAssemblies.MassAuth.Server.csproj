@@ -28,7 +28,7 @@
 		<PackageReference Include="MassTransit.Extensions.DependencyInjection" Version="7.1.8" />
 		<PackageReference Include="MassTransit.RabbitMQ" Version="7.1.8" />
 		<PackageReference Include="Serilog.AspNetCore" Version="4.1.0" />
-		<PackageReference Include="StoneAssemblies.Extensibility" Version="1.0.0-alpha0052" />
+		<PackageReference Include="StoneAssemblies.Extensibility" Version="1.0.0-alpha0055" />
 		<PackageReference Include="StoneAssemblies.Hosting" Version="1.0.0-alpha0005" />
 	</ItemGroup>
 

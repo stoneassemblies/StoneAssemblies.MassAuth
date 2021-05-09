@@ -5,16 +5,31 @@
 	</PropertyGroup>
 
 	<ItemGroup>
+	  <Compile Remove="cache\**" />
+	  <Compile Remove="lib\**" />
+	  <Compile Remove="plugins\**" />
+	  <Compile Remove="Rules\**" />
+	  <Content Remove="cache\**" />
+	  <Content Remove="lib\**" />
+	  <Content Remove="plugins\**" />
+	  <Content Remove="Rules\**" />
+	  <EmbeddedResource Remove="cache\**" />
+	  <EmbeddedResource Remove="lib\**" />
+	  <EmbeddedResource Remove="plugins\**" />
+	  <EmbeddedResource Remove="Rules\**" />
+	  <None Remove="cache\**" />
+	  <None Remove="lib\**" />
+	  <None Remove="plugins\**" />
+	  <None Remove="Rules\**" />
+	</ItemGroup>
+
+	<ItemGroup>
 		<PackageReference Include="AsyncEnumerator" Version="4.0.2" />
 		<PackageReference Include="MassTransit.Extensions.DependencyInjection" Version="7.1.8" />
 		<PackageReference Include="MassTransit.RabbitMQ" Version="7.1.8" />
 		<PackageReference Include="Serilog.AspNetCore" Version="4.1.0" />
-		<PackageReference Include="StoneAssemblies.Extensibility" Version="1.0.0-alpha0016" />
+		<PackageReference Include="StoneAssemblies.Extensibility" Version="1.0.0-alpha0051" />
 		<PackageReference Include="StoneAssemblies.Hosting" Version="1.0.0-alpha0005" />
-	</ItemGroup>
-
-	<ItemGroup>
-		<Folder Include="Rules\" />
 	</ItemGroup>
 
 	<ItemGroup>

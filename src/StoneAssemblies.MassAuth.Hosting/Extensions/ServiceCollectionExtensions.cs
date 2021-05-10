@@ -80,6 +80,7 @@ namespace StoneAssemblies.MassAuth.Hosting.Extensions
                 var registeredRulesTypes = serviceCollection
                     .Where(descriptor => !string.IsNullOrWhiteSpace(descriptor.ServiceType.FullName) && descriptor.ServiceType.FullName.StartsWith(fullName))
                     .Select(descriptor => descriptor.ServiceType);
+
                 foreach (var registeredRulesType in registeredRulesTypes)
                 {
                     var genericArguments = registeredRulesType.GetGenericArguments();

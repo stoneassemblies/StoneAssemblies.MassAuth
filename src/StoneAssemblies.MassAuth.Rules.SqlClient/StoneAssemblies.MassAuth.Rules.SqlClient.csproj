@@ -1,0 +1,17 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+	<PropertyGroup>
+		<TargetFramework>net5.0</TargetFramework>
+	</PropertyGroup>
+
+	<ItemGroup>
+		<PackageReference Include="Microsoft.Data.SqlClient" Version="2.1.2" />
+		<PackageReference Include="Newtonsoft.Json" Version="13.0.1" />
+		<PackageReference Include="Serilog" Version="2.10.0" />
+		<PackageReference Include="StoneAssemblies.Extensibility" Version="1.0.0-alpha0055" />
+	</ItemGroup>
+
+	<ItemGroup>
+	  <ProjectReference Include="..\StoneAssemblies.MassAuth.Messages\StoneAssemblies.MassAuth.Messages.csproj" />
+	  <ProjectReference Include="..\StoneAssemblies.MassAuth.Rules\StoneAssemblies.MassAuth.Rules.csproj" />
+	</ItemGroup>
+</Project>

@@ -18,6 +18,7 @@ string[] ComponentProjects  = new [] {
 	"./src/StoneAssemblies.MassAuth.Hosting/StoneAssemblies.MassAuth.Hosting.csproj",
 	"./src/StoneAssemblies.MassAuth.Messages/StoneAssemblies.MassAuth.Messages.csproj",
 	"./src/StoneAssemblies.MassAuth.Rules/StoneAssemblies.MassAuth.Rules.csproj",
+	"./src/StoneAssemblies.MassAuth.Rules.SqlClient/StoneAssemblies.MassAuth.Rules.SqlClient.csproj",
 	"./src/StoneAssemblies.MassAuth.Bank.Messages/StoneAssemblies.MassAuth.Bank.Messages.csproj",
 	"./src/StoneAssemblies.MassAuth.Bank.Rules/StoneAssemblies.MassAuth.Bank.Rules.csproj"
 };

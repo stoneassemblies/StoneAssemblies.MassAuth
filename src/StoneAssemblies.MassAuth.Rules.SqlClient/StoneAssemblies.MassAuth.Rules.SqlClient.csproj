@@ -1,6 +1,8 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 	<PropertyGroup>
 		<TargetFramework>net5.0</TargetFramework>
+	        <Description>Extension for StoneAssemblies.MassAuth to use Sql Server stored procedures as rules</Description>
+		<PackageTags>netcore;massauth;sqlserver;sqlclient;authorization;stored procedures;rules</PackageTags>
 	</PropertyGroup>
 
 	<ItemGroup>

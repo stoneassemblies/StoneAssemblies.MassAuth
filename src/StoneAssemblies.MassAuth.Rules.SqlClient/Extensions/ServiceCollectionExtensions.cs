@@ -12,6 +12,7 @@ namespace StoneAssemblies.MassAuth.Rules.SqlClient.Extensions
 
     using StoneAssemblies.MassAuth.Messages;
     using StoneAssemblies.MassAuth.Rules.Interfaces;
+    using StoneAssemblies.MassAuth.Rules.SqlClient.Rules;
 
     /// <summary>
     ///     The service collection extensions.

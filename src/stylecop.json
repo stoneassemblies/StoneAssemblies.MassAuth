@@ -2,8 +2,9 @@
   "settings": {
     "documentationRules": {
       "companyName": "Stone Assemblies",
-      "copyrightText": "Copyright © 2021 - 2021 Stone Assemblies. All rights reserved.",
-      "headerDecoration": "--------------------------------------------------------------------------------------------------------------------"
+      "copyrightText": "Copyright Â© 2021 - 2021 Stone Assemblies. All rights reserved.",
+      "headerDecoration": "--------------------------------------------------------------------------------------------------------------------",
+      "xmlHeader": true
     }
   }
 }

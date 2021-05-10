@@ -4,7 +4,7 @@
 // </copyright>
 // --------------------------------------------------------------------------------------------------------------------
 
-namespace StoneAssemblies.MassAuth.Rules.SqlClient
+namespace StoneAssemblies.MassAuth.Rules.SqlClient.Rules
 {
     using System;
     using System.Data;

@@ -57,7 +57,8 @@ namespace StoneAssemblies.MassAuth.Rules.SqlClient
         /// </param>
         public void ConfigureServices(IServiceCollection serviceCollection)
         {
-            this.extensionManager.Finished += (sender, args) => this.RegisterStoredProcedureBasedRules(serviceCollection);
+            this.extensionManager.Finished +=
+                (sender, args) => this.RegisterStoredProcedureBasedRules(serviceCollection);
         }
 
         /// <summary>

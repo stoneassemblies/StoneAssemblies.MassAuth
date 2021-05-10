@@ -8,6 +8,7 @@ namespace StoneAssemblies.MassAuth.Hosting.Extensions
 {
     using System;
     using System.Collections.Generic;
+    using System.Linq;
     using System.Reflection;
 
     using Microsoft.Extensions.DependencyInjection;
@@ -36,27 +37,16 @@ namespace StoneAssemblies.MassAuth.Hosting.Extensions
         /// <param name="serviceCollection">
         ///     The service collection.
         /// </param>
-        /// <param name="autoDiscoverRules">
-        ///     Auto discover rules.
+        /// <param name="autoDiscover">
+        ///     Auto discover rules and message types.
         /// </param>
-        public static void AddRules(this IServiceCollection serviceCollection, bool autoDiscoverRules = true)
+        public static void AddRules(this IServiceCollection serviceCollection, bool autoDiscover = true)
         {
             serviceCollection.AddSingleton(typeof(IRulesContainer<>), typeof(RulesContainer<>));
-
-            if (autoDiscoverRules)
+            serviceCollection.AddMessagesTypesFromAlreadyRegisteredRules();
+            if (autoDiscover)
             {
-                var extensionManager = serviceCollection.GetRegisteredInstance<IExtensionManager>();
-
-                foreach (var assembly in extensionManager.GetExtensionAssemblies())
-                {
-                    foreach (var messageType in serviceCollection.AddRulesFromAssembly(assembly))
-                    {
-                        if (!DiscoveredMessagesTypes.Contains(messageType))
-                        {
-                            DiscoveredMessagesTypes.Add(messageType);
-                        }
-                    }
-                }
+                serviceCollection.AutoDiscoverRulesAndMessageTypes();
             }
         }
 
@@ -69,9 +59,42 @@ namespace StoneAssemblies.MassAuth.Hosting.Extensions
         /// <returns>
         ///     The <see cref="HashSet{Type}" />.
         /// </returns>
+#pragma warning disable IDE0060 // Remove unused parameter
         public static HashSet<Type> GetDiscoveredMessageTypes(this IServiceCollection serviceCollection)
+#pragma warning restore IDE0060 // Remove unused parameter
         {
             return DiscoveredMessagesTypes;
+        }
+
+        /// <summary>
+        ///     Add messages types from already registered rules.
+        /// </summary>
+        /// <param name="serviceCollection">
+        ///     The service collection.
+        /// </param>
+        private static void AddMessagesTypesFromAlreadyRegisteredRules(this IServiceCollection serviceCollection)
+        {
+            var fullName = typeof(IRule<>).FullName;
+            if (!string.IsNullOrWhiteSpace(fullName))
+            {
+                var registeredRulesTypes = serviceCollection
+                    .Where(descriptor => !string.IsNullOrWhiteSpace(descriptor.ServiceType.FullName) && descriptor.ServiceType.FullName.StartsWith(fullName))
+                    .Select(descriptor => descriptor.ServiceType);
+                foreach (var registeredRulesType in registeredRulesTypes)
+                {
+                    var genericArguments = registeredRulesType.GetGenericArguments();
+                    if (genericArguments.Length != 1)
+                    {
+                        continue;
+                    }
+
+                    var messageType = genericArguments[0];
+                    if (!DiscoveredMessagesTypes.Contains(messageType))
+                    {
+                        DiscoveredMessagesTypes.Add(messageType);
+                    }
+                }
+            }
         }
 
         /// <summary>
@@ -100,7 +123,8 @@ namespace StoneAssemblies.MassAuth.Hosting.Extensions
                     foreach (var ruleInterfaceType in interfaces)
                     {
                         if (!string.IsNullOrWhiteSpace(ruleInterfaceType.FullName)
-                            && !string.IsNullOrWhiteSpace(fullName) && ruleInterfaceType.FullName.StartsWith(fullName))
+                            && !string.IsNullOrWhiteSpace(fullName) 
+                            && ruleInterfaceType.FullName.StartsWith(fullName))
                         {
                             // TODO: Improve this?
                             var genericArguments = ruleInterfaceType.GetGenericArguments();
@@ -117,6 +141,28 @@ namespace StoneAssemblies.MassAuth.Hosting.Extensions
 
                             yield return messageType;
                         }
+                    }
+                }
+            }
+        }
+
+        /// <summary>
+        ///     Auto discover rules.
+        /// </summary>
+        /// <param name="serviceCollection">
+        ///     The service collection.
+        /// </param>
+        private static void AutoDiscoverRulesAndMessageTypes(this IServiceCollection serviceCollection)
+        {
+            var extensionManager = serviceCollection.GetRegisteredInstance<IExtensionManager>();
+
+            foreach (var assembly in extensionManager.GetExtensionAssemblies())
+            {
+                foreach (var messageType in serviceCollection.AddRulesFromAssembly(assembly))
+                {
+                    if (!DiscoveredMessagesTypes.Contains(messageType))
+                    {
+                        DiscoveredMessagesTypes.Add(messageType);
                     }
                 }
             }

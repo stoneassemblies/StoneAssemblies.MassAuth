@@ -29,6 +29,10 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "StoneAssemblies.MassAuth.Ru
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "plugins", "plugins", "{5CD95772-3276-4D4D-8DF3-A8399C081BE2}"
 EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "tests", "tests", "{2E47C590-2B49-4FDA-A8E8-0AA10BA0CDAF}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "StoneAssemblies.MassAuth.Tests", "StoneAssemblies.MassAuth.Tests\StoneAssemblies.MassAuth.Tests.csproj", "{14E947EC-491F-4232-83F4-7773EA0C683C}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -75,6 +79,10 @@ Global
 		{34AE9DB3-C3E6-477F-BFDC-FFD44A26A4FC}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{34AE9DB3-C3E6-477F-BFDC-FFD44A26A4FC}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{34AE9DB3-C3E6-477F-BFDC-FFD44A26A4FC}.Release|Any CPU.Build.0 = Release|Any CPU
+		{14E947EC-491F-4232-83F4-7773EA0C683C}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{14E947EC-491F-4232-83F4-7773EA0C683C}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{14E947EC-491F-4232-83F4-7773EA0C683C}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{14E947EC-491F-4232-83F4-7773EA0C683C}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -90,6 +98,7 @@ Global
 		{B944E883-908F-4388-8998-DAC7D190C511} = {02309875-9DEF-4F08-9053-4522066F11A0}
 		{344054D3-6947-4A13-9EC1-2FAF8DE5E941} = {81CC7634-7D2D-4B0D-A7CA-1D7BF3AB4649}
 		{34AE9DB3-C3E6-477F-BFDC-FFD44A26A4FC} = {5CD95772-3276-4D4D-8DF3-A8399C081BE2}
+		{14E947EC-491F-4232-83F4-7773EA0C683C} = {2E47C590-2B49-4FDA-A8E8-0AA10BA0CDAF}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {DC4F2C75-83F6-47DF-96F8-B205162A1E70}

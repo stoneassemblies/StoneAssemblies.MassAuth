@@ -33,6 +33,30 @@ var nugetApiKey = EnvironmentVariable("NUGET_API_KEY");
 
 var DockerRepositoryPrefix = string.IsNullOrWhiteSpace(dockerRepository) ? string.Empty : dockerRepository + "/";
 
+var sonarToken = EnvironmentVariable("SONAR_TOKEN");
+var sonarUrl = EnvironmentVariable("SONAR_URL") ?? "https://sonarcloud.io/";
+
+string GetCoverageFilePath() 
+{
+    if (string.IsNullOrWhiteSpace(TestProject))
+    {
+        return string.Empty;
+    }
+
+    var testDirectoryPath = System.IO.Path.GetDirectoryName(TestProject);
+    return System.IO.Path.GetFullPath($"{testDirectoryPath}/coverage.opencover.xml");
+}
+
+string GetTestResultFilePath() 
+{
+    if (string.IsNullOrWhiteSpace(TestProject))
+    {
+        return string.Empty;
+    }
+
+    var testDirectoryPath = System.IO.Path.GetDirectoryName(TestProject);
+    return System.IO.Path.GetFullPath($"{testDirectoryPath}/TestResults.trx");
+}
 
 Task("UpdateVersion")
   .Does(() => 
@@ -40,21 +64,21 @@ Task("UpdateVersion")
       StartProcess("dotnet", new ProcessSettings
       {
           Arguments = new ProcessArgumentBuilder()
-          .Append("gitversion")
-          .Append("/output")
-          .Append("buildserver")
-          .Append("/nofetch")
-          .Append("/updateassemblyinfo")
+            .Append("gitversion")
+            .Append("/output")
+            .Append("buildserver")
+            .Append("/nofetch")
+            .Append("/updateassemblyinfo")
       });
 
       IEnumerable<string> redirectedStandardOutput;
       StartProcess("dotnet", new ProcessSettings
       {
           Arguments = new ProcessArgumentBuilder()
-          .Append("gitversion")
-          .Append("/output")
-          .Append("json")
-	  .Append("/nofetch"),
+            .Append("gitversion")
+            .Append("/output")
+            .Append("json")
+            .Append("/nofetch"),
           RedirectStandardOutput = true
       }, out redirectedStandardOutput);
 
@@ -87,6 +111,63 @@ Task("Build")
                           .Append($"/p:PackageVersion={NuGetVersionV2}")
                   });
   }); 
+
+Task("Test")
+  .IsDependentOn("Build")
+  .Does(() => 
+  {
+    if (!string.IsNullOrWhiteSpace(TestProject))
+    {
+      var settings = new DotNetCoreTestSettings
+        {
+          Configuration = buildConfiguration,
+          ArgumentCustomization = args => args
+            .Append("/p:CollectCoverage=true")
+            .Append("/p:CoverletOutputFormat=opencover")
+        };
+
+      settings.Loggers.Add($"trx;LogFileName={GetTestResultFilePath()}");
+      settings.Collectors.Add("XPlat Code Coverage");
+
+      DotNetCoreTest(TestProject, settings);	
+    }
+  });
+
+Task("Sonar-Begin")
+  .IsDependentOn("UpdateVersion")
+  .Does(() => 
+  {
+      StartProcess("dotnet", new ProcessSettings
+      {
+          Arguments = new ProcessArgumentBuilder()
+            .Append("sonarscanner")
+            .Append("begin")
+            .Append($"/k:{SonarProjectKey}")
+            .Append($"/o:{SonarOrganization}")
+            .Append($"/v:{NuGetVersionV2}")
+            .Append($"/d:sonar.cs.opencover.reportsPaths={GetCoverageFilePath()}")
+            .Append($"/d:sonar.cs.vstest.reportsPaths={GetTestResultFilePath()}")
+            .Append($"/d:sonar.host.url={sonarUrl}")
+            .Append($"/d:sonar.login={sonarToken}")
+      });
+  });
+
+Task("Sonar-End")
+  .Does(() => 
+  {
+      StartProcess("dotnet", new ProcessSettings
+      {
+          Arguments = new ProcessArgumentBuilder()
+            .Append("sonarscanner")
+            .Append("end")
+            .Append($"/d:sonar.login={sonarToken}")
+      });
+  });
+
+Task("Sonar")
+  .IsDependentOn("Sonar-Begin")
+  .IsDependentOn("Test")
+  .IsDependentOn("Sonar-End");
 
 Task("Publish")
   .IsDependentOn("Build")

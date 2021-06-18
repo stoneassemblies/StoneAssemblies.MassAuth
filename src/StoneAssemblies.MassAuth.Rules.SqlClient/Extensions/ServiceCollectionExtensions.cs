@@ -34,24 +34,28 @@ namespace StoneAssemblies.MassAuth.Rules.SqlClient.Extensions
         /// <param name="messageType">
         ///     The message type.
         /// </param>
+        /// <param name="ruleName">
+        ///     The rule name.
+        /// </param>
         /// <param name="connectionString">
         ///     The connection string.
         /// </param>
-        /// <param name="storeProcedureName">
+        /// <param name="storedProcedureName">
         ///     The store procedure name.
         /// </param>
         public static void RegisterStoredProcedureBasedRule(
             this IServiceCollection serviceCollection,
             Type messageType,
+            string ruleName,
             string connectionString,
-            string storeProcedureName)
+            string storedProcedureName)
         {
             var authorizationRequestMessageType = typeof(AuthorizationRequestMessage<>).MakeGenericType(messageType);
             var ruleInterfaceType = typeof(IRule<>).MakeGenericType(authorizationRequestMessageType);
             var ruleType = typeof(StoredProcedureBasedRule<>).MakeGenericType(authorizationRequestMessageType);
             serviceCollection.AddSingleton(
                 ruleInterfaceType,
-                sp => Activator.CreateInstance(ruleType, connectionString, storeProcedureName));
+                sp => Activator.CreateInstance(ruleType, ruleName, connectionString, storedProcedureName));
         }
 
         /// <summary>
@@ -68,6 +72,8 @@ namespace StoneAssemblies.MassAuth.Rules.SqlClient.Extensions
             IConfiguration configuration)
         {
             const string MessageTypeCapturingGroupName = "messageType";
+            const string RuleNameCapturingGroupName = "ruleName";
+
             var regexOptions = RegexOptions.IgnoreCase | RegexOptions.Multiline | RegexOptions.Compiled;
 
             var patterns = new List<string>();
@@ -104,10 +110,19 @@ namespace StoneAssemblies.MassAuth.Rules.SqlClient.Extensions
                             var messageType = AppDomain.CurrentDomain.GetAssemblies()
                                 .SelectMany(assembly => assembly.GetTypes()).FirstOrDefault(
                                     type => typeof(MessageBase).IsAssignableFrom(type) && type.Name == messageTypeName);
+
+
+                            string ruleName = string.Empty;
+                            if (match.Groups.ContainsKey(RuleNameCapturingGroupName))
+                            {
+                                ruleName = match.Groups[RuleNameCapturingGroupName].Value;
+                            }
+
                             if (messageType != null)
                             {
                                 serviceCollection.RegisterStoredProcedureBasedRule(
                                     messageType,
+                                    ruleName,
                                     connectionString,
                                     storeProcedureName);
                             }

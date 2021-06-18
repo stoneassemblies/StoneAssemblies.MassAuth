@@ -24,6 +24,8 @@ namespace StoneAssemblies.MassAuth.Rules.SqlClient.Rules
     /// </typeparam>
     public sealed class StoredProcedureBasedRule<TMessage> : IRule<TMessage>
     {
+        private readonly string ruleName;
+
         /// <summary>
         ///     The connection string.
         /// </summary>
@@ -32,28 +34,43 @@ namespace StoneAssemblies.MassAuth.Rules.SqlClient.Rules
         /// <summary>
         ///     The store procedure name.
         /// </summary>
-        private readonly string storeProcedureName;
+        private readonly string storedProcedureName;
 
         /// <summary>
         ///     Initializes a new instance of the <see cref="StoredProcedureBasedRule{TMessage}" /> class.
         /// </summary>
+        /// <param name="ruleName">
+        ///     The rule name.
+        /// </param>
         /// <param name="connectionString">
         ///     The connection string.
         /// </param>
-        /// <param name="storeProcedureName">
+        /// <param name="storedProcedureName">
         ///     The store procedure name.
         /// </param>
-        public StoredProcedureBasedRule(string connectionString, string storeProcedureName)
+        public StoredProcedureBasedRule(string ruleName, string connectionString, string storedProcedureName)
         {
+            this.ruleName = ruleName;
             this.connectionString = connectionString;
-            this.storeProcedureName = storeProcedureName;
+            this.storedProcedureName = storedProcedureName;
         }
 
         /// <inheritdoc />
         public bool IsEnabled => true;
 
         /// <inheritdoc />
-        public string Name => $"Store procedure '{this.storeProcedureName}'";
+        public string Name
+        {
+            get
+            {
+                if (!string.IsNullOrWhiteSpace(this.ruleName))
+                {
+                    return $"'{this.ruleName}' from stored procedure '{this.storedProcedureName}'";
+                }
+
+                return $"Stored procedure '{this.storedProcedureName}'";
+            }
+        }
 
         /// <inheritdoc />
         public int Priority => 0;
@@ -72,7 +89,7 @@ namespace StoneAssemblies.MassAuth.Rules.SqlClient.Rules
             await using var connection = new SqlConnection(this.connectionString);
             var sqlCommand = connection.CreateCommand();
             sqlCommand.CommandType = CommandType.StoredProcedure;
-            sqlCommand.CommandText = this.storeProcedureName;
+            sqlCommand.CommandText = this.storedProcedureName;
             var serializedMessage = JsonConvert.SerializeObject(message);
             sqlCommand.Parameters.AddWithValue("@message", serializedMessage);
 

@@ -1,4 +1,10 @@
-﻿namespace StoneAssemblies.MassAuth.Tests.Services
+﻿// --------------------------------------------------------------------------------------------------------------------
+// <copyright file="AuthorizationRequestMessageFactoryFacts.cs" company="Stone Assemblies">
+// Copyright © 2021 - 2021 Stone Assemblies. All rights reserved.
+// </copyright>
+// --------------------------------------------------------------------------------------------------------------------
+
+namespace StoneAssemblies.MassAuth.Tests.Services
 {
     using StoneAssemblies.MassAuth.Bank.Messages;
     using StoneAssemblies.MassAuth.Messages;
@@ -6,10 +12,19 @@
 
     using Xunit;
 
+    /// <summary>
+    /// The authorization request message factory facts.
+    /// </summary>
     public class AuthorizationRequestMessageFactoryFacts
     {
+        /// <summary>
+        /// The from method.
+        /// </summary>
         public class The_From_Method
         {
+            /// <summary>
+            /// Initializes a generic authorization request message from a regular message.
+            /// </summary>
             [Fact]
             public void Initializes_A_Generic_AuthorizationRequestMessage_From_A_Regular_Message()
             {
@@ -18,6 +33,9 @@
                 Assert.IsType<AuthorizationRequestMessage<AccountBalanceRequestMessage>>(authorizationRequestMessage);
             }
 
+            /// <summary>
+            /// Sets the payload.
+            /// </summary>
             [Fact]
             public void Sets_The_Payload()
             {
@@ -27,6 +45,9 @@
                 Assert.NotNull(authorizationRequestMessage?.Payload);
             }
 
+            /// <summary>
+            /// Sets the payload with the given message reference.
+            /// </summary>
             [Fact]
             public void Sets_The_Payload_With_The_Given_Message_Reference()
             {

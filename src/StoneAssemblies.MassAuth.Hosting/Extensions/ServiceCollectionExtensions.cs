@@ -80,13 +80,12 @@ namespace StoneAssemblies.MassAuth.Hosting.Extensions
         /// </param>
         private static void AddMessagesTypesFromAlreadyRegisteredRules(this IServiceCollection serviceCollection)
         {
-            var fullName = typeof(IRule<>).FullName;
-            if (!string.IsNullOrWhiteSpace(fullName))
+            if (!string.IsNullOrWhiteSpace(RuleGenericInterfaceName))
             {
                 var registeredRulesTypes = serviceCollection
                     .Where(
                         descriptor => !string.IsNullOrWhiteSpace(descriptor.ServiceType.FullName)
-                                      && descriptor.ServiceType.FullName.StartsWith(fullName))
+                                      && descriptor.ServiceType.FullName.StartsWith(RuleGenericInterfaceName))
                     .Select(descriptor => descriptor.ServiceType);
 
                 foreach (var registeredRulesType in registeredRulesTypes)

@@ -8,17 +8,15 @@ namespace StoneAssemblies.MassAuth.Rules.SqlClient.Extensions
 {
     using System;
     using System.Collections.Generic;
-    using System.Data;
     using System.Linq;
     using System.Text.RegularExpressions;
 
-    using Microsoft.Data.SqlClient;
-    using Microsoft.Extensions.Configuration;
     using Microsoft.Extensions.DependencyInjection;
 
     using StoneAssemblies.MassAuth.Messages;
     using StoneAssemblies.MassAuth.Rules.Interfaces;
     using StoneAssemblies.MassAuth.Rules.SqlClient.Rules;
+    using StoneAssemblies.MassAuth.Rules.SqlClient.Services.Interfaces;
 
     /// <summary>
     ///     The service collection extensions.
@@ -52,10 +50,10 @@ namespace StoneAssemblies.MassAuth.Rules.SqlClient.Extensions
         {
             var authorizationRequestMessageType = typeof(AuthorizationRequestMessage<>).MakeGenericType(messageType);
             var ruleInterfaceType = typeof(IRule<>).MakeGenericType(authorizationRequestMessageType);
-            var ruleType = typeof(StoredProcedureBasedRule<>).MakeGenericType(authorizationRequestMessageType);
+            var ruleType = typeof(SqlClientStoredProcedureBasedRule<>).MakeGenericType(authorizationRequestMessageType);
             serviceCollection.AddSingleton(
                 ruleInterfaceType,
-                sp => Activator.CreateInstance(ruleType, ruleName, connectionString, storedProcedureName));
+                sp => Activator.CreateInstance(ruleType, ruleName, messageType, connectionString, storedProcedureName));
         }
 
         /// <summary>
@@ -64,80 +62,54 @@ namespace StoneAssemblies.MassAuth.Rules.SqlClient.Extensions
         /// <param name="serviceCollection">
         ///     The service collection.
         /// </param>
-        /// <param name="configuration">
-        ///     The configuration.
+        /// <param name="databaseInspector">
+        ///     The database inspector.
+        /// </param>
+        /// <param name="patterns">
+        ///     The name patterns.
         /// </param>
         public static void RegisterStoredProcedureBasedRules(
             this IServiceCollection serviceCollection,
-            IConfiguration configuration)
+            IDatabaseInspector databaseInspector,
+            IEnumerable<string> patterns)
         {
             const string MessageTypeCapturingGroupName = "messageType";
             const string RuleNameCapturingGroupName = "ruleName";
 
             var regexOptions = RegexOptions.IgnoreCase | RegexOptions.Multiline | RegexOptions.Compiled;
-
-            var patterns = new List<string>();
-            var configurationSection = configuration?.GetSection("SqlClientStoredProcedureBasedRules");
-
-            configurationSection?.GetSection("Patterns")?.Bind(patterns);
             var regularExpressions = patterns.Select(pattern => new Regex(pattern, regexOptions)).ToList();
-
             if (regularExpressions.Count == 0)
             {
                 return;
             }
 
-            var connectionStrings = new List<string>();
-            configurationSection?.GetSection("ConnectionStrings")?.Bind(connectionStrings);
-            foreach (var connectionString in connectionStrings)
+            foreach (var storedProcedureName in databaseInspector.GetStoredProcedures().Distinct())
             {
-                using var sqlConnection = new SqlConnection(connectionString);
-                var sqlCommand = sqlConnection.CreateCommand();
-                sqlCommand.CommandText = "SELECT * FROM INFORMATION_SCHEMA.ROUTINES WHERE ROUTINE_TYPE = 'PROCEDURE'";
-                try
+                var match = regularExpressions.Select(r => r.Match(storedProcedureName)).FirstOrDefault(m => m.Success);
+
+                if (match != null && match.Groups.ContainsKey(MessageTypeCapturingGroupName))
                 {
-                    sqlConnection.Open();
-                    var sqlDataReader = sqlCommand.ExecuteReader();
-                    while (sqlDataReader.Read())
+                    var messageTypeName = match.Groups[MessageTypeCapturingGroupName].Value;
+                    var messageType = AppDomain.CurrentDomain.GetAssemblies()
+                        .SelectMany(assembly => assembly.GetTypes()).FirstOrDefault(
+                            type => typeof(MessageBase).IsAssignableFrom(type) && type.Name == messageTypeName);
+
+                    var ruleName = string.Empty;
+                    if (match.Groups.ContainsKey(RuleNameCapturingGroupName))
                     {
-                        var storeProcedureName = sqlDataReader.GetString(2);
-                        var match = regularExpressions.Select(r => r.Match(storeProcedureName))
-                            .FirstOrDefault(m => m.Success);
-
-                        if (match != null && match.Groups.ContainsKey(MessageTypeCapturingGroupName))
-                        {
-                            var messageTypeName = match.Groups[MessageTypeCapturingGroupName].Value;
-                            var messageType = AppDomain.CurrentDomain.GetAssemblies()
-                                .SelectMany(assembly => assembly.GetTypes()).FirstOrDefault(
-                                    type => typeof(MessageBase).IsAssignableFrom(type) && type.Name == messageTypeName);
-
-
-                            string ruleName = string.Empty;
-                            if (match.Groups.ContainsKey(RuleNameCapturingGroupName))
-                            {
-                                ruleName = match.Groups[RuleNameCapturingGroupName].Value;
-                            }
-
-                            if (messageType != null)
-                            {
-                                serviceCollection.RegisterStoredProcedureBasedRule(
-                                    messageType,
-                                    ruleName,
-                                    connectionString,
-                                    storeProcedureName);
-                            }
-                        }
+                        ruleName = match.Groups[RuleNameCapturingGroupName].Value;
                     }
-                }
-                finally
-                {
-                    if (sqlConnection.State == ConnectionState.Open)
+
+                    if (messageType != null)
                     {
-                        sqlConnection.Close();
+                        serviceCollection.RegisterStoredProcedureBasedRule(
+                            messageType,
+                            ruleName,
+                            databaseInspector.ConnectionString,
+                            storedProcedureName);
                     }
                 }
             }
         }
-
     }
 }

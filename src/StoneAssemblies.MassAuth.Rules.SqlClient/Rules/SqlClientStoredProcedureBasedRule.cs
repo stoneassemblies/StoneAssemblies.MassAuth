@@ -22,9 +22,17 @@ namespace StoneAssemblies.MassAuth.Rules.SqlClient.Rules
     /// <typeparam name="TMessage">
     ///     The message type.
     /// </typeparam>
-    public sealed class StoredProcedureBasedRule<TMessage> : IRule<TMessage>
+    public sealed class SqlClientStoredProcedureBasedRule<TMessage> : IRule<TMessage>
     {
+        /// <summary>
+        ///     The rule name.
+        /// </summary>
         private readonly string ruleName;
+
+        /// <summary>
+        ///     The message type.
+        /// </summary>
+        private readonly Type messageType;
 
         /// <summary>
         ///     The connection string.
@@ -37,10 +45,13 @@ namespace StoneAssemblies.MassAuth.Rules.SqlClient.Rules
         private readonly string storedProcedureName;
 
         /// <summary>
-        ///     Initializes a new instance of the <see cref="StoredProcedureBasedRule{TMessage}" /> class.
+        ///     Initializes a new instance of the <see cref="SqlClientStoredProcedureBasedRule{TMessage}" /> class.
         /// </summary>
         /// <param name="ruleName">
         ///     The rule name.
+        /// </param>
+        /// <param name="messageType">
+        ///     The message type.
         /// </param>
         /// <param name="connectionString">
         ///     The connection string.
@@ -48,9 +59,10 @@ namespace StoneAssemblies.MassAuth.Rules.SqlClient.Rules
         /// <param name="storedProcedureName">
         ///     The store procedure name.
         /// </param>
-        public StoredProcedureBasedRule(string ruleName, string connectionString, string storedProcedureName)
+        public SqlClientStoredProcedureBasedRule(string ruleName, Type messageType, string connectionString, string storedProcedureName)
         {
             this.ruleName = ruleName;
+            this.messageType = messageType;
             this.connectionString = connectionString;
             this.storedProcedureName = storedProcedureName;
         }
@@ -59,18 +71,7 @@ namespace StoneAssemblies.MassAuth.Rules.SqlClient.Rules
         public bool IsEnabled => true;
 
         /// <inheritdoc />
-        public string Name
-        {
-            get
-            {
-                if (!string.IsNullOrWhiteSpace(this.ruleName))
-                {
-                    return $"'{this.ruleName}' from stored procedure '{this.storedProcedureName}'";
-                }
-
-                return $"Stored procedure '{this.storedProcedureName}'";
-            }
-        }
+        public string Name => $"{this.ruleName} for '{this.messageType.Name}' message type based on the '{this.storedProcedureName}' stored procedure".TrimStart();
 
         /// <inheritdoc />
         public int Priority => 0;

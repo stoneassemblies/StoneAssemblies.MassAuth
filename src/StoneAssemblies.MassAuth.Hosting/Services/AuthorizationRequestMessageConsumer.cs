@@ -59,7 +59,6 @@ namespace StoneAssemblies.MassAuth.Hosting.Services
                               };
 
             var rules = this.rulesContainer.Rules;
-            
             foreach (var rule in rules)
             {
                 var succeeded = false;

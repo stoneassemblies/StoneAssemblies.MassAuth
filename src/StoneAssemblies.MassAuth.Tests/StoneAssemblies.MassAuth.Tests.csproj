@@ -21,15 +21,29 @@
 			<IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
 		</PackageReference>
 		<PackageReference Include="Microsoft.Data.SqlClient" Version="2.1.2" />
+		<PackageReference Include="Microsoft.Extensions.DependencyInjection.Abstractions" Version="5.0.0" />
 		<PackageReference Include="Microsoft.NET.Test.Sdk" Version="16.9.4" />
 		<PackageReference Include="Moq" Version="4.16.1" />
-		<PackageReference Include="MSTest.TestAdapter" Version="2.2.3" />
-		<PackageReference Include="MSTest.TestFramework" Version="2.2.3" />
 		<PackageReference Include="coverlet.collector" Version="3.0.3">
 			<PrivateAssets>all</PrivateAssets>
 			<IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
 		</PackageReference>
 		<PackageReference Include="NuGet.Protocol" Version="5.9.1" />
+		<PackageReference Include="xunit" Version="2.4.1" />
+		<PackageReference Include="xunit.runner.visualstudio" Version="2.4.3">
+			<IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+			<PrivateAssets>all</PrivateAssets>
+		</PackageReference>
+		<PackageReference Include="coverlet.collector" Version="3.0.3">
+			<PrivateAssets>all</PrivateAssets>
+			<IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+		</PackageReference>
+	</ItemGroup>
+
+	<ItemGroup>
+	  <ProjectReference Include="..\StoneAssemblies.MassAuth.Bank.Messages\StoneAssemblies.MassAuth.Bank.Messages.csproj" />
+	  <ProjectReference Include="..\StoneAssemblies.MassAuth.Rules.SqlClient\StoneAssemblies.MassAuth.Rules.SqlClient.csproj" />
+	  <ProjectReference Include="..\StoneAssemblies.MassAuth.Server\StoneAssemblies.MassAuth.Server.csproj" />
 	</ItemGroup>
 
 </Project>

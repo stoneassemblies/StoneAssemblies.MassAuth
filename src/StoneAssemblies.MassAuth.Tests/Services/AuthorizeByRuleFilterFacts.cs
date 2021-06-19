@@ -1,4 +1,10 @@
-﻿namespace StoneAssemblies.MassAuth.Tests.Services
+﻿// --------------------------------------------------------------------------------------------------------------------
+// <copyright file="AuthorizeByRuleFilterFacts.cs" company="Stone Assemblies">
+// Copyright © 2021 - 2021 Stone Assemblies. All rights reserved.
+// </copyright>
+// --------------------------------------------------------------------------------------------------------------------
+
+namespace StoneAssemblies.MassAuth.Tests.Services
 {
     using System.Collections.Generic;
     using System.Threading;
@@ -21,12 +27,24 @@
 
     using Xunit;
 
+    /// <summary>
+    /// The authorize by rule filter facts.
+    /// </summary>
     public class AuthorizeByRuleFilterFacts
     {
+        /// <summary>
+        /// The the_ on action execution async_ method.
+        /// </summary>
         public class The_OnActionExecutionAsync_Method
         {
+            /// <summary>
+            /// The invokes next action delegate when the request have no message as parameter.
+            /// </summary>
+            /// <returns>
+            /// The <see cref="Task"/>.
+            /// </returns>
             [Fact]
-            public async Task Calls_Next_Action_When_The_Request_Have_No_Message_As_Parameter()
+            public async Task Invokes_Next_Action_Delegate_When_The_Request_Have_No_Message_As_Parameter()
             {
                 var actionContext = new ActionContext
                                         {
@@ -51,10 +69,18 @@
                             return Task.FromResult<ActionExecutedContext>(null);
                         });
                 await authorizeByRuleFilter.OnActionExecutionAsync(actionExecutingContext, actionExecutionDelegate);
+
+                Assert.True(nextInvoked);
             }
 
+            /// <summary>
+            /// Invokes next action delegate when the request is authorized.
+            /// </summary>
+            /// <returns>
+            /// The <see cref="Task"/>.
+            /// </returns>
             [Fact]
-            public async Task Calls_Next_When_The_Request_Is_Authorized()
+            public async Task Invokes_Next_Action_Delegate_When_The_Request_Is_Authorized()
             {
                 var actionContext = new ActionContext
                                         {
@@ -113,8 +139,14 @@
                 Assert.True(nextInvoked);
             }
 
+            /// <summary>
+            /// Does not invoke next action delegate when the request is unauthorized.
+            /// </summary>
+            /// <returns>
+            /// The <see cref="Task"/>.
+            /// </returns>
             [Fact]
-            public async Task Does_Not_Call_Next_When_The_Request_Is_Unahuthorized()
+            public async Task Does_Not_Invoke_Next_Action_Delegate_When_The_Request_Is_Unauthorized()
             {
                 var actionContext = new ActionContext
                                         {

@@ -38,6 +38,7 @@
 
 	<ItemGroup>
 	  <ProjectReference Include="..\StoneAssemblies.MassAuth.Bank.Messages\StoneAssemblies.MassAuth.Bank.Messages.csproj" />
+	  <ProjectReference Include="..\StoneAssemblies.MassAuth.Hosting\StoneAssemblies.MassAuth.Hosting.csproj" />
 	  <ProjectReference Include="..\StoneAssemblies.MassAuth.Rules.SqlClient\StoneAssemblies.MassAuth.Rules.SqlClient.csproj" />
 	  <ProjectReference Include="..\StoneAssemblies.MassAuth.Server\StoneAssemblies.MassAuth.Server.csproj" />
 	</ItemGroup>

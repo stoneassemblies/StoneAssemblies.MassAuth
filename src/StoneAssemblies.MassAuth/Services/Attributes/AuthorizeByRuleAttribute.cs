@@ -1,5 +1,5 @@
 ﻿// --------------------------------------------------------------------------------------------------------------------
-// <copyright file="AuthorizeByRule.cs" company="Stone Assemblies">
+// <copyright file="AuthorizeByRuleAttribute.cs" company="Stone Assemblies">
 // Copyright Â© 2021 - 2021 Stone Assemblies. All rights reserved.
 // </copyright>
 // --------------------------------------------------------------------------------------------------------------------
@@ -11,12 +11,12 @@ namespace StoneAssemblies.MassAuth.Services.Attributes
     /// <summary>
     /// The authorize by rule.
     /// </summary>
-    public class AuthorizeByRule : ServiceFilterAttribute
+    public class AuthorizeByRuleAttribute : ServiceFilterAttribute
     {
         /// <summary>
-        /// Initializes a new instance of the <see cref="AuthorizeByRule"/> class.
+        /// Initializes a new instance of the <see cref="AuthorizeByRuleAttribute"/> class.
         /// </summary>
-        public AuthorizeByRule()
+        public AuthorizeByRuleAttribute()
             : base(typeof(AuthorizeByRuleFilter))
         {
         }

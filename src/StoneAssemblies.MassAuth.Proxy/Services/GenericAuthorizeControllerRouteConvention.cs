@@ -17,16 +17,16 @@ namespace StoneAssemblies.MassAuth.Proxy.Services
         /// <summary>
         ///     Applies the route convention.
         /// </summary>
-        /// <param name="controllerModel">
+        /// <param name="controller">
         ///     The controller model.
         /// </param>
-        public void Apply(ControllerModel controllerModel)
+        public void Apply(ControllerModel controller)
         {
-            if (controllerModel.ControllerType.IsGenericType)
+            if (controller.ControllerType.IsGenericType)
             {
-                var messageType = controllerModel.ControllerType.GenericTypeArguments[0];
+                var messageType = controller.ControllerType.GenericTypeArguments[0];
                 var routeTemplateProvider = new RouteAttribute($"api/authorize/{messageType.Name}");
-                controllerModel.Selectors.Add(
+                controller.Selectors.Add(
                     new SelectorModel
                         {
                             AttributeRouteModel = new AttributeRouteModel(routeTemplateProvider),

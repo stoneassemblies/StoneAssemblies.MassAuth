@@ -41,13 +41,13 @@ namespace StoneAssemblies.MassAuth.Proxy.Services
         /// <summary>
         ///     Populates feature.
         /// </summary>
-        /// <param name="applicationParts">
+        /// <param name="parts">
         ///     The application parts.
         /// </param>
-        /// <param name="controllerFeature">
+        /// <param name="feature">
         ///     The controller feature.
         /// </param>
-        public void PopulateFeature(IEnumerable<ApplicationPart> applicationParts, ControllerFeature controllerFeature)
+        public void PopulateFeature(IEnumerable<ApplicationPart> parts, ControllerFeature feature)
         {
             var extensionAssemblies = this.extensionManager.GetExtensionAssemblies();
             foreach (var extensionAssembly in extensionAssemblies)
@@ -58,7 +58,7 @@ namespace StoneAssemblies.MassAuth.Proxy.Services
                 foreach (var messageType in messageTypes)
                 {
                     var controllerType = typeof(AuthorizeController<>).MakeGenericType(messageType);
-                    controllerFeature.Controllers.Add(controllerType.GetTypeInfo());
+                    feature.Controllers.Add(controllerType.GetTypeInfo());
                 }
             }
         }

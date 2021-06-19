@@ -15,13 +15,16 @@ namespace StoneAssemblies.MassAuth.Rules.SqlClient.Services
         /// <summary>
         ///     Initializes a new instance of the <see cref="SqlClientDatabaseInspector" /> class.
         /// </summary>
+        /// <param name="connectionString">
+        ///     The connection string.
+        /// </param>
         public SqlClientDatabaseInspector(string connectionString)
         {
             this.ConnectionString = connectionString;
         }
 
         /// <summary>
-        /// The connection string.
+        ///     Gets connection string.
         /// </summary>
         public string ConnectionString { get; }
 

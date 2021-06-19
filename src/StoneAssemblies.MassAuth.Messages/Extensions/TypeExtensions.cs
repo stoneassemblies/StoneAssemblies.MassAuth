@@ -7,6 +7,7 @@
 namespace StoneAssemblies.MassAuth.Messages.Extensions
 {
     using System;
+    using System.Text;
 
     /// <summary>
     ///     The type extensions.
@@ -24,14 +25,14 @@ namespace StoneAssemblies.MassAuth.Messages.Extensions
         /// </returns>
         public static string GetFlatName(this Type type)
         {
-            // TODO: Improve this later.
-            var flatName = type.Name.Split('`')[0];
+            StringBuilder builder = new StringBuilder();
+            builder.Append(type.Name.Split('`')[0]);
             foreach (var genericArgument in type.GetGenericArguments())
             {
-                flatName += "-" + genericArgument.GetFlatName();
+                builder.Append($"-{genericArgument.GetFlatName()}");
             }
 
-            return flatName;
+            return builder.ToString();
         }
     }
 }

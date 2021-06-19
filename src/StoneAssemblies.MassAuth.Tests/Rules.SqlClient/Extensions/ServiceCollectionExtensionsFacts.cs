@@ -29,6 +29,7 @@ namespace StoneAssemblies.MassAuth.Tests.Rules.SqlClient.Extensions
         /// <summary>
         /// The register stored procedure based rules method.
         /// </summary>
+        //[CollectionDefinition("Sin", DisableParallelization = true)]
         public class The_RegisterStoredProcedureBasedRules_Method
         {
             /// <summary>

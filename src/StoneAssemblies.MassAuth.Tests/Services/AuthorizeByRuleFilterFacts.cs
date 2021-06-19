@@ -56,7 +56,7 @@ namespace StoneAssemblies.MassAuth.Tests.Services
                     actionContext,
                     new List<IFilterMetadata>(),
                     new Dictionary<string, object>(),
-                    Mock.Of<Controller>());
+                    new Mock<Controller>().Object);
 
                 var clientFactoryMock = new Mock<IClientFactory>();
 
@@ -97,7 +97,7 @@ namespace StoneAssemblies.MassAuth.Tests.Services
                     actionContext,
                     new List<IFilterMetadata>(),
                     actionArguments,
-                    Mock.Of<Controller>());
+                    new Mock<Controller>());
 
                 var clientFactoryMock = new Mock<IClientFactory>();
                 var requestClientMock =
@@ -163,7 +163,7 @@ namespace StoneAssemblies.MassAuth.Tests.Services
                     actionContext,
                     new List<IFilterMetadata>(),
                     actionArguments,
-                    Mock.Of<Controller>());
+                    new Mock<Controller>());
 
                 var clientFactoryMock = new Mock<IClientFactory>();
                 var requestClientMock =

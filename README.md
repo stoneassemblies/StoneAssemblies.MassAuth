@@ -5,6 +5,9 @@ MassAuth is a _free_, _open source_ distributed, extensible message based author
 
 Build Status
 ------------
+[![Quality Gate Status](https://sonarcloud.io/api/project_badges/measure?project=stoneassemblies_StoneAssemblies.MassAuth&metric=alert_status)](https://sonarcloud.io/dashboard?id=stoneassemblies_StoneAssemblies.MassAuth)
+[![Lines of Code](https://sonarcloud.io/api/project_badges/measure?project=stoneassemblies_StoneAssemblies.MassAuth&metric=ncloc)](https://sonarcloud.io/dashboard?id=stoneassemblies_StoneAssemblies.MassAuth)
+[![Coverage](https://sonarcloud.io/api/project_badges/measure?project=stoneassemblies_StoneAssemblies.MassAuth&metric=coverage)](https://sonarcloud.io/dashboard?id=stoneassemblies_StoneAssemblies.MassAuth)
 
 Branch | Status
 ------ | :------:

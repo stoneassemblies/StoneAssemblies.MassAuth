@@ -125,6 +125,7 @@ Task("Test")
           ArgumentCustomization = args => args
             .Append("/p:CollectCoverage=true")
             .Append("/p:CoverletOutputFormat=opencover")
+            .Append("/p:ExcludeByAttribute=\"Obsolete,GeneratedCodeAttribute\"")
         };
 
       settings.Loggers.Add($"trx;LogFileName={GetTestResultFilePath()}");

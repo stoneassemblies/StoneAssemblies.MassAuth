@@ -1,4 +1,10 @@
-﻿namespace StoneAssemblies.MassAuth.Tests.Rules.SqlClient.Extensions
+﻿// --------------------------------------------------------------------------------------------------------------------
+// <copyright file="ServiceCollectionExtensionsFacts.cs" company="Stone Assemblies">
+//  Copyright © 2021 - 2021 Stone Assemblies. All rights reserved. 
+// </copyright>
+// --------------------------------------------------------------------------------------------------------------------
+
+namespace StoneAssemblies.MassAuth.Tests.Rules.SqlClient.Extensions
 {
     using System.Collections.Generic;
     using System.Linq;
@@ -15,10 +21,19 @@
 
     using Xunit;
 
+    /// <summary>
+    /// The service collection extensions facts.
+    /// </summary>
     public class ServiceCollectionExtensionsFacts
     {
+        /// <summary>
+        /// The register stored procedure based rules method.
+        /// </summary>
         public class The_RegisterStoredProcedureBasedRules_Method
         {
+            /// <summary>
+            /// Registers rules per stored procedure name matches with the specified_ pattern.
+            /// </summary>
             [Fact]
             public void Registers_Rules_Per_Stored_Procedure_Name_Matches_With_The_Specified_Pattern()
             {
@@ -55,6 +70,9 @@
                 Assert.Equal(2, services.Count);
             }
 
+            /// <summary>
+            /// Registers only one rule per stored procedure.
+            /// </summary>
             [Fact]
             public void Registers_Only_One_Rule_Per_Stored_Procedure()
             {

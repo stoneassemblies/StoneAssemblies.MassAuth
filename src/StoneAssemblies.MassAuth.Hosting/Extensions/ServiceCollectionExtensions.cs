@@ -32,6 +32,11 @@ namespace StoneAssemblies.MassAuth.Hosting.Extensions
         private static readonly HashSet<Type> DiscoveredMessagesTypes = new HashSet<Type>();
 
         /// <summary>
+        /// The rule generic interface name.
+        /// </summary>
+        private static readonly string RuleGenericInterfaceName = typeof(IRule<>).FullName;
+
+        /// <summary>
         ///     The add auto discovered rules.
         /// </summary>
         /// <param name="serviceCollection">
@@ -61,8 +66,9 @@ namespace StoneAssemblies.MassAuth.Hosting.Extensions
         /// </returns>
 #pragma warning disable IDE0060 // Remove unused parameter
         public static HashSet<Type> GetDiscoveredMessageTypes(this IServiceCollection serviceCollection)
-#pragma warning restore IDE0060 // Remove unused parameter
+#pragma warning restore IDE0060
         {
+            // Remove unused parameter
             return DiscoveredMessagesTypes;
         }
 
@@ -78,7 +84,9 @@ namespace StoneAssemblies.MassAuth.Hosting.Extensions
             if (!string.IsNullOrWhiteSpace(fullName))
             {
                 var registeredRulesTypes = serviceCollection
-                    .Where(descriptor => !string.IsNullOrWhiteSpace(descriptor.ServiceType.FullName) && descriptor.ServiceType.FullName.StartsWith(fullName))
+                    .Where(
+                        descriptor => !string.IsNullOrWhiteSpace(descriptor.ServiceType.FullName)
+                                      && descriptor.ServiceType.FullName.StartsWith(fullName))
                     .Select(descriptor => descriptor.ServiceType);
 
                 foreach (var registeredRulesType in registeredRulesTypes)
@@ -99,6 +107,47 @@ namespace StoneAssemblies.MassAuth.Hosting.Extensions
         }
 
         /// <summary>
+        ///     Adds rule from type.
+        /// </summary>
+        /// <param name="serviceCollection">
+        ///     The service collection.
+        /// </param>
+        /// <param name="ruleInterfaceType">
+        ///     The rule interface type.
+        /// </param>
+        /// <param name="type">
+        ///     The type.
+        /// </param>
+        /// <returns>
+        ///     The <see cref="IEnumerable{Type}" />.
+        /// </returns>
+        private static IEnumerable<Type> AddRuleFromTypeInterface(
+            this IServiceCollection serviceCollection,
+            Type ruleInterfaceType,
+            Type type)
+        {
+            if (!string.IsNullOrWhiteSpace(ruleInterfaceType.FullName)
+                && !string.IsNullOrWhiteSpace(RuleGenericInterfaceName)
+                && ruleInterfaceType.FullName.StartsWith(RuleGenericInterfaceName))
+            {
+                // TODO: Improve this?
+                var genericArguments = ruleInterfaceType.GetGenericArguments();
+                if (genericArguments.Length != 1)
+                {
+                    yield break;
+                }
+
+                var messageType = genericArguments[0];
+
+                Log.Information("Registering rule {RuleType}", type);
+
+                serviceCollection.AddSingleton(ruleInterfaceType, type);
+
+                yield return messageType;
+            }
+        }
+
+        /// <summary>
         ///     Add rules from assembly.
         /// </summary>
         /// <param name="serviceCollection">
@@ -114,35 +163,40 @@ namespace StoneAssemblies.MassAuth.Hosting.Extensions
             this IServiceCollection serviceCollection,
             Assembly assembly)
         {
-            var fullName = typeof(IRule<>).FullName;
-
             foreach (var type in assembly.GetTypes())
             {
-                var interfaces = type.GetInterfaces();
-                if (!type.IsAbstract && interfaces.Length > 0)
+                foreach (var ruleType in serviceCollection.AddRulesFromType(type))
                 {
-                    foreach (var ruleInterfaceType in interfaces)
-                    {
-                        if (!string.IsNullOrWhiteSpace(ruleInterfaceType.FullName)
-                            && !string.IsNullOrWhiteSpace(fullName) 
-                            && ruleInterfaceType.FullName.StartsWith(fullName))
-                        {
-                            // TODO: Improve this?
-                            var genericArguments = ruleInterfaceType.GetGenericArguments();
-                            if (genericArguments.Length != 1)
-                            {
-                                continue;
-                            }
+                    yield return ruleType;
+                }
+            }
+        }
 
-                            var messageType = genericArguments[0];
+        /// <summary>
+        ///     Add rules from type.
+        /// </summary>
+        /// <param name="serviceCollection">
+        ///     The service collection.
+        /// </param>
+        /// <param name="type">
+        ///     The type.
+        /// </param>
+        /// <returns>
+        ///     The <see cref="IEnumerable{Type}" />.
+        /// </returns>
+        private static IEnumerable<Type> AddRulesFromType(this IServiceCollection serviceCollection, Type type)
+        {
+            var interfaces = type.GetInterfaces();
+            if (type.IsAbstract || interfaces.Length <= 0)
+            {
+                yield break;
+            }
 
-                            Log.Information("Registering rule {RuleType}", type);
-
-                            serviceCollection.AddSingleton(ruleInterfaceType, type);
-
-                            yield return messageType;
-                        }
-                    }
+            foreach (var ruleInterfaceType in interfaces)
+            {
+                foreach (var ruleType in serviceCollection.AddRuleFromTypeInterface(ruleInterfaceType, type))
+                {
+                    yield return ruleType;
                 }
             }
         }

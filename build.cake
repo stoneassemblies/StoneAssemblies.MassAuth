@@ -120,6 +120,7 @@ Task("Test")
     {
       var settings = new DotNetCoreTestSettings
         {
+          NoWorkingDirectory = true,
           Configuration = buildConfiguration,
           ArgumentCustomization = args => args
             .Append("/p:CollectCoverage=true")

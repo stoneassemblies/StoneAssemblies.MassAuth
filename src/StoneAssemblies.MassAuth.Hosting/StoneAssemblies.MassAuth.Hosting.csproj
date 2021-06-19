@@ -4,11 +4,11 @@
 	</PropertyGroup>
 
 	<ItemGroup>
-		<PackageReference Include="MassTransit" Version="7.1.8" />
-		<PackageReference Include="MassTransit.Extensions.DependencyInjection" Version="7.1.8" />
+		<PackageReference Include="MassTransit" Version="7.2.0" />
+		<PackageReference Include="MassTransit.Extensions.DependencyInjection" Version="7.2.0" />
 		<PackageReference Include="Microsoft.Extensions.Hosting.Abstractions" Version="5.0.0" />
 		<PackageReference Include="Serilog" Version="2.10.0" />
-		<PackageReference Include="StoneAssemblies.Extensibility" Version="1.0.0-alpha0063" />
+		<PackageReference Include="StoneAssemblies.Extensibility" Version="1.0.0-alpha0068" />
 		<PackageReference Include="StoneAssemblies.Hosting" Version="1.0.0-alpha0005" />
 		<PackageReference Include="System.Net.Http.Json" Version="5.0.0" />
 	</ItemGroup>

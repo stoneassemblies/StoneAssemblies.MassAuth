@@ -127,11 +127,11 @@ namespace StoneAssemblies.MassAuth.Tests.Rules.SqlClient.Extensions
                                        new Mapping(
                                            "Is Account Owner",
                                            "AccountBalanceRequestMessage",
-                                           "sp_Authorize_IsAccountOwner_AccountBalanceRequestMessage"),
+                                           "sp_Authorize_IsAccountOwner_AccountBalanceRequestMessage", 0),
                                        new Mapping(
                                            "Global AccountBalanceRequest Rule",
                                            "AccountBalanceRequestMessage",
-                                           "sp_Authorize_AccountBalanceRequestMessage")
+                                           "sp_Authorize_AccountBalanceRequestMessage", 0)
                                    };
 
                 databaseInspectorMock.Setup(inspector => inspector.GetMappings()).Returns(mappings);
@@ -172,11 +172,11 @@ namespace StoneAssemblies.MassAuth.Tests.Rules.SqlClient.Extensions
                                        new Mapping(
                                            "Is Account Owner",
                                            "AccountBalanceRequestMessage",
-                                           "sp_Authorize_IsAccountOwner_AccountBalanceRequestMessage"),
+                                           "sp_Authorize_IsAccountOwner_AccountBalanceRequestMessage", 0),
                                        new Mapping(
                                            "Global AccountBalanceRequest Rule",
                                            "AccountBalanceRequestMessage",
-                                           "sp_Authorize_AccountBalanceRequestMessage")
+                                           "sp_Authorize_AccountBalanceRequestMessage", 0)
                                    };
                 databaseInspectorMock.Setup(inspector => inspector.GetMappings()).Returns(mappings);
 

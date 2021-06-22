@@ -45,7 +45,7 @@ namespace StoneAssemblies.MassAuth.Rules.SqlClient.Services
                 using var sqlConnection = new SqlConnection(this.ConnectionString);
                 var sqlCommand = sqlConnection.CreateCommand();
                 sqlCommand.CommandText =
-                    $"SELECT [RuleName], [MessageTypeName], [StoredProcedure] FROM [dbo].[Mappings] WHERE [StoredProcedure]='{storedProcedure}'";
+                    $"SELECT [RuleName], [MessageTypeName], [StoredProcedure], [Priority] FROM [dbo].[Mappings] WHERE [StoredProcedure]='{storedProcedure}'";
 
                 try
                 {
@@ -80,7 +80,9 @@ namespace StoneAssemblies.MassAuth.Rules.SqlClient.Services
                             yield return new Mapping(
                                 sqlDataReader.GetString(0),
                                 sqlDataReader.GetString(1),
-                                sqlDataReader.GetString(2));
+                                sqlDataReader.GetString(2),
+                                sqlDataReader.GetInt32(3)
+                                );
                         }
                     }
                 }

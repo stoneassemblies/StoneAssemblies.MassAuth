@@ -25,9 +25,9 @@ namespace StoneAssemblies.MassAuth.Rules.SqlClient.Rules
     public sealed class SqlClientStoredProcedureBasedRule<TMessage> : IRule<TMessage>
     {
         /// <summary>
-        ///     The rule name.
+        ///     The connection string.
         /// </summary>
-        private readonly string ruleName;
+        private readonly string connectionString;
 
         /// <summary>
         ///     The message type.
@@ -35,9 +35,9 @@ namespace StoneAssemblies.MassAuth.Rules.SqlClient.Rules
         private readonly Type messageType;
 
         /// <summary>
-        ///     The connection string.
+        ///     The rule name.
         /// </summary>
-        private readonly string connectionString;
+        private readonly string ruleName;
 
         /// <summary>
         ///     The store procedure name.
@@ -59,22 +59,29 @@ namespace StoneAssemblies.MassAuth.Rules.SqlClient.Rules
         /// <param name="storedProcedureName">
         ///     The store procedure name.
         /// </param>
-        public SqlClientStoredProcedureBasedRule(string ruleName, Type messageType, string connectionString, string storedProcedureName)
+        /// <param name="priority">
+        ///     The priority.
+        /// </param>
+        public SqlClientStoredProcedureBasedRule(
+            string ruleName, Type messageType, string connectionString, string storedProcedureName, int priority)
         {
             this.ruleName = ruleName;
             this.messageType = messageType;
             this.connectionString = connectionString;
             this.storedProcedureName = storedProcedureName;
+            this.Priority = priority;
         }
 
         /// <inheritdoc />
         public bool IsEnabled => true;
 
         /// <inheritdoc />
-        public string Name => $"{this.ruleName} for '{this.messageType.Name}' message type based on the '{this.storedProcedureName}' stored procedure".TrimStart();
+        public string Name =>
+            $"{this.ruleName} for '{this.messageType.Name}' message type based on the '{this.storedProcedureName}' stored procedure"
+                .TrimStart();
 
         /// <inheritdoc />
-        public int Priority => 0;
+        public int Priority { get; }
 
         /// <summary>
         ///     Evaluate the rules by running the stored procedure.

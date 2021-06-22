@@ -17,6 +17,7 @@ namespace StoneAssemblies.MassAuth.Tests.Rules.SqlClient.Extensions
     using StoneAssemblies.MassAuth.Messages;
     using StoneAssemblies.MassAuth.Rules.Interfaces;
     using StoneAssemblies.MassAuth.Rules.SqlClient.Extensions;
+    using StoneAssemblies.MassAuth.Rules.SqlClient.Models;
     using StoneAssemblies.MassAuth.Rules.SqlClient.Services.Interfaces;
 
     using Xunit;
@@ -29,7 +30,6 @@ namespace StoneAssemblies.MassAuth.Tests.Rules.SqlClient.Extensions
         /// <summary>
         /// The register stored procedure based rules method.
         /// </summary>
-        //[CollectionDefinition("Sin", DisableParallelization = true)]
         public class The_RegisterStoredProcedureBasedRules_Method
         {
             /// <summary>
@@ -105,6 +105,83 @@ namespace StoneAssemblies.MassAuth.Tests.Rules.SqlClient.Extensions
                     storedProcedureNames);
 
                 serviceCollection.RegisterStoredProcedureBasedRules(databaseInspectorMock.Object, patterns);
+                var provider = serviceCollection.BuildServiceProvider();
+                var services = provider.GetServices<IRule<AuthorizationRequestMessage<AccountBalanceRequestMessage>>>()
+                    .ToList();
+
+                Assert.Equal(2, services.Count);
+            }
+
+            /// <summary>
+            /// Registers rules from mappings.
+            /// </summary>
+            [Fact]
+            public void Registers_Rules_From_Mappings()
+            {
+                var serviceCollection = new ServiceCollection();
+
+                var databaseInspectorMock = new Mock<IDatabaseInspector>();
+                databaseInspectorMock.SetupGet(inspector => inspector.ConnectionString).Returns("Server=Fake");
+                var mappings = new List<Mapping>
+                                   {
+                                       new Mapping(
+                                           "Is Account Owner",
+                                           "AccountBalanceRequestMessage",
+                                           "sp_Authorize_IsAccountOwner_AccountBalanceRequestMessage"),
+                                       new Mapping(
+                                           "Global AccountBalanceRequest Rule",
+                                           "AccountBalanceRequestMessage",
+                                           "sp_Authorize_AccountBalanceRequestMessage")
+                                   };
+
+                databaseInspectorMock.Setup(inspector => inspector.GetMappings()).Returns(mappings);
+
+                serviceCollection.RegisterStoredProcedureBasedRules(databaseInspectorMock.Object, new List<string>());
+                var provider = serviceCollection.BuildServiceProvider();
+                var services = provider.GetServices<IRule<AuthorizationRequestMessage<AccountBalanceRequestMessage>>>()
+                    .ToList();
+
+                Assert.Equal(2, services.Count);
+            }
+
+            /// <summary>
+            /// Registers only one instance of a rule per stored procedure and message type.
+            /// </summary>
+            [Fact]
+            public void Registers_Only_One_Instance_Of_A_Rule_Per_StoredProcedure_And_MessageType()
+            {
+                var serviceCollection = new ServiceCollection();
+                var patterns = new List<string>
+                                   {
+                                       "sp_Authorize_(?<ruleName>[^_]+)_(?<messageType>.+)",
+                                       "sp_Authorize_(?<messageType>.+)",
+                                   };
+
+                var databaseInspectorMock = new Mock<IDatabaseInspector>();
+                databaseInspectorMock.SetupGet(inspector => inspector.ConnectionString).Returns("Server=Fake");
+
+                var storedProcedureNames = new List<string>
+                                               {
+                                                   "sp_Authorize_IsAccountOwner_AccountBalanceRequestMessage",
+                                                   "sp_Authorize_AccountBalanceRequestMessage"
+                                               };
+                databaseInspectorMock.Setup(inspector => inspector.GetStoredProcedures()).Returns(storedProcedureNames);
+
+                var mappings = new List<Mapping>
+                                   {
+                                       new Mapping(
+                                           "Is Account Owner",
+                                           "AccountBalanceRequestMessage",
+                                           "sp_Authorize_IsAccountOwner_AccountBalanceRequestMessage"),
+                                       new Mapping(
+                                           "Global AccountBalanceRequest Rule",
+                                           "AccountBalanceRequestMessage",
+                                           "sp_Authorize_AccountBalanceRequestMessage")
+                                   };
+                databaseInspectorMock.Setup(inspector => inspector.GetMappings()).Returns(mappings);
+
+                serviceCollection.RegisterStoredProcedureBasedRules(databaseInspectorMock.Object, patterns);
+
                 var provider = serviceCollection.BuildServiceProvider();
                 var services = provider.GetServices<IRule<AuthorizationRequestMessage<AccountBalanceRequestMessage>>>()
                     .ToList();

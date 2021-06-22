@@ -8,6 +8,8 @@ namespace StoneAssemblies.MassAuth.Rules.SqlClient.Services.Interfaces
 {
     using System.Collections.Generic;
 
+    using StoneAssemblies.MassAuth.Rules.SqlClient.Models;
+
     /// <summary>
     /// The DatabaseInspector interface.
     /// </summary>
@@ -25,5 +27,13 @@ namespace StoneAssemblies.MassAuth.Rules.SqlClient.Services.Interfaces
         /// The <see cref="IEnumerable{String}"/>.
         /// </returns>
         IEnumerable<string> GetStoredProcedures();
+
+        /// <summary>
+        /// Gets the mappings.
+        /// </summary>
+        /// <returns>
+        /// The <see cref="IEnumerable{Mapping}"/>.
+        /// </returns>
+        IEnumerable<Mapping> GetMappings();
     }
 }

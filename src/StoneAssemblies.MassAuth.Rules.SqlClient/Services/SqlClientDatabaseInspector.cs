@@ -11,6 +11,7 @@ namespace StoneAssemblies.MassAuth.Rules.SqlClient.Services
 
     using Microsoft.Data.SqlClient;
 
+    using StoneAssemblies.MassAuth.Rules.SqlClient.Models;
     using StoneAssemblies.MassAuth.Rules.SqlClient.Services.Interfaces;
 
     /// <summary>
@@ -29,10 +30,37 @@ namespace StoneAssemblies.MassAuth.Rules.SqlClient.Services
             this.ConnectionString = connectionString;
         }
 
-        /// <summary>
-        ///     Gets connection string.
-        /// </summary>
+        /// <inheritdoc />
         public string ConnectionString { get; }
+
+        /// <inheritdoc />
+        public IEnumerable<Mapping> GetMappings()
+        {
+            var storedProcedures = this.GetStoredProcedures();
+            foreach (var storedProcedure in storedProcedures)
+            {
+                using var sqlConnection = new SqlConnection(this.ConnectionString);
+                var sqlCommand = sqlConnection.CreateCommand();
+                sqlCommand.CommandText = $"SELECT [RuleName], [MessageTypeName], [StoredProcedure] FROM [dbo].[Mappings] WHERE [StoredProcedure]='{storedProcedure}'";
+
+                try
+                {
+                    sqlConnection.Open();
+                    var sqlDataReader = sqlCommand.ExecuteReader();
+                    while (sqlDataReader.Read())
+                    {
+                        yield return new Mapping(sqlDataReader.GetString(0), sqlDataReader.GetString(1), sqlDataReader.GetString(2));
+                    }
+                }
+                finally
+                {
+                    if (sqlConnection.State == ConnectionState.Open)
+                    {
+                        sqlConnection.Close();
+                    }
+                }
+            }
+        }
 
         /// <inheritdoc />
         public IEnumerable<string> GetStoredProcedures()

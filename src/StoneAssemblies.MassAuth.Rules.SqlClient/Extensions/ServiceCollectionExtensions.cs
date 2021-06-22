@@ -66,12 +66,15 @@ namespace StoneAssemblies.MassAuth.Rules.SqlClient.Extensions
         /// <param name="storedProcedureName">
         ///     The store procedure name.
         /// </param>
-        /// <param name="mappingPriority"></param>
+        /// <param name="priority">
+        ///     The priority.
+        /// </param>
         private static void RegisterStoredProcedureBasedRule(
-            this IServiceCollection serviceCollection, Type messageType, string ruleName, string connectionString,
-            string storedProcedureName, int priority = 0)
+            this IServiceCollection serviceCollection, Type messageType, string ruleName, string connectionString, string storedProcedureName, int priority = 0)
         {
-            var registeredStoredProcedures = RegisteredStoredProcedureRulesPerServiceCollection.GetOrAdd(serviceCollection, collection => new HashSet<string>());
+            var registeredStoredProcedures = RegisteredStoredProcedureRulesPerServiceCollection.GetOrAdd(
+                serviceCollection,
+                collection => new HashSet<string>());
             lock (registeredStoredProcedures)
             {
                 var key = $"{connectionString}-{storedProcedureName}-{messageType.Name}";
@@ -82,7 +85,13 @@ namespace StoneAssemblies.MassAuth.Rules.SqlClient.Extensions
                     var ruleType = typeof(SqlClientStoredProcedureBasedRule<>).MakeGenericType(authorizationRequestMessageType);
                     serviceCollection.AddSingleton(
                         ruleInterfaceType,
-                        sp => Activator.CreateInstance(ruleType, ruleName, messageType, connectionString, storedProcedureName, priority));
+                        sp => Activator.CreateInstance(
+                            ruleType,
+                            ruleName,
+                            messageType,
+                            connectionString,
+                            storedProcedureName,
+                            priority));
                     registeredStoredProcedures.Add(key);
                 }
             }
@@ -112,7 +121,7 @@ namespace StoneAssemblies.MassAuth.Rules.SqlClient.Extensions
                         messageType,
                         ruleName,
                         databaseInspector.ConnectionString,
-                        storedProcedureName, 
+                        storedProcedureName,
                         mapping.Priority);
                 }
             }

@@ -6,10 +6,13 @@
 
 namespace StoneAssemblies.MassAuth.Rules.SqlClient.Services
 {
+    using System;
     using System.Collections.Generic;
     using System.Data;
 
     using Microsoft.Data.SqlClient;
+
+    using Serilog;
 
     using StoneAssemblies.MassAuth.Rules.SqlClient.Models;
     using StoneAssemblies.MassAuth.Rules.SqlClient.Services.Interfaces;
@@ -41,15 +44,44 @@ namespace StoneAssemblies.MassAuth.Rules.SqlClient.Services
             {
                 using var sqlConnection = new SqlConnection(this.ConnectionString);
                 var sqlCommand = sqlConnection.CreateCommand();
-                sqlCommand.CommandText = $"SELECT [RuleName], [MessageTypeName], [StoredProcedure] FROM [dbo].[Mappings] WHERE [StoredProcedure]='{storedProcedure}'";
+                sqlCommand.CommandText =
+                    $"SELECT [RuleName], [MessageTypeName], [StoredProcedure] FROM [dbo].[Mappings] WHERE [StoredProcedure]='{storedProcedure}'";
 
                 try
                 {
                     sqlConnection.Open();
-                    var sqlDataReader = sqlCommand.ExecuteReader();
-                    while (sqlDataReader.Read())
+                }
+                catch (Exception ex)
+                {
+                    Log.Error(ex, "Error opening connection to read information schema routines");
+                }
+
+                try
+                {
+                    if (sqlConnection.State == ConnectionState.Open)
                     {
-                        yield return new Mapping(sqlDataReader.GetString(0), sqlDataReader.GetString(1), sqlDataReader.GetString(2));
+                        SqlDataReader sqlDataReader = null;
+                        try
+                        {
+                            sqlDataReader = sqlCommand.ExecuteReader();
+                        }
+                        catch (Exception ex)
+                        {
+                            Log.Warning(ex, "Error reading rules stored procedures message type mappings");
+                        }
+
+                        if (sqlDataReader == null)
+                        {
+                            yield break;
+                        }
+
+                        while (sqlDataReader.Read())
+                        {
+                            yield return new Mapping(
+                                sqlDataReader.GetString(0),
+                                sqlDataReader.GetString(1),
+                                sqlDataReader.GetString(2));
+                        }
                     }
                 }
                 finally
@@ -71,18 +103,43 @@ namespace StoneAssemblies.MassAuth.Rules.SqlClient.Services
             try
             {
                 sqlConnection.Open();
-                var sqlDataReader = sqlCommand.ExecuteReader();
-                while (sqlDataReader.Read())
-                {
-                    var storeProcedureName = sqlDataReader.GetString(2);
-                    yield return storeProcedureName;
-                }
             }
-            finally
+            catch (Exception ex)
             {
-                if (sqlConnection.State == ConnectionState.Open)
+                Log.Error(ex, "Error opening connection to read information schema routines");
+            }
+
+            if (sqlConnection.State == ConnectionState.Open)
+            {
+                try
                 {
-                    sqlConnection.Close();
+                    SqlDataReader sqlDataReader = null;
+                    try
+                    {
+                        sqlDataReader = sqlCommand.ExecuteReader();
+                    }
+                    catch (Exception ex)
+                    {
+                        Log.Error(ex, "Error reading information schema routines");
+                    }
+
+                    if (sqlDataReader == null)
+                    {
+                        yield break;
+                    }
+
+                    while (sqlDataReader.Read())
+                    {
+                        var storeProcedureName = sqlDataReader.GetString(2);
+                        yield return storeProcedureName;
+                    }
+                }
+                finally
+                {
+                    if (sqlConnection.State == ConnectionState.Open)
+                    {
+                        sqlConnection.Close();
+                    }
                 }
             }
         }

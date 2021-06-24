@@ -14,6 +14,7 @@ namespace StoneAssemblies.MassAuth.Rules.SqlClient.Services
 
     using Serilog;
 
+    using StoneAssemblies.MassAuth.Rules.SqlClient.Extensions;
     using StoneAssemblies.MassAuth.Rules.SqlClient.Models;
     using StoneAssemblies.MassAuth.Rules.SqlClient.Services.Interfaces;
 
@@ -60,29 +61,23 @@ namespace StoneAssemblies.MassAuth.Rules.SqlClient.Services
                 {
                     if (sqlConnection.State == ConnectionState.Open)
                     {
-                        SqlDataReader sqlDataReader = null;
-                        try
-                        {
-                            sqlDataReader = sqlCommand.ExecuteReader();
-                        }
-                        catch (Exception ex)
-                        {
-                            Log.Warning(ex, "Error reading rules stored procedures message type mappings");
-                        }
-
-                        if (sqlDataReader == null)
+                        
+                        var dataReader = sqlCommand.ExecuteReaderSafety();
+                        if (dataReader == null)
                         {
                             yield break;
                         }
 
-                        while (sqlDataReader.Read())
+                        var mappings = dataReader.Select(
+                            reader => new Mapping(
+                                dataReader.GetString(0),
+                                dataReader.GetString(1),
+                                dataReader.GetString(2),
+                                dataReader.GetInt32(3)));
+
+                        foreach (var mapping in mappings)
                         {
-                            yield return new Mapping(
-                                sqlDataReader.GetString(0),
-                                sqlDataReader.GetString(1),
-                                sqlDataReader.GetString(2),
-                                sqlDataReader.GetInt32(3)
-                                );
+                            yield return mapping;
                         }
                     }
                 }
@@ -102,6 +97,7 @@ namespace StoneAssemblies.MassAuth.Rules.SqlClient.Services
             using var sqlConnection = new SqlConnection(this.ConnectionString);
             var sqlCommand = sqlConnection.CreateCommand();
             sqlCommand.CommandText = "SELECT * FROM INFORMATION_SCHEMA.ROUTINES WHERE ROUTINE_TYPE = 'PROCEDURE'";
+            
             try
             {
                 sqlConnection.Open();
@@ -130,10 +126,9 @@ namespace StoneAssemblies.MassAuth.Rules.SqlClient.Services
                         yield break;
                     }
 
-                    while (sqlDataReader.Read())
+                    foreach (var storedProcedure in sqlDataReader.Select(reader => reader.GetString(2)))
                     {
-                        var storeProcedureName = sqlDataReader.GetString(2);
-                        yield return storeProcedureName;
+                        yield return storedProcedure;
                     }
                 }
                 finally
@@ -146,4 +141,5 @@ namespace StoneAssemblies.MassAuth.Rules.SqlClient.Services
             }
         }
     }
+
 }

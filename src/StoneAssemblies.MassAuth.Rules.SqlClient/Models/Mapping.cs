@@ -23,6 +23,9 @@ namespace StoneAssemblies.MassAuth.Rules.SqlClient.Models
         /// <param name="storedProcedure">
         ///     The stored procedure.
         /// </param>
+        /// <param name="priority">
+        ///     The priority.
+        /// </param>
         public Mapping(string ruleName, string messageTypeName, string storedProcedure, int priority)
         {
             this.RuleName = ruleName;
@@ -37,6 +40,11 @@ namespace StoneAssemblies.MassAuth.Rules.SqlClient.Models
         public string MessageTypeName { get; }
 
         /// <summary>
+        ///     Gets or sets the priority.
+        /// </summary>
+        public int Priority { get; set; }
+
+        /// <summary>
         ///     Gets the name.
         /// </summary>
         public string RuleName { get; }
@@ -45,10 +53,5 @@ namespace StoneAssemblies.MassAuth.Rules.SqlClient.Models
         ///     Gets the stored procedure.
         /// </summary>
         public string StoredProcedure { get; }
-
-        /// <summary>
-        /// Gets or sets the priority.
-        /// </summary>
-        public int Priority { get; set; }
     }
 }

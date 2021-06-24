@@ -135,8 +135,8 @@ namespace StoneAssemblies.MassAuth.Proxy
                         var extensionAssemblies = extensionManager.GetExtensionAssemblies();
                         foreach (var extensionAssembly in extensionAssemblies)
                         {
-                            var messageTypes = extensionAssembly.GetTypes()
-                                .Where(type => typeof(MessageBase).IsAssignableFrom(type)).ToList();
+                            var messageTypes = extensionAssembly.GetTypes().Where(type => typeof(MessageBase).IsAssignableFrom(type))
+                                .ToList();
                             foreach (var type in messageTypes)
                             {
                                 var makeGenericType = typeof(AuthorizationRequestMessage<>).MakeGenericType(type);
@@ -145,10 +145,10 @@ namespace StoneAssemblies.MassAuth.Proxy
                         }
                     });
 
-            // serviceCollection.AddControllers();
-            serviceCollection
-                .AddMvc(options => options.Conventions.Add(new GenericAuthorizeControllerRouteConvention()))
-                .ConfigureApplicationPartManager(manager => manager.FeatureProviders.Add(new MessageTypeGenericAuthorizeControllerFeatureProvider(extensionManager)));
+            serviceCollection.AddMvc(options => options.Conventions.Add(new GenericAuthorizeControllerRouteConvention()))
+                .ConfigureApplicationPartManager(
+                    manager => manager.FeatureProviders.Add(
+                        new MessageTypeGenericAuthorizeControllerFeatureProvider(extensionManager)));
             serviceCollection.AddHostedService<BusHostedService>();
         }
     }

@@ -129,7 +129,6 @@ namespace StoneAssemblies.MassAuth.Hosting.Extensions
                 && !string.IsNullOrWhiteSpace(RuleGenericInterfaceName)
                 && ruleInterfaceType.FullName.StartsWith(RuleGenericInterfaceName))
             {
-                // TODO: Improve this?
                 var genericArguments = ruleInterfaceType.GetGenericArguments();
                 if (genericArguments.Length != 1)
                 {

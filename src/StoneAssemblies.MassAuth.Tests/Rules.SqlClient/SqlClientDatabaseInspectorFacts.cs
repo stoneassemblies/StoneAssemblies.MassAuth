@@ -6,6 +6,7 @@
 
 namespace StoneAssemblies.MassAuth.Tests.Rules.SqlClient
 {
+    using System;
     using System.Data;
     using System.Linq;
 
@@ -40,7 +41,118 @@ namespace StoneAssemblies.MassAuth.Tests.Rules.SqlClient
             }
 
             /// <summary>
-            /// The returns a non empty list of mappings.
+            ///     Returns a empty list of mappings when an exception is raised reading data.
+            /// </summary>
+            [Fact]
+            public void Returns_A_Empty_List_Of_Mappings_When_An_Exception_Is_Raised_Reading_Data()
+            {
+                var connectionString =
+                    "Server=localhost,321;Database=DB;User Id=User;Password=Password;MultipleActiveResultSets=true;Connection Timeout=30";
+
+                var connectionFactoryMock = new Mock<IConnectionFactory>();
+                var connectionMock = new Mock<IDbConnection>();
+                connectionMock.SetupGet(connection => connection.State).Returns(ConnectionState.Open);
+
+                var storedProceduresCommandMock = new Mock<IDbCommand>();
+                var storedProceduresDataReaderMock = new Mock<IDataReader>();
+                var storedProceduresReadCount = 0;
+                storedProceduresDataReaderMock.Setup(reader => reader.Read()).Returns(
+                    () =>
+                        {
+                            storedProceduresReadCount++;
+                            return storedProceduresReadCount < 2;
+                        });
+
+                storedProceduresDataReaderMock.Setup(reader => reader.GetString(2)).Returns("sp_Authorize_AccountBalanceRequest");
+                storedProceduresCommandMock.Setup(command => command.ExecuteReader()).Returns(storedProceduresDataReaderMock.Object);
+
+                var mappingsCommandMock = new Mock<IDbCommand>();
+                var mappingsDataReaderMock = new Mock<IDataReader>();
+                var mappingReadCount = 0;
+                mappingsDataReaderMock.Setup(reader => reader.Read()).Returns(
+                    () =>
+                        {
+                            mappingReadCount++;
+                            return mappingReadCount < 2;
+                        });
+
+                mappingsDataReaderMock.Setup(reader => reader.GetString(0)).Throws<Exception>();
+                mappingsCommandMock.Setup(command => command.ExecuteReader()).Returns(mappingsDataReaderMock.Object);
+
+                var times = 0;
+                connectionMock.Setup(connection => connection.CreateCommand()).Returns(
+                    () =>
+                        {
+                            if (times == 0)
+                            {
+                                times++;
+                                return storedProceduresCommandMock.Object;
+                            }
+
+                            return mappingsCommandMock.Object;
+                        });
+
+                connectionFactoryMock.Setup(factory => factory.Create(connectionString)).Returns(connectionMock.Object);
+                var sqlClientDatabaseInspector = new SqlClientDatabaseInspector(connectionFactoryMock.Object, connectionString);
+
+                var mappings = sqlClientDatabaseInspector.GetMappings().ToList();
+
+                Assert.Empty(mappings);
+            }
+
+            /// <summary>
+            /// Returns an empty list of mappings when mappings reader is null.
+            /// </summary>
+            [Fact]
+            public void Returns_An_Empty_List_Of_Mappings_When_Mappings_Reader_Is_Null()
+            {
+                var connectionString =
+                    "Server=localhost,321;Database=DB;User Id=User;Password=Password;MultipleActiveResultSets=true;Connection Timeout=30";
+
+                var connectionFactoryMock = new Mock<IConnectionFactory>();
+                var connectionMock = new Mock<IDbConnection>();
+                connectionMock.SetupGet(connection => connection.State).Returns(ConnectionState.Open);
+
+                var storedProceduresCommandMock = new Mock<IDbCommand>();
+                var storedProceduresDataReaderMock = new Mock<IDataReader>();
+                var storedProceduresReadCount = 0;
+                storedProceduresDataReaderMock.Setup(reader => reader.Read()).Returns(
+                    () =>
+                        {
+                            storedProceduresReadCount++;
+                            return storedProceduresReadCount < 2;
+                        });
+
+                storedProceduresDataReaderMock.Setup(reader => reader.GetString(2)).Returns("sp_Authorize_AccountBalanceRequest");
+                storedProceduresCommandMock.Setup(command => command.ExecuteReader()).Returns(storedProceduresDataReaderMock.Object);
+
+                var mappingsCommandMock = new Mock<IDbCommand>();
+
+                mappingsCommandMock.Setup(command => command.ExecuteReader()).Returns(() => null);
+
+                var times = 0;
+                connectionMock.Setup(connection => connection.CreateCommand()).Returns(
+                    () =>
+                        {
+                            if (times == 0)
+                            {
+                                times++;
+                                return storedProceduresCommandMock.Object;
+                            }
+
+                            return mappingsCommandMock.Object;
+                        });
+
+                connectionFactoryMock.Setup(factory => factory.Create(connectionString)).Returns(connectionMock.Object);
+                var sqlClientDatabaseInspector = new SqlClientDatabaseInspector(connectionFactoryMock.Object, connectionString);
+
+                var mappings = sqlClientDatabaseInspector.GetMappings().ToList();
+
+                Assert.Empty(mappings);
+            }
+
+            /// <summary>
+            ///     The returns a non empty list of mappings.
             /// </summary>
             [Fact]
             public void Returns_A_Non_Empty_List_Of_Mappings()
@@ -123,7 +235,7 @@ namespace StoneAssemblies.MassAuth.Tests.Rules.SqlClient
             }
 
             /// <summary>
-            /// Returns a non empty list of_ stored procedures names.
+            ///     Returns a non empty list of_ stored procedures names.
             /// </summary>
             [Fact]
             public void Returns_A_Non_Empty_List_Of_StoredProcedures_Names()

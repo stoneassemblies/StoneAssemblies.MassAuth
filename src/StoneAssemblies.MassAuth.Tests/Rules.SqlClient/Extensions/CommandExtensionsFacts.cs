@@ -26,6 +26,20 @@ namespace StoneAssemblies.MassAuth.Tests.Rules.SqlClient.Extensions
         public class The_ExecuteReaderSafety_Method
         {
             /// <summary>
+            ///     Returns a not null data reader when execute reader returns a not null data reader.
+            /// </summary>
+            [Fact]
+            public void Returns_A_Not_Null_DataReader_When_ExecuteReader_Returns_A_Not_Null_DataReader()
+            {
+                var databaseCommandMock = new Mock<IDbCommand>();
+                databaseCommandMock.Setup(command => command.ExecuteReader()).Returns(Mock.Of<IDataReader>());
+
+                var dataReader = databaseCommandMock.Object.ExecuteReaderSafety();
+
+                Assert.NotNull(dataReader);
+            }
+
+            /// <summary>
             ///     Returns a null data reader when execute reader throws an exception.
             /// </summary>
             [Fact]

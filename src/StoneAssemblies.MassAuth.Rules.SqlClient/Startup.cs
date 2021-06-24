@@ -52,7 +52,7 @@ namespace StoneAssemblies.MassAuth.Rules.SqlClient
             configurationSection?.GetSection("ConnectionStrings")?.Bind(connectionStrings);
             foreach (var connectionString in connectionStrings)
             {
-                var sqlServerDatabaseInspector = new SqlClientDatabaseInspector(connectionString);
+                var sqlServerDatabaseInspector = new SqlClientDatabaseInspector(new SqlClientConnectionFactory(), connectionString);
                 serviceCollection.RegisterStoredProcedureBasedRules(sqlServerDatabaseInspector, patterns);
             }
         }

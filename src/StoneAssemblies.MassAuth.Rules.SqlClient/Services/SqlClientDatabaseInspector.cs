@@ -10,8 +10,6 @@ namespace StoneAssemblies.MassAuth.Rules.SqlClient.Services
     using System.Collections.Generic;
     using System.Data;
 
-    using Microsoft.Data.SqlClient;
-
     using Serilog;
 
     using StoneAssemblies.MassAuth.Rules.SqlClient.Extensions;
@@ -23,14 +21,20 @@ namespace StoneAssemblies.MassAuth.Rules.SqlClient.Services
     /// </summary>
     public class SqlClientDatabaseInspector : IDatabaseInspector
     {
+        private readonly IConnectionFactory connectionFactory;
+
         /// <summary>
         ///     Initializes a new instance of the <see cref="SqlClientDatabaseInspector" /> class.
         /// </summary>
+        /// <param name="connectionFactory">
+        ///     The connection factory.
+        /// </param>
         /// <param name="connectionString">
         ///     The connection string.
         /// </param>
-        public SqlClientDatabaseInspector(string connectionString)
+        public SqlClientDatabaseInspector(IConnectionFactory connectionFactory, string connectionString)
         {
+            this.connectionFactory = connectionFactory;
             this.ConnectionString = connectionString;
         }
 
@@ -43,14 +47,14 @@ namespace StoneAssemblies.MassAuth.Rules.SqlClient.Services
             var storedProcedures = this.GetStoredProcedures();
             foreach (var storedProcedure in storedProcedures)
             {
-                using var sqlConnection = new SqlConnection(this.ConnectionString);
-                var sqlCommand = sqlConnection.CreateCommand();
+                using var connection = this.connectionFactory.Create(this.ConnectionString);
+                var sqlCommand = connection.CreateCommand();
                 sqlCommand.CommandText =
                     $"SELECT [RuleName], [MessageTypeName], [StoredProcedure], [Priority] FROM [dbo].[Mappings] WHERE [StoredProcedure]='{storedProcedure}'";
 
                 try
                 {
-                    sqlConnection.Open();
+                    connection.Open();
                 }
                 catch (Exception ex)
                 {
@@ -59,9 +63,8 @@ namespace StoneAssemblies.MassAuth.Rules.SqlClient.Services
 
                 try
                 {
-                    if (sqlConnection.State == ConnectionState.Open)
+                    if (connection.State == ConnectionState.Open)
                     {
-                        
                         var dataReader = sqlCommand.ExecuteReaderSafety();
                         if (dataReader == null)
                         {
@@ -83,9 +86,9 @@ namespace StoneAssemblies.MassAuth.Rules.SqlClient.Services
                 }
                 finally
                 {
-                    if (sqlConnection.State == ConnectionState.Open)
+                    if (connection.State == ConnectionState.Open)
                     {
-                        sqlConnection.Close();
+                        connection.Close();
                     }
                 }
             }
@@ -94,52 +97,42 @@ namespace StoneAssemblies.MassAuth.Rules.SqlClient.Services
         /// <inheritdoc />
         public IEnumerable<string> GetStoredProcedures()
         {
-            using var sqlConnection = new SqlConnection(this.ConnectionString);
-            var sqlCommand = sqlConnection.CreateCommand();
-            sqlCommand.CommandText = "SELECT * FROM INFORMATION_SCHEMA.ROUTINES WHERE ROUTINE_TYPE = 'PROCEDURE'";
-            
+            using var connection = this.connectionFactory.Create(this.ConnectionString);
+            var command = connection.CreateCommand();
+            command.CommandText = "SELECT * FROM INFORMATION_SCHEMA.ROUTINES WHERE ROUTINE_TYPE = 'PROCEDURE'";
+
             try
             {
-                sqlConnection.Open();
+                connection.Open();
             }
             catch (Exception ex)
             {
                 Log.Error(ex, "Error opening connection to read information schema routines");
             }
 
-            if (sqlConnection.State == ConnectionState.Open)
+            if (connection.State == ConnectionState.Open)
             {
                 try
                 {
-                    SqlDataReader sqlDataReader = null;
-                    try
-                    {
-                        sqlDataReader = sqlCommand.ExecuteReader();
-                    }
-                    catch (Exception ex)
-                    {
-                        Log.Error(ex, "Error reading information schema routines");
-                    }
-
-                    if (sqlDataReader == null)
+                    var dataReader = command.ExecuteReaderSafety();
+                    if (dataReader == null)
                     {
                         yield break;
                     }
 
-                    foreach (var storedProcedure in sqlDataReader.Select(reader => reader.GetString(2)))
+                    foreach (var storedProcedure in dataReader.Select(reader => reader.GetString(2)))
                     {
                         yield return storedProcedure;
                     }
                 }
                 finally
                 {
-                    if (sqlConnection.State == ConnectionState.Open)
+                    if (connection.State == ConnectionState.Open)
                     {
-                        sqlConnection.Close();
+                        connection.Close();
                     }
                 }
             }
         }
     }
-
 }

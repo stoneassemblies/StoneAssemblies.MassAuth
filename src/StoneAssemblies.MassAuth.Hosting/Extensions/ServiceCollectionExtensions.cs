@@ -7,6 +7,7 @@
 namespace StoneAssemblies.MassAuth.Hosting.Extensions
 {
     using System;
+    using System.Collections.Concurrent;
     using System.Collections.Generic;
     using System.Linq;
     using System.Reflection;
@@ -29,10 +30,11 @@ namespace StoneAssemblies.MassAuth.Hosting.Extensions
         /// <summary>
         ///     The discovered messages types.
         /// </summary>
-        private static readonly HashSet<Type> DiscoveredMessagesTypes = new HashSet<Type>();
+        private static readonly ConcurrentDictionary<IServiceCollection, HashSet<Type>> DiscoveredMessagesTypesPerServiceCollection =
+            new ConcurrentDictionary<IServiceCollection, HashSet<Type>>();
 
         /// <summary>
-        /// The rule generic interface name.
+        ///     The rule generic interface name.
         /// </summary>
         private static readonly string RuleGenericInterfaceName = typeof(IRule<>).FullName;
 
@@ -64,12 +66,10 @@ namespace StoneAssemblies.MassAuth.Hosting.Extensions
         /// <returns>
         ///     The <see cref="HashSet{Type}" />.
         /// </returns>
-#pragma warning disable IDE0060 // Remove unused parameter
         public static HashSet<Type> GetDiscoveredMessageTypes(this IServiceCollection serviceCollection)
-#pragma warning restore IDE0060
         {
-            // Remove unused parameter
-            return DiscoveredMessagesTypes;
+            var discoveredMessagesTypes = DiscoveredMessagesTypesPerServiceCollection.GetOrAdd(serviceCollection, new HashSet<Type>());
+            return discoveredMessagesTypes;
         }
 
         /// <summary>
@@ -97,9 +97,10 @@ namespace StoneAssemblies.MassAuth.Hosting.Extensions
                     }
 
                     var messageType = genericArguments[0];
-                    if (!DiscoveredMessagesTypes.Contains(messageType))
+                    var discoveredMessageTypes = serviceCollection.GetDiscoveredMessageTypes();
+                    if (!discoveredMessageTypes.Contains(messageType))
                     {
-                        DiscoveredMessagesTypes.Add(messageType);
+                        discoveredMessageTypes.Add(messageType);
                     }
                 }
             }
@@ -121,13 +122,11 @@ namespace StoneAssemblies.MassAuth.Hosting.Extensions
         ///     The <see cref="IEnumerable{Type}" />.
         /// </returns>
         private static IEnumerable<Type> AddRuleFromTypeInterface(
-            this IServiceCollection serviceCollection,
-            Type ruleInterfaceType,
-            Type type)
+            this IServiceCollection serviceCollection, Type ruleInterfaceType, Type type)
         {
-            if (!string.IsNullOrWhiteSpace(ruleInterfaceType.FullName)
-                && !string.IsNullOrWhiteSpace(RuleGenericInterfaceName)
-                && ruleInterfaceType.FullName.StartsWith(RuleGenericInterfaceName))
+            if (!string.IsNullOrWhiteSpace(ruleInterfaceType.FullName) && !string.IsNullOrWhiteSpace(RuleGenericInterfaceName)
+                                                                       && ruleInterfaceType.FullName.StartsWith(
+                                                                           RuleGenericInterfaceName))
             {
                 var genericArguments = ruleInterfaceType.GetGenericArguments();
                 if (genericArguments.Length != 1)
@@ -157,9 +156,7 @@ namespace StoneAssemblies.MassAuth.Hosting.Extensions
         /// <returns>
         ///     The <see cref="IEnumerable{Type}" />.
         /// </returns>
-        private static IEnumerable<Type> AddRulesFromAssembly(
-            this IServiceCollection serviceCollection,
-            Assembly assembly)
+        private static IEnumerable<Type> AddRulesFromAssembly(this IServiceCollection serviceCollection, Assembly assembly)
         {
             foreach (var type in assembly.GetTypes())
             {
@@ -207,15 +204,15 @@ namespace StoneAssemblies.MassAuth.Hosting.Extensions
         /// </param>
         private static void AutoDiscoverRulesAndMessageTypes(this IServiceCollection serviceCollection)
         {
+            var discoveredMessageTypes = serviceCollection.GetDiscoveredMessageTypes();
             var extensionManager = serviceCollection.GetRegisteredInstance<IExtensionManager>();
-
             foreach (var assembly in extensionManager.GetExtensionAssemblies())
             {
                 foreach (var messageType in serviceCollection.AddRulesFromAssembly(assembly))
                 {
-                    if (!DiscoveredMessagesTypes.Contains(messageType))
+                    if (!discoveredMessageTypes.Contains(messageType))
                     {
-                        DiscoveredMessagesTypes.Add(messageType);
+                        discoveredMessageTypes.Add(messageType);
                     }
                 }
             }

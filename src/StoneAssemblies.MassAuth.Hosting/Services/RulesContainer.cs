@@ -1,6 +1,6 @@
 ﻿// --------------------------------------------------------------------------------------------------------------------
 // <copyright file="RulesContainer.cs" company="Stone Assemblies">
-// Copyright Â© 2021 - 2021 Stone Assemblies. All rights reserved.
+// Copyright © 2021 - 2021 Stone Assemblies. All rights reserved.
 // </copyright>
 // --------------------------------------------------------------------------------------------------------------------
 

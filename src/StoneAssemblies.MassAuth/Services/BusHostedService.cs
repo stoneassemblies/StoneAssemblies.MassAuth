@@ -6,6 +6,7 @@
 
 namespace StoneAssemblies.MassAuth.Services
 {
+    using System;
     using System.Threading;
     using System.Threading.Tasks;
 
@@ -31,7 +32,7 @@ namespace StoneAssemblies.MassAuth.Services
         /// </param>
         public BusHostedService(IBusControl busControl)
         {
-            this.busControl = busControl;
+            this.busControl = busControl ?? throw new ArgumentNullException(nameof(busControl));
         }
 
         /// <summary>

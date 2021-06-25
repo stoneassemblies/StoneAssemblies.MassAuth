@@ -7,6 +7,7 @@
 namespace StoneAssemblies.MassAuth.Services
 {
     using System;
+    using System.Diagnostics;
     using System.Reflection;
 
     using StoneAssemblies.MassAuth.Messages;
@@ -29,8 +30,10 @@ namespace StoneAssemblies.MassAuth.Services
         {
             var makeGenericType = typeof(AuthorizationRequestMessage<>).MakeGenericType(payload.GetType());
             var authorizationMessage = Activator.CreateInstance(makeGenericType);
-            var propertyInfo = makeGenericType.GetProperty("Payload", BindingFlags.Instance | BindingFlags.Public);
-            propertyInfo?.SetValue(authorizationMessage, payload);
+            var payloadPropertyName = nameof(AuthorizationRequestMessage<MessageBase>.Payload);
+            var propertyInfo = makeGenericType.GetProperty(payloadPropertyName, BindingFlags.Instance | BindingFlags.Public);
+            Debug.Assert(propertyInfo != null, $"{payloadPropertyName} exists in {nameof(AuthorizationRequestMessage)} type.");
+            propertyInfo.SetValue(authorizationMessage, payload);
             return (AuthorizationRequestMessage)authorizationMessage;
         }
     }

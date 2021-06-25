@@ -1,13 +1,12 @@
 ﻿// --------------------------------------------------------------------------------------------------------------------
 // <copyright file="AuthorizationRequestMessageConsumer.cs" company="Stone Assemblies">
-// Copyright Â© 2021 - 2021 Stone Assemblies. All rights reserved.
+// Copyright © 2021 - 2021 Stone Assemblies. All rights reserved.
 // </copyright>
 // --------------------------------------------------------------------------------------------------------------------
 
 namespace StoneAssemblies.MassAuth.Hosting.Services
 {
     using System;
-    using System.Linq;
     using System.Threading.Tasks;
 
     using MassTransit;

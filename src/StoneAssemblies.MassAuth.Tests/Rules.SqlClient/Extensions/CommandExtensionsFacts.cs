@@ -8,6 +8,9 @@ namespace StoneAssemblies.MassAuth.Tests.Rules.SqlClient.Extensions
 {
     using System;
     using System.Data;
+    using System.Threading.Tasks;
+
+    using Microsoft.Data.SqlClient;
 
     using Moq;
 
@@ -51,6 +54,26 @@ namespace StoneAssemblies.MassAuth.Tests.Rules.SqlClient.Extensions
                 var dataReader = databaseCommandMock.Object.ExecuteReaderSafety();
 
                 Assert.Null(dataReader);
+            }
+        }
+
+        /// <summary>
+        /// The execute scalar async method.
+        /// </summary>
+        public class The_ExecuteScalarAsync_Method
+        {
+            /// <summary>
+            /// Throws InvalidOperationException because the underlying connection_ is_ closed.
+            /// </summary>
+            /// <returns>
+            /// The <see cref="Task"/>.
+            /// </returns>
+            [Fact]
+            public async Task Throws_InvalidOperationException_Because_The_UnderlyingConnection_Is_Closed()
+            {
+                var command = new SqlCommand() as IDbCommand;
+
+                await Assert.ThrowsAsync<InvalidOperationException>(() => command.ExecuteScalarAsync());
             }
         }
     }

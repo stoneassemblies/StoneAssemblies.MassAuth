@@ -262,5 +262,56 @@ namespace StoneAssemblies.MassAuth.Tests.Rules.SqlClient.Rules
                 Assert.True(result);
             }
         }
+
+        public class The_Name_Property
+        {
+            [Fact]
+            public void Returns_The_Name_Of_The_Rule()
+            {
+                var sqlClientStoredProcedureBasedRule =
+                    new SqlClientStoredProcedureBasedRule<AuthorizationRequestMessage<AccountBalanceRequestMessage>>(
+                        Mock.Of<IConnectionFactory>(),
+                        "TestRule",
+                        typeof(AccountBalanceRequestMessage),
+                        "Server=localhost;",
+                        "sp_Authorize_AccountBalanceRequestMessage",
+                        0);
+
+                Assert.Contains("TestRule", sqlClientStoredProcedureBasedRule.Name);
+            }
+
+            [Fact]
+            public void Returns_The_StoredProcedureName_As_Part_Of_The_Name_Of_The_Rule()
+            {
+                var sqlClientStoredProcedureBasedRule =
+                    new SqlClientStoredProcedureBasedRule<AuthorizationRequestMessage<AccountBalanceRequestMessage>>(
+                        Mock.Of<IConnectionFactory>(),
+                        string.Empty,
+                        typeof(AccountBalanceRequestMessage),
+                        "Server=localhost;",
+                        "sp_Authorize_AccountBalanceRequestMessage",
+                        0);
+
+                Assert.Contains("sp_Authorize_AccountBalanceRequestMessage", sqlClientStoredProcedureBasedRule.Name);
+            }
+        }
+
+        public class The_Priory_Property
+        {
+            [Fact]
+            public void Returns_Specified_Value()
+            {
+                var sqlClientStoredProcedureBasedRule =
+                    new SqlClientStoredProcedureBasedRule<AuthorizationRequestMessage<AccountBalanceRequestMessage>>(
+                        Mock.Of<IConnectionFactory>(),
+                        "TestRule",
+                        typeof(AccountBalanceRequestMessage),
+                        "Server=localhost;",
+                        "sp_Authorize_AccountBalanceRequestMessage",
+                        10);
+
+                Assert.Equal(10, sqlClientStoredProcedureBasedRule.Priority);
+            }
+        }
     }
 }

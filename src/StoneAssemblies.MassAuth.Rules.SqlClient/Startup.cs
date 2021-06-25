@@ -6,14 +6,10 @@
 
 namespace StoneAssemblies.MassAuth.Rules.SqlClient
 {
-    using System.Collections.Generic;
-
     using Microsoft.Extensions.Configuration;
     using Microsoft.Extensions.DependencyInjection;
 
-    using StoneAssemblies.Hosting.Extensions;
     using StoneAssemblies.MassAuth.Rules.SqlClient.Extensions;
-    using StoneAssemblies.MassAuth.Rules.SqlClient.Services;
 
     /// <summary>
     ///     The startup.

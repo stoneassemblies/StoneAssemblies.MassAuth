@@ -14,9 +14,11 @@ namespace StoneAssemblies.MassAuth.Rules.SqlClient.Extensions
 
     using Microsoft.Extensions.DependencyInjection;
 
+    using StoneAssemblies.Hosting.Extensions;
     using StoneAssemblies.MassAuth.Messages;
     using StoneAssemblies.MassAuth.Rules.Interfaces;
     using StoneAssemblies.MassAuth.Rules.SqlClient.Rules;
+    using StoneAssemblies.MassAuth.Rules.SqlClient.Services;
     using StoneAssemblies.MassAuth.Rules.SqlClient.Services.Interfaces;
 
     /// <summary>
@@ -70,7 +72,8 @@ namespace StoneAssemblies.MassAuth.Rules.SqlClient.Extensions
         ///     The priority.
         /// </param>
         private static void RegisterStoredProcedureBasedRule(
-            this IServiceCollection serviceCollection, Type messageType, string ruleName, string connectionString, string storedProcedureName, int priority = 0)
+            this IServiceCollection serviceCollection, Type messageType, string ruleName, string connectionString,
+            string storedProcedureName, int priority = 0)
         {
             var registeredStoredProcedures = RegisteredStoredProcedureRulesPerServiceCollection.GetOrAdd(
                 serviceCollection,
@@ -80,6 +83,7 @@ namespace StoneAssemblies.MassAuth.Rules.SqlClient.Extensions
                 var key = $"{connectionString}-{storedProcedureName}-{messageType.Name}";
                 if (!registeredStoredProcedures.Contains(key))
                 {
+                    var sqlClientConnectionFactory = serviceCollection.GetRegisteredInstance<SqlClientConnectionFactory>();
                     var authorizationRequestMessageType = typeof(AuthorizationRequestMessage<>).MakeGenericType(messageType);
                     var ruleInterfaceType = typeof(IRule<>).MakeGenericType(authorizationRequestMessageType);
                     var ruleType = typeof(SqlClientStoredProcedureBasedRule<>).MakeGenericType(authorizationRequestMessageType);
@@ -87,11 +91,13 @@ namespace StoneAssemblies.MassAuth.Rules.SqlClient.Extensions
                         ruleInterfaceType,
                         sp => Activator.CreateInstance(
                             ruleType,
+                            sqlClientConnectionFactory,
                             ruleName,
                             messageType,
                             connectionString,
                             storedProcedureName,
                             priority));
+
                     registeredStoredProcedures.Add(key);
                 }
             }

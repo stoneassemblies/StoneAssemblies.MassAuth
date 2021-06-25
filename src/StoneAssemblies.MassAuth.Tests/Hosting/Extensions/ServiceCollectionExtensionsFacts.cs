@@ -27,6 +27,50 @@
         /// </summary>
         public class The_Add_Rules_Method
         {
+            [Fact]
+            public void Discovers_The_MessaTypes()
+            {
+                var extensionManagerMock = new Mock<IExtensionManager>();
+                var assemblies = new List<Assembly>
+                                     {
+                                         typeof(Startup).Assembly
+                                     };
+
+                extensionManagerMock.Setup(manager => manager.GetExtensionAssemblies()).Returns(assemblies);
+
+                var serviceCollection = new ServiceCollection();
+                serviceCollection.AddSingleton(extensionManagerMock.Object);
+                serviceCollection.AddSingleton(Mock.Of<IRule<AuthorizationRequestMessage<AccountBalanceRequestMessage>>>());
+
+                serviceCollection.AddRules();
+
+                Assert.Single(serviceCollection.GetDiscoveredMessageTypes());
+            }
+
+            [Fact]
+            public void Loads_Rules_From_Already_RegisteredRules()
+            {
+                var extensionManagerMock = new Mock<IExtensionManager>();
+                var assemblies = new List<Assembly>
+                                     {
+                                         typeof(Startup).Assembly
+                                     };
+
+                extensionManagerMock.Setup(manager => manager.GetExtensionAssemblies()).Returns(assemblies);
+
+                var serviceCollection = new ServiceCollection();
+                serviceCollection.AddSingleton(extensionManagerMock.Object);
+                serviceCollection.AddSingleton(Mock.Of<IRule<AuthorizationRequestMessage<AccountBalanceRequestMessage>>>());
+
+                serviceCollection.AddRules();
+
+                var buildServiceProvider = serviceCollection.BuildServiceProvider();
+                var rules = buildServiceProvider.GetServices<IRule<AuthorizationRequestMessage<AccountBalanceRequestMessage>>>()
+                    .ToList();
+
+                Assert.Equal(3, rules.Count);
+            }
+
             /// <summary>
             ///     Loads rules from the extension assemblies.
             /// </summary>
@@ -46,10 +90,10 @@
                 serviceCollection.AddRules();
 
                 var buildServiceProvider = serviceCollection.BuildServiceProvider();
-                var rules = buildServiceProvider
-                    .GetServices<IRule<AuthorizationRequestMessage<AccountBalanceRequestMessage>>>().ToList();
+                var rules = buildServiceProvider.GetServices<IRule<AuthorizationRequestMessage<AccountBalanceRequestMessage>>>()
+                    .ToList();
 
-                Assert.NotEmpty(rules);
+                Assert.Equal(2, rules.Count);
             }
         }
     }

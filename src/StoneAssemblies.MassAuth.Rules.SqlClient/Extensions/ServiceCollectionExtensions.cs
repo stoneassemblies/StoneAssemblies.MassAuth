@@ -12,6 +12,7 @@ namespace StoneAssemblies.MassAuth.Rules.SqlClient.Extensions
     using System.Linq;
     using System.Text.RegularExpressions;
 
+    using Microsoft.Extensions.Configuration;
     using Microsoft.Extensions.DependencyInjection;
 
     using StoneAssemblies.Hosting.Extensions;
@@ -30,6 +31,39 @@ namespace StoneAssemblies.MassAuth.Rules.SqlClient.Extensions
         ///     The registered stored procedure rules.
         /// </summary>
         private static readonly ConcurrentDictionary<IServiceCollection, HashSet<string>> RegisteredStoredProcedureRulesPerServiceCollection = new ConcurrentDictionary<IServiceCollection, HashSet<string>>();
+
+        /// <summary>
+        ///     Register SQL Client stored procedure based rules from configuration.
+        /// </summary>
+        /// <param name="serviceCollection">
+        ///     The service collection.
+        /// </param>
+        /// <param name="configuration">
+        ///     The configuration.
+        /// </param>
+        public static void RegisterSqlClientStoredProcedureBasedRulesFromConfiguration(
+            this IServiceCollection serviceCollection, IConfiguration configuration)
+        {
+            var configurationSection = configuration?.GetSection("SqlClientStoredProcedureBasedRules");
+
+            var patterns = new List<string>();
+            configurationSection?.GetSection("Patterns")?.Bind(patterns);
+
+            var connectionStrings = new List<string>();
+            configurationSection?.GetSection("ConnectionStrings")?.Bind(connectionStrings);
+
+            if (connectionStrings.Count > 0)
+            {
+                var sqlClientConnectionFactory = new SqlClientConnectionFactory();
+                serviceCollection.AddSingleton(sqlClientConnectionFactory);
+
+                foreach (var connectionString in connectionStrings)
+                {
+                    var sqlServerDatabaseInspector = new SqlClientDatabaseInspector(sqlClientConnectionFactory, connectionString);
+                    serviceCollection.RegisterStoredProcedureBasedRules(sqlServerDatabaseInspector, patterns);
+                }
+            }
+        }
 
         /// <summary>
         ///     Register stored procedure based rules.

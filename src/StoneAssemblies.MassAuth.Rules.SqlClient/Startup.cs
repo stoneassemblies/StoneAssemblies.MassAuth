@@ -8,8 +8,6 @@ namespace StoneAssemblies.MassAuth.Rules.SqlClient
 {
     using System.Collections.Generic;
 
-    using StoneAssemblies.MassAuth.Rules.SqlClient.Extensions;
-
     using Microsoft.Extensions.Configuration;
     using Microsoft.Extensions.DependencyInjection;
 
@@ -46,24 +44,7 @@ namespace StoneAssemblies.MassAuth.Rules.SqlClient
         /// </param>
         public void ConfigureServices(IServiceCollection serviceCollection)
         {
-            var configurationSection = this.configuration?.GetSection("SqlClientStoredProcedureBasedRules");
-
-            var patterns = new List<string>();
-            configurationSection?.GetSection("Patterns")?.Bind(patterns);
-
-            var connectionStrings = new List<string>();
-            configurationSection?.GetSection("ConnectionStrings")?.Bind(connectionStrings);
-
-            if (connectionStrings.Count > 0)
-            {
-                serviceCollection.AddSingleton(new SqlClientConnectionFactory());
-            }
-
-            foreach (var connectionString in connectionStrings)
-            {
-                var sqlServerDatabaseInspector = new SqlClientDatabaseInspector(serviceCollection.GetRegisteredInstance<SqlClientConnectionFactory>(), connectionString);
-                serviceCollection.RegisterStoredProcedureBasedRules(sqlServerDatabaseInspector, patterns);
-            }
+            serviceCollection.RegisterSqlClientStoredProcedureBasedRulesFromConfiguration(this.configuration);
         }
     }
 }

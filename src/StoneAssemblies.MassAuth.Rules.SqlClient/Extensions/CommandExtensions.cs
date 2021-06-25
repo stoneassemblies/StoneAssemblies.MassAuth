@@ -60,7 +60,7 @@ namespace StoneAssemblies.MassAuth.Rules.SqlClient.Extensions
         /// <returns>
         ///     The <see cref="Task" />.
         /// </returns>
-        public static async Task<object?> ExecuteScalarAsync(this IDbCommand command, CancellationToken cancellationToken = default)
+        public static async Task<object> ExecuteScalarAsync(this IDbCommand command, CancellationToken cancellationToken = default)
         {
             if (command is DbCommand dbConnection)
             {

@@ -7,9 +7,11 @@
 namespace StoneAssemblies.MassAuth.Bank.Balance.Services
 {
     using System;
+    using System.Net.Http;
 
     using MassTransit;
 
+    using Microsoft.AspNetCore.Authentication.JwtBearer;
     using Microsoft.AspNetCore.Builder;
     using Microsoft.AspNetCore.Hosting;
     using Microsoft.Extensions.Configuration;
@@ -128,6 +130,20 @@ namespace StoneAssemblies.MassAuth.Bank.Balance.Services
                         sc.AddRequestClient<AuthorizationRequestMessage<AccountBalanceRequestMessage>>(
                             new Uri(
                                 $"queue:{typeof(AuthorizationRequestMessage<AccountBalanceRequestMessage>).GetFlatName()}"));
+                    });
+
+            var identityServerAuthority = this.Configuration.GetSection("IdentityServer")?["Authority"] ?? "http://172.30.64.1:6005/auth/realms/master";
+            services
+                .AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
+                .AddJwtBearer(options =>
+                    {
+                        options.Authority = identityServerAuthority;
+                        options.RequireHttpsMetadata = !string.IsNullOrWhiteSpace(identityServerAuthority) && identityServerAuthority.StartsWith("https://");
+                        options.Audience = "stoneassemblies-massauth-bank-balance-services";
+                        options.BackchannelHttpHandler = new HttpClientHandler
+                                                             {
+                                                                 ServerCertificateCustomValidationCallback = delegate { return true; }
+                                                             };
                     });
 
             services.AddControllers();

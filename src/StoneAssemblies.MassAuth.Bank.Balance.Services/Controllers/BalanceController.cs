@@ -9,6 +9,7 @@ namespace StoneAssemblies.MassAuth.Bank.Balance.Services.Controllers
     using System;
     using System.Threading.Tasks;
 
+    using Microsoft.AspNetCore.Authorization;
     using Microsoft.AspNetCore.Mvc;
 
     using StoneAssemblies.MassAuth.Bank.Balance.Services.Models;
@@ -32,6 +33,7 @@ namespace StoneAssemblies.MassAuth.Bank.Balance.Services.Controllers
         ///     The <see cref="Task" />.
         /// </returns>
         [AuthorizeByRule]
+        [Authorize]
         [HttpGet]
         public Task<AccountBalance> AccountBalanceRequest(
             [FromQuery] AccountBalanceRequestMessage accountBalanceRequestMessage)

@@ -25,5 +25,10 @@ namespace StoneAssemblies.MassAuth.Messages
         /// Gets or sets the user id.
         /// </summary>
         public string UserId { get; set; }
+
+        /// <summary>
+        /// Gets or sets the access token.
+        /// </summary>
+        public string AccessToken { get; set; }
     }
 }

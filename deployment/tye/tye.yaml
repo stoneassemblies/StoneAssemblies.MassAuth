@@ -76,3 +76,42 @@ services:
     value: StoneAssemblies.MassAuth.Bank.Messages
   bindings:
   - port: 6004
+- name: stoneassemblies-keycloak
+  image: jboss/keycloak:11.0.0
+  bindings:
+    - port: 6005
+      containerPort: 8080
+      protocol: http   
+  env:
+  - name: KEYCLOAK_USER
+    value: admin
+  - name: KEYCLOAK_PASSWORD
+    value: Password123! 
+  - name: DB_VENDOR
+    value: postgres
+  - name: DB_ADDR
+    value: stoneassemblies-keycloak-postgres
+  - name: DB_DATABASE
+    value: keycloak
+  - name: DB_PORT
+    value: 5432
+  - name: DB_USER
+    value: postgres
+  - name: DB_PASSWORD
+    value: Password123!
+- name: stoneassemblies-keycloak-postgres
+  image: postgres:9.6.1
+  bindings:
+    - port: 6006
+      containerPort: 5432
+      protocol: tcp
+  env:
+  - name: POSTGRES_USER
+    value: postgres
+  - name: POSTGRES_PASSWORD
+    value: Password123! 
+  - name: POSTGRES_DB
+    value: keycloak
+  volumes:
+  - name: stoneassemblies-keycloak-postgres-data
+    target: /var/lib/postgresql/data

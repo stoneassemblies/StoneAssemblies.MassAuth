@@ -6,13 +6,17 @@
 
 namespace StoneAssemblies.MassAuth.Services
 {
+    using System;
     using System.Linq;
     using System.Threading.Tasks;
 
     using MassTransit;
 
+    using Microsoft.AspNetCore.Authentication;
     using Microsoft.AspNetCore.Mvc;
     using Microsoft.AspNetCore.Mvc.Filters;
+
+    using Serilog;
 
     using StoneAssemblies.MassAuth.Extensions;
     using StoneAssemblies.MassAuth.Messages;
@@ -62,6 +66,14 @@ namespace StoneAssemblies.MassAuth.Services
 
                 authorizationMessage.UserId = context.HttpContext.User.GetUserId();
                 authorizationMessage.Claims = context.HttpContext.User.Claims;
+                try
+                {
+                    authorizationMessage.AccessToken = await context.HttpContext.GetTokenAsync("access_token");
+                }
+                catch (Exception ex)
+                {
+                    Log.Warning(ex, "Error getting the access token");
+                }
 
                 var response = await clientRequest.GetResponse<AuthorizationResponseMessage>(authorizationMessage);
                 if (!response.Message.IsAuthorized)

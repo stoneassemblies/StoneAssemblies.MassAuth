@@ -6,7 +6,6 @@
 
 namespace StoneAssemblies.MassAuth.Bank.Balance.Services
 {
-    using System;
     using System.Net.Http;
 
     using MassTransit;
@@ -24,8 +23,8 @@ namespace StoneAssemblies.MassAuth.Bank.Balance.Services
     using StoneAssemblies.Hosting.Services;
     using StoneAssemblies.MassAuth.Bank.Messages;
     using StoneAssemblies.MassAuth.Messages;
-    using StoneAssemblies.MassAuth.Messages.Extensions;
     using StoneAssemblies.MassAuth.Services;
+    using StoneAssemblies.MassAuth.Services.Extensions;
 
     /// <summary>
     ///     The startup.
@@ -89,7 +88,7 @@ namespace StoneAssemblies.MassAuth.Bank.Balance.Services
             var serviceDiscovery = ServiceDiscoveryFactory.GetServiceDiscovery();
             services.AddSingleton(serviceDiscovery);
 
-            services.AddScoped<AuthorizeByRuleFilter>();
+            services.AddMassAuth();
 
             // TODO: Use service discovery to resolve address from service name.
             // var serviceDiscovery = serviceCollection.GetRegisteredInstance<IServiceDiscovery>();
@@ -127,9 +126,7 @@ namespace StoneAssemblies.MassAuth.Bank.Balance.Services
                                                 });
                                     }));
 
-                        sc.AddRequestClient<AuthorizationRequestMessage<AccountBalanceRequestMessage>>(
-                            new Uri(
-                                $"queue:{typeof(AuthorizationRequestMessage<AccountBalanceRequestMessage>).GetFlatName()}"));
+                        sc.AddDefaultAuthorizationRequestClient<AccountBalanceRequestMessage>();
                     });
 
             var identityServerAuthority = this.Configuration.GetSection("IdentityServer")?["Authority"] ?? "http://172.30.64.1:6005/auth/realms/master";

@@ -137,8 +137,8 @@ namespace StoneAssemblies.MassAuth.Server
                                         serviceCollectionConfigurator.ConfigureAuthorizationRequestConsumers(
                                             (messagesType, consumerType) =>
                                                 {
-                                                    cfg.ReceiveEndpoint(
-                                                        messagesType.GetFlatName(),
+                                                    cfg.DefaultReceiveEndpoint(
+                                                        messagesType,
                                                         e =>
                                                             {
                                                                 e.PrefetchCount = 16;

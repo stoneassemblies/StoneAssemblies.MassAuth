@@ -4,7 +4,7 @@
 // </copyright>
 // --------------------------------------------------------------------------------------------------------------------
 
-namespace StoneAssemblies.MassAuth.Rules.Extensions
+namespace StoneAssemblies.MassAuth.Bank.Rules.Extensions
 {
     using System.Collections.Concurrent;
     using System.Reflection;

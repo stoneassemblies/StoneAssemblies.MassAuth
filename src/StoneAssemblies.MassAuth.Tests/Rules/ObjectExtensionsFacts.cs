@@ -7,7 +7,7 @@
 namespace StoneAssemblies.MassAuth.Tests.Rules
 {
     using StoneAssemblies.MassAuth.Bank.Messages;
-    using StoneAssemblies.MassAuth.Rules.Extensions;
+    using StoneAssemblies.MassAuth.Bank.Rules.Extensions;
 
     using Xunit;
 

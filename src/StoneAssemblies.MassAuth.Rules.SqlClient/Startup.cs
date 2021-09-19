@@ -9,6 +9,8 @@ namespace StoneAssemblies.MassAuth.Rules.SqlClient
     using Microsoft.Extensions.Configuration;
     using Microsoft.Extensions.DependencyInjection;
 
+    using Serilog;
+
     using StoneAssemblies.MassAuth.Rules.SqlClient.Extensions;
 
     /// <summary>
@@ -40,6 +42,8 @@ namespace StoneAssemblies.MassAuth.Rules.SqlClient
         /// </param>
         public void ConfigureServices(IServiceCollection serviceCollection)
         {
+            Log.Information("Configuring service for SqlClient rules");
+
             serviceCollection.RegisterSqlClientStoredProcedureBasedRulesFromConfiguration(this.configuration);
         }
     }

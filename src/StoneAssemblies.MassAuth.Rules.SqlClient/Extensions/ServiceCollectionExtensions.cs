@@ -15,6 +15,8 @@ namespace StoneAssemblies.MassAuth.Rules.SqlClient.Extensions
     using Microsoft.Extensions.Configuration;
     using Microsoft.Extensions.DependencyInjection;
 
+    using Serilog;
+
     using StoneAssemblies.Hosting.Extensions;
     using StoneAssemblies.MassAuth.Messages;
     using StoneAssemblies.MassAuth.Rules.Interfaces;
@@ -45,23 +47,29 @@ namespace StoneAssemblies.MassAuth.Rules.SqlClient.Extensions
             this IServiceCollection serviceCollection, IConfiguration configuration)
         {
             var configurationSection = configuration?.GetSection("SqlClientStoredProcedureBasedRules");
+            if (configurationSection == null)
+            {
+                Log.Warning("Expected configuration section 'SqlClientStoredProcedureBasedRules' not found");
+                return;
+            }
 
             var patterns = new List<string>();
             configurationSection?.GetSection("Patterns")?.Bind(patterns);
 
             var connectionStrings = new List<string>();
             configurationSection?.GetSection("ConnectionStrings")?.Bind(connectionStrings);
-
-            if (connectionStrings.Count > 0)
+            if (connectionStrings.Count == 0)
             {
-                var sqlClientConnectionFactory = new SqlClientConnectionFactory();
-                serviceCollection.AddSingleton(sqlClientConnectionFactory);
+                Log.Warning("No connection strings are specified in 'ConnectionStrings' section for 'SqlClientStoredProcedureBasedRules'");
+                return;
+            }
 
-                foreach (var connectionString in connectionStrings)
-                {
-                    var sqlServerDatabaseInspector = new SqlClientDatabaseInspector(sqlClientConnectionFactory, connectionString);
-                    serviceCollection.RegisterStoredProcedureBasedRules(sqlServerDatabaseInspector, patterns);
-                }
+            var sqlClientConnectionFactory = new SqlClientConnectionFactory();
+            serviceCollection.AddSingleton(sqlClientConnectionFactory);
+            foreach (var connectionString in connectionStrings)
+            {
+                var sqlServerDatabaseInspector = new SqlClientDatabaseInspector(sqlClientConnectionFactory, connectionString);
+                serviceCollection.RegisterStoredProcedureBasedRules(sqlServerDatabaseInspector, patterns);
             }
         }
 
@@ -106,9 +114,20 @@ namespace StoneAssemblies.MassAuth.Rules.SqlClient.Extensions
         ///     The priority.
         /// </param>
         private static void RegisterStoredProcedureBasedRule(
-            this IServiceCollection serviceCollection, Type messageType, string ruleName, string connectionString,
-            string storedProcedureName, int priority = 0)
+            this IServiceCollection serviceCollection, 
+            Type messageType, 
+            string ruleName, 
+            string connectionString,
+            string storedProcedureName, 
+            int priority = 0)
         {
+            Log.Information(
+                "Registering stored procedure based rule '{RuleName}' for message type '{MessageTypeName}' using stored procedure '{StoredProcedureName}' with priority {Priority}",
+                ruleName,
+                messageType.Name,
+                storedProcedureName, 
+                priority);
+
             var registeredStoredProcedures = RegisteredStoredProcedureRulesPerServiceCollection.GetOrAdd(
                 serviceCollection,
                 collection => new HashSet<string>());
@@ -149,7 +168,16 @@ namespace StoneAssemblies.MassAuth.Rules.SqlClient.Extensions
         private static void RegisterStoredProcedureBasedRulesUsingMappings(
             this IServiceCollection serviceCollection, IDatabaseInspector databaseInspector)
         {
-            foreach (var mapping in databaseInspector.GetMappings())
+            Log.Information("Registering stored procedure based rules using mappings");
+
+            var mappings = databaseInspector.GetMappings().ToList();
+            if (mappings.Count == 0)
+            {
+                Log.Warning("No mappings found for stored procedure based rules");
+                return;
+            }
+
+            foreach (var mapping in mappings)
             {
                 var messageTypeName = mapping.MessageTypeName;
                 var ruleName = mapping.RuleName;
@@ -182,12 +210,16 @@ namespace StoneAssemblies.MassAuth.Rules.SqlClient.Extensions
         private static void RegisterStoredProcedureBasedRulesUsingPatterns(
             this IServiceCollection serviceCollection, IDatabaseInspector databaseInspector, IEnumerable<string> patterns)
         {
+            Log.Information("Registering stored procedure based rules using patterns");
+
             const string MessageTypeCapturingGroupName = "messageType";
             const string RuleNameCapturingGroupName = "ruleName";
             var regexOptions = RegexOptions.IgnoreCase | RegexOptions.Multiline | RegexOptions.Compiled;
             var regularExpressions = patterns.Select(pattern => new Regex(pattern, regexOptions)).ToList();
             if (regularExpressions.Count == 0)
             {
+                Log.Warning("No patterns specified for stored procedure based rules");
+
                 return;
             }
 

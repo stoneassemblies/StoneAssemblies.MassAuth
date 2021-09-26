@@ -4,11 +4,22 @@
 // </copyright>
 // --------------------------------------------------------------------------------------------------------------------
 
+#nullable enable
 namespace StoneAssemblies.MassAuth.Server
 {
+    using System;
+    using System.Collections.Generic;
+    using System.Linq;
+    using System.Reflection;
+    using System.Reflection.Emit;
+    using System.Threading;
+
     using GreenPipes;
 
     using MassTransit;
+    using MassTransit.ExtensionsDependencyInjectionIntegration;
+    using MassTransit.ExtensionsDependencyInjectionIntegration.MultiBus;
+    using MassTransit.MultiBus;
 
     using Microsoft.AspNetCore.Builder;
     using Microsoft.AspNetCore.Hosting;
@@ -21,17 +32,18 @@ namespace StoneAssemblies.MassAuth.Server
 
     using Serilog;
 
+    using StoneAssemblies.Contrib.MassTransit.Extensions;
     using StoneAssemblies.Extensibility.Extensions;
     using StoneAssemblies.Hosting.Extensions;
+    using StoneAssemblies.MassAuth.Extensions;
     using StoneAssemblies.MassAuth.Hosting.Extensions;
     using StoneAssemblies.MassAuth.Hosting.Services;
-    using StoneAssemblies.MassAuth.Messages.Extensions;
     using StoneAssemblies.MassAuth.Services;
 
     /// <summary>
     ///     The startup.
     /// </summary>
-    public class Startup
+        public class Startup
     {
         /// <summary>
         ///     Initializes a new instance of the <see cref="Startup" /> class.
@@ -96,60 +108,81 @@ namespace StoneAssemblies.MassAuth.Server
             // var serviceDiscovery = serviceCollection.GetRegisteredInstance<IServiceDiscovery>();
             var username = this.Configuration.GetSection("RabbitMQ")?["Username"] ?? "queuedemo";
             var password = this.Configuration.GetSection("RabbitMQ")?["Password"] ?? "queuedemo";
+            var virtualHosts = new List<string>();
+            this.Configuration.GetSection("RabbitMQ")?.GetSection("VirtualHosts").Bind(virtualHosts);
             var messageQueueAddress = this.Configuration.GetSection("RabbitMQ")?["Address"] ?? "rabbitmq://localhost";
+            foreach (var virtualHost in virtualHosts)
+            {
+                serviceCollection.AddMassTransit(
+                    $"{virtualHost}Bus",
+                    serviceCollectionConfigurator =>
+                        {
+                            AddBus(serviceCollectionConfigurator, messageQueueAddress, virtualHost, username, password);
+                        });
+            }
 
-            serviceCollection.AddMassTransit(
-                serviceCollectionConfigurator =>
-                    {
-                        serviceCollectionConfigurator.AddAuthorizationRequestConsumers();
+            serviceCollection.AddMassTransitHostedService();
+        }
 
-                        Log.Information(
-                            "Connecting to message queue server with address '{ServiceAddress}'",
-                            messageQueueAddress);
+        private static void AddBus(IServiceCollectionBusConfigurator serviceCollectionConfigurator, string messageQueueAddress, string? virtualHost, string username, string password)
+        {
+            serviceCollectionConfigurator.AddAuthorizationRequestConsumers();
 
-                        serviceCollectionConfigurator.AddBus(
-                            context => Bus.Factory.CreateUsingRabbitMq(
-                                cfg =>
+            Log.Information("Connecting to message queue server with address '{ServiceAddress}'", messageQueueAddress);
+
+            serviceCollectionConfigurator.AddBus(
+                context => Bus.Factory.CreateUsingRabbitMq(
+                    cfg =>
+                        {
+                            if (!string.IsNullOrEmpty(virtualHost))
+                            {
+                                cfg.Host(
+                                    new Uri(new Uri(messageQueueAddress), new Uri(virtualHost, UriKind.Relative)),
+                                    configurator =>
+                                        {
+                                            configurator.Username(username);
+                                            configurator.Password(password);
+                                        });
+                            }
+                            else
+                            {
+                                cfg.Host(
+                                    messageQueueAddress,
+                                    configurator =>
+                                        {
+                                            configurator.Username(username);
+                                            configurator.Password(password);
+                                        });
+                            }
+
+                            cfg.ConfigureJsonSerializer(
+                                s =>
                                     {
-                                        cfg.Host(
-                                            messageQueueAddress,
-                                            configurator =>
-                                                {
-                                                    configurator.Username(username);
-                                                    configurator.Password(password);
-                                                });
+                                        s.ReferenceLoopHandling = ReferenceLoopHandling.Ignore;
+                                        return s;
+                                    });
 
-                                        cfg.ConfigureJsonSerializer(
-                                            s =>
-                                                {
-                                                    s.ReferenceLoopHandling = ReferenceLoopHandling.Ignore;
-                                                    return s;
-                                                });
+                            cfg.ConfigureJsonDeserializer(
+                                s =>
+                                    {
+                                        s.ReferenceLoopHandling = ReferenceLoopHandling.Ignore;
+                                        s.Converters.Add(new ClaimConverter());
+                                        return s;
+                                    });
 
-                                        cfg.ConfigureJsonDeserializer(
-                                            s =>
+                            serviceCollectionConfigurator.ConfigureAuthorizationRequestConsumers(
+                                (messagesType, consumerType) =>
+                                    {
+                                        cfg.DefaultReceiveEndpoint(
+                                            messagesType,
+                                            e =>
                                                 {
-                                                    s.ReferenceLoopHandling = ReferenceLoopHandling.Ignore;
-                                                    s.Converters.Add(new ClaimConverter());
-                                                    return s;
+                                                    e.PrefetchCount = 16;
+                                                    e.UseMessageRetry(x => x.Interval(2, 100));
+                                                    e.ConfigureConsumer(context, consumerType);
                                                 });
-
-                                        serviceCollectionConfigurator.ConfigureAuthorizationRequestConsumers(
-                                            (messagesType, consumerType) =>
-                                                {
-                                                    cfg.DefaultReceiveEndpoint(
-                                                        messagesType,
-                                                        e =>
-                                                            {
-                                                                e.PrefetchCount = 16;
-                                                                e.UseMessageRetry(x => x.Interval(2, 100));
-                                                                e.ConfigureConsumer(context, consumerType);
-                                                            });
-                                                });
-                                    }));
-                    });
-
-            serviceCollection.AddHostedService<BusHostedService>();
+                                    });
+                        }));
         }
     }
 }

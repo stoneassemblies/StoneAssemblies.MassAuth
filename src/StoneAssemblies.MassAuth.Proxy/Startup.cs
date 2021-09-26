@@ -20,12 +20,12 @@ namespace StoneAssemblies.MassAuth.Proxy
 
     using Newtonsoft.Json;
 
+    using StoneAssemblies.Contrib.MassTransit.Extensions;
     using StoneAssemblies.Extensibility.Extensions;
     using StoneAssemblies.Extensibility.Services.Interfaces;
     using StoneAssemblies.Hosting.Extensions;
     using StoneAssemblies.Hosting.Services;
     using StoneAssemblies.MassAuth.Messages;
-    using StoneAssemblies.MassAuth.Messages.Extensions;
     using StoneAssemblies.MassAuth.Proxy.Services;
     using StoneAssemblies.MassAuth.Services;
 
@@ -149,7 +149,7 @@ namespace StoneAssemblies.MassAuth.Proxy
                 .ConfigureApplicationPartManager(
                     manager => manager.FeatureProviders.Add(
                         new MessageTypeGenericAuthorizeControllerFeatureProvider(extensionManager)));
-            serviceCollection.AddHostedService<BusHostedService>();
+            serviceCollection.AddMassTransitHostedService();
         }
     }
 }

@@ -12,9 +12,9 @@ namespace StoneAssemblies.MassAuth.Tests.Hosting.Extensions
 
     using Moq;
 
+    using StoneAssemblies.Contrib.MassTransit.Extensions;
     using StoneAssemblies.MassAuth.Bank.Messages;
     using StoneAssemblies.MassAuth.Hosting.Extensions;
-    using StoneAssemblies.MassAuth.Messages.Extensions;
 
     using Xunit;
 

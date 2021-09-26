@@ -6,9 +6,9 @@
 
 namespace StoneAssemblies.MassAuth.Tests.Messages.TypeExtensions
 {
+    using StoneAssemblies.Contrib.MassTransit.Extensions;
     using StoneAssemblies.MassAuth.Bank.Messages;
     using StoneAssemblies.MassAuth.Messages;
-    using StoneAssemblies.MassAuth.Messages.Extensions;
 
     using Xunit;
 

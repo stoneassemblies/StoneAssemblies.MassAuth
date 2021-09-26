@@ -14,8 +14,6 @@
       "launchBrowser": true,
       "launchUrl": "weatherforecast",
       "environmentVariables": {
-        "RabbitMQ:Password": "Password123!",
-        "RabbitMQ:Username": "admin",
         "ASPNETCORE_ENVIRONMENT": "Development"
       }
     },
@@ -24,9 +22,7 @@
       "launchBrowser": true,
       "launchUrl": "weatherforecast",
       "environmentVariables": {
-        "RabbitMQ:Password": "Password123!",
         "MARATHON_APP_ID": "1234",
-        "RabbitMQ:Username": "admin",
         "ASPNETCORE_ENVIRONMENT": "Development"
       },
       "applicationUrl": "http://localhost:5000"

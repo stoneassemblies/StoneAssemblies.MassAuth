@@ -21,9 +21,13 @@ string[] ComponentProjects  = new [] {
 	"./src/StoneAssemblies.MassAuth.Rules.SqlClient/StoneAssemblies.MassAuth.Rules.SqlClient.csproj",
 	"./src/StoneAssemblies.MassAuth.Bank.Messages/StoneAssemblies.MassAuth.Bank.Messages.csproj",
 	"./src/StoneAssemblies.MassAuth.Bank.Rules/StoneAssemblies.MassAuth.Bank.Rules.csproj"
+	"./src/StoneAssemblies.Contrib.MassTransit/StoneAssemblies.Contrib.MassTransit.csproj"
 };
 
 string TestProject = "src/StoneAssemblies.MassAuth.Tests/StoneAssemblies.MassAuth.Tests.csproj";
 
-string SonarProjectKey = "stoneassemblies_StoneAssemblies.MassAuth";
-string SonarOrganization = "stoneassemblies";
+// string SonarProjectKey = "stoneassemblies_StoneAssemblies.MassAuth";
+// string SonarOrganization = "stoneassemblies";
+
+string SonarProjectKey = "";
+string SonarOrganization = "";

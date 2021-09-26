@@ -16,3 +16,4 @@ lib
 /src/StoneAssemblies.MassAuth.Tests/TestResults
 /src/StoneAssemblies.MassAuth.Tests/coverage.opencover.xml
 /src/StoneAssemblies.MassAuth.Tests/TestResults.trx
+NDependOut

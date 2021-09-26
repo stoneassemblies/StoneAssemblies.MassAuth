@@ -1,0 +1,47 @@
+name: stoneassemblies-massauth
+network: stoneassemblies-massauth-network
+services:
+- name: stoneassemblies-massauth-rabbitmq
+  image: rabbitmq:3.8.3-management
+  bindings:
+  - name: rabbitmq
+    port: 6002
+    containerPort: 5672
+    protocol: tcp
+  - name: https
+    port: 6003
+    containerPort: 15672
+    protocol: http
+  env:
+  - name: RABBITMQ_DEFAULT_USER
+    value: queuedemo
+  - name: RABBITMQ_DEFAULT_PASS
+    value: queuedemo
+  volumes:
+  - name: stoneassemblies-massauth-rabbitmq-data
+    target: /var/lib/rabbitmq
+- name: stoneassemblies-massauth-server-1
+  project: ../../src/StoneAssemblies.MassAuth.Server/StoneAssemblies.MassAuth.Server.csproj
+  replicas: 1
+  buildProperties: 
+  - name: Configuration
+    value: Debug
+  env:
+  - name: ASPNETCORE_ENVIRONMENT
+    value: Development
+  - name: RabbitMQ:Address
+    value: rabbitmq://localhost:6002
+  - name: RabbitMQ:VirtualHosts:0
+    value: Bank0
+  - name: RabbitMQ:VirtualHosts:1
+    value: Bank1
+  - name: RabbitMQ:Username
+    value: queuedemo
+  - name: RabbitMQ:Password
+    value: queuedemo
+  - name: Extensions:Sources:0
+    value: ../../output/nuget-symbols/
+  - name: Extensions:Sources:1
+    value: http://localhost:8081/repository/nuget-all/
+  - name: Extensions:Packages:0
+    value: StoneAssemblies.MassAuth.Bank.Rules

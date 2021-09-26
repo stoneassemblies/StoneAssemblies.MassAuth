@@ -6,9 +6,12 @@
 
 namespace StoneAssemblies.MassAuth.Bank.Balance.Services
 {
+    using System;
     using System.Net.Http;
 
     using MassTransit;
+    using MassTransit.ExtensionsDependencyInjectionIntegration;
+    using MassTransit.MultiBus;
 
     using Microsoft.AspNetCore.Authentication.JwtBearer;
     using Microsoft.AspNetCore.Builder;
@@ -20,10 +23,9 @@ namespace StoneAssemblies.MassAuth.Bank.Balance.Services
 
     using Newtonsoft.Json;
 
+    using StoneAssemblies.Contrib.MassTransit.Extensions;
     using StoneAssemblies.Hosting.Services;
     using StoneAssemblies.MassAuth.Bank.Messages;
-    using StoneAssemblies.MassAuth.Messages;
-    using StoneAssemblies.MassAuth.Services;
     using StoneAssemblies.MassAuth.Services.Extensions;
 
     /// <summary>
@@ -94,40 +96,38 @@ namespace StoneAssemblies.MassAuth.Bank.Balance.Services
             // var serviceDiscovery = serviceCollection.GetRegisteredInstance<IServiceDiscovery>();
             var username = this.Configuration.GetSection("RabbitMQ")?["Username"] ?? "queuedemo";
             var password = this.Configuration.GetSection("RabbitMQ")?["Password"] ?? "queuedemo";
-            var messageQueueAddress = this.Configuration.GetSection("RabbitMQ")?["Address"] ?? "rabbitmq://localhost";
+            var messageQueueAddress = this.Configuration.GetSection("RabbitMQ")?["Address"] ?? "rabbitmq://localhost:6002";
 
-            services.AddMassTransit(
-                sc =>
-                    {
-                        sc.AddBus(
-                            context => Bus.Factory.CreateUsingRabbitMq(
-                                cfg =>
-                                    {
-                                        cfg.Host(
-                                            messageQueueAddress,
-                                            configurator =>
-                                                {
-                                                    configurator.Username(username);
-                                                    configurator.Password(password);
-                                                });
+            //// SingleBus
+            //services.AddMassTransit(sc => AddBus(sc, messageQueueAddress, "first", username, password));
+            //services.RegisterBusSelector();
 
-                                        cfg.ConfigureJsonSerializer(
-                                            s =>
-                                                {
-                                                    s.ReferenceLoopHandling = ReferenceLoopHandling.Ignore;
-                                                    return s;
-                                                });
+            // MultiBus
+            services.AddMassTransit("Bank0Bus", sc => AddBus(sc, messageQueueAddress, "Bank0", username, password));
+            services.AddMassTransit("Bank1Bus", sc => AddBus(sc, messageQueueAddress, "Bank1", username, password));
+            services.AddBusSelector<AccountBalanceRequestMessage>(
+               async (bus, message) =>
+                   {
+                       var parts = bus.Address.AbsolutePath.Split('/');
 
-                                        cfg.ConfigureJsonDeserializer(
-                                            s =>
-                                                {
-                                                    s.ReferenceLoopHandling = ReferenceLoopHandling.Ignore;
-                                                    return s;
-                                                });
-                                    }));
+                       var virtualHost = parts[1];
+                       if (message.PrimaryAccountNumber.StartsWith("0") && virtualHost.Equals(
+                               "Bank0",
+                               StringComparison.InvariantCultureIgnoreCase))
+                       {
+                           return true;
+                       }
+                       
+                       if (message.PrimaryAccountNumber.StartsWith("1") && virtualHost.Equals(
+                               "Bank1",
+                               StringComparison.InvariantCultureIgnoreCase))
+                       {
+                           return true;
+                       }
 
-                        sc.AddDefaultAuthorizationRequestClient<AccountBalanceRequestMessage>();
-                    });
+                       return false;
+                   });
+
 
             var identityServerAuthority = this.Configuration.GetSection("IdentityServer")?["Authority"] ?? "http://172.30.64.1:6005/auth/realms/master";
             services
@@ -144,7 +144,47 @@ namespace StoneAssemblies.MassAuth.Bank.Balance.Services
                     });
 
             services.AddControllers();
-            services.AddHostedService<BusHostedService>();
+            services.AddMassTransitHostedService();
+        }
+
+        private static void AddBus(
+            IServiceCollectionBusConfigurator sc, string messageQueueAddress, string virtualHost,
+            string username, string password)
+        {
+            sc.AddBus(
+                context =>
+                    {
+                        var busControl = Bus.Factory.CreateUsingRabbitMq(
+                            cfg =>
+                                {
+                                    cfg.Host(
+                                        new Uri(new Uri(messageQueueAddress), new Uri(virtualHost, UriKind.Relative)),
+                                        configurator =>
+                                            {
+                                                configurator.Username(username);
+                                                configurator.Password(password);
+                                            });
+
+                                    cfg.ConfigureJsonSerializer(
+                                        s =>
+                                            {
+                                                s.ReferenceLoopHandling = ReferenceLoopHandling.Ignore;
+                                                return s;
+                                            });
+
+                                    cfg.ConfigureJsonDeserializer(
+                                        s =>
+                                            {
+                                                s.ReferenceLoopHandling = ReferenceLoopHandling.Ignore;
+                                                return s;
+                                            });
+                                });
+
+                        return busControl;
+                    });
+
+            sc.AddDefaultAuthorizationRequestClient<AccountBalanceRequestMessage>();
         }
     }
+
 }

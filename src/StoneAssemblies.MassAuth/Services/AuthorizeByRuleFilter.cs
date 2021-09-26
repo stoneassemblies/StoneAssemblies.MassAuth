@@ -7,6 +7,7 @@
 namespace StoneAssemblies.MassAuth.Services
 {
     using System;
+    using System.Collections.Generic;
     using System.Linq;
     using System.Threading.Tasks;
 
@@ -18,6 +19,7 @@ namespace StoneAssemblies.MassAuth.Services
 
     using Serilog;
 
+    using StoneAssemblies.Contrib.MassTransit.Services.Interfaces;
     using StoneAssemblies.MassAuth.Extensions;
     using StoneAssemblies.MassAuth.Messages;
     using StoneAssemblies.MassAuth.Services.Extensions;
@@ -28,19 +30,21 @@ namespace StoneAssemblies.MassAuth.Services
     public class AuthorizeByRuleFilter : IAsyncActionFilter
     {
         /// <summary>
-        ///     The client factory.
+        /// The bus selector.
         /// </summary>
-        private readonly IClientFactory clientFactory;
+        private readonly List<IBusSelector> busSelectors;
+
+        ///// <summary>
+        /////     The client factories.
+        ///// </summary>
+        //private readonly IClientFactory clientFactory;
 
         /// <summary>
-        ///     Initializes a new instance of the <see cref="AuthorizeByRuleFilter" /> class.
+        /// Initializes a new instance of the <see cref="AuthorizeByRuleFilter"/> class.
         /// </summary>
-        /// <param name="clientFactory">
-        ///     The client factory.
-        /// </param>
-        public AuthorizeByRuleFilter(IClientFactory clientFactory)
+        public AuthorizeByRuleFilter(IEnumerable<IBusSelector> busSelectors)
         {
-            this.clientFactory = clientFactory;
+            this.busSelectors = busSelectors.ToList();
         }
 
         /// <summary>
@@ -60,25 +64,43 @@ namespace StoneAssemblies.MassAuth.Services
             var message = context.ActionArguments.Values.OfType<MessageBase>().FirstOrDefault();
             if (message != null)
             {
-                var authorizationMessage = AuthorizationRequestMessageFactory.From(message);
-
-                var clientRequest = this.clientFactory.CreateRequestClient(authorizationMessage.GetType());
-
-                authorizationMessage.UserId = context.HttpContext.User.GetUserId();
-                authorizationMessage.Claims = context.HttpContext.User.Claims;
-                try
+                var busSelector = this.busSelectors.FirstOrDefault(selector => selector.GetType().GetGenericArguments()[0] == message.GetType());
+                if (busSelector != null)
                 {
-                    authorizationMessage.AccessToken = await context.HttpContext.GetTokenAsync("access_token");
-                }
-                catch (Exception ex)
-                {
-                    Log.Warning(ex, "Error getting the access token");
-                }
+                    var clientFactories = busSelector.SelectClientFactories(message);
+                    var authorizationMessage = AuthorizationRequestMessageFactory.From(message);
 
-                var response = await clientRequest.GetResponse<AuthorizationResponseMessage>(authorizationMessage);
-                if (!response.Message.IsAuthorized)
-                {
-                    context.Result = new UnauthorizedResult();
+                    var tasks = new List<Task<Response<AuthorizationResponseMessage>>>();
+                    await foreach (var factory in clientFactories)
+                    {
+                        var clientRequest = factory.CreateRequestClient(authorizationMessage.GetType());
+
+                        authorizationMessage.UserId = context.HttpContext.User.GetUserId();
+                        authorizationMessage.Claims = context.HttpContext.User.Claims;
+                        try
+                        {
+                            authorizationMessage.AccessToken = await context.HttpContext.GetTokenAsync("access_token");
+                        }
+                        catch (Exception ex)
+                        {
+                            Log.Warning(ex, "Error getting the access token");
+                        }
+
+                        tasks.Add(Task.Run(() => clientRequest.GetResponse<AuthorizationResponseMessage>(authorizationMessage)));
+                    }
+
+                    if (tasks.Count == 0)
+                    {
+                        context.Result = new UnauthorizedResult();
+                    }
+                    else
+                    {
+                        var responses = await Task.WhenAll(tasks);
+                        if (responses.Any(r => !r.Message.IsAuthorized))
+                        {
+                            context.Result = new UnauthorizedResult();
+                        }
+                    }
                 }
             }
 
@@ -87,5 +109,6 @@ namespace StoneAssemblies.MassAuth.Services
                 await next();
             }
         }
+
     }
 }

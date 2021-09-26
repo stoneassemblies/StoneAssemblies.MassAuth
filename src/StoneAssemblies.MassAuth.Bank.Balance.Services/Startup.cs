@@ -99,8 +99,8 @@ namespace StoneAssemblies.MassAuth.Bank.Balance.Services
             var messageQueueAddress = this.Configuration.GetSection("RabbitMQ")?["Address"] ?? "rabbitmq://localhost:6002";
 
             //// SingleBus
-            //services.AddMassTransit(sc => AddBus(sc, messageQueueAddress, "first", username, password));
-            //services.RegisterBusSelector();
+            // services.AddMassTransit(sc => AddBus(sc, messageQueueAddress, "first", username, password));
+            // services.AddBusSelector<AccountBalanceRequestMessage>();
 
             // MultiBus
             services.AddMassTransit("Bank0Bus", sc => AddBus(sc, messageQueueAddress, "Bank0", username, password));
@@ -117,7 +117,7 @@ namespace StoneAssemblies.MassAuth.Bank.Balance.Services
                        {
                            return true;
                        }
-                       
+
                        if (message.PrimaryAccountNumber.StartsWith("1") && virtualHost.Equals(
                                "Bank1",
                                StringComparison.InvariantCultureIgnoreCase))
@@ -148,8 +148,7 @@ namespace StoneAssemblies.MassAuth.Bank.Balance.Services
         }
 
         private static void AddBus(
-            IServiceCollectionBusConfigurator sc, string messageQueueAddress, string virtualHost,
-            string username, string password)
+            IServiceCollectionBusConfigurator sc, string messageQueueAddress, string virtualHost, string username, string password)
         {
             sc.AddBus(
                 context =>

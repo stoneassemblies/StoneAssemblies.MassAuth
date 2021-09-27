@@ -27,8 +27,11 @@
         /// </summary>
         public class The_Add_Rules_Method
         {
+            /// <summary>
+            /// Discovers the message types.
+            /// </summary>
             [Fact]
-            public void Discovers_The_MessaTypes()
+            public void Discovers_The_MessageTypes()
             {
                 var extensionManagerMock = new Mock<IExtensionManager>();
                 var assemblies = new List<Assembly>
@@ -47,6 +50,9 @@
                 Assert.Single(serviceCollection.GetDiscoveredMessageTypes());
             }
 
+            /// <summary>
+            /// Loads rules from already registered rules.
+            /// </summary>
             [Fact]
             public void Loads_Rules_From_Already_RegisteredRules()
             {

@@ -64,7 +64,7 @@ namespace StoneAssemblies.MassAuth.Services
             var message = context.ActionArguments.Values.OfType<MessageBase>().FirstOrDefault();
             if (message != null)
             {
-                var busSelector = this.busSelectors.FirstOrDefault(selector => selector.GetType().GetGenericArguments()[0] == message.GetType());
+                var busSelector = this.busSelectors.FirstOrDefault(selector => typeof(IBusSelector<>).MakeGenericType(message.GetType()).IsInstanceOfType(selector));
                 if (busSelector != null)
                 {
                     var clientFactories = busSelector.SelectClientFactories(message);

@@ -6,9 +6,12 @@
 
 namespace StoneAssemblies.MassAuth.Tests.Services
 {
+    using System;
     using System.Collections.Generic;
     using System.Threading;
     using System.Threading.Tasks;
+
+    using Dasync.Collections;
 
     using MassTransit;
     using MassTransit.Clients;
@@ -21,6 +24,8 @@ namespace StoneAssemblies.MassAuth.Tests.Services
 
     using Moq;
 
+    using StoneAssemblies.Contrib.MassTransit.Services;
+    using StoneAssemblies.Contrib.MassTransit.Services.Interfaces;
     using StoneAssemblies.MassAuth.Bank.Messages;
     using StoneAssemblies.MassAuth.Messages;
     using StoneAssemblies.MassAuth.Services;
@@ -56,9 +61,9 @@ namespace StoneAssemblies.MassAuth.Tests.Services
                                           {
                                               {
                                                   "accountBalanceRequestMessage", new AccountBalanceRequestMessage
-                                                      {
-                                                          PrimaryAccountNumber = "123456789012"
-                                                      }
+                                                                                      {
+                                                                                          PrimaryAccountNumber = "123456789012"
+                                                                                      }
                                               }
                                           };
 
@@ -69,8 +74,7 @@ namespace StoneAssemblies.MassAuth.Tests.Services
                     new Mock<Controller>());
 
                 var clientFactoryMock = new Mock<IClientFactory>();
-                var requestClientMock =
-                    new Mock<IRequestClient<AuthorizationRequestMessage<AccountBalanceRequestMessage>>>();
+                var requestClientMock = new Mock<IRequestClient<AuthorizationRequestMessage<AccountBalanceRequestMessage>>>();
                 requestClientMock.Setup(
                     client => client.GetResponse<AuthorizationResponseMessage>(
                         It.IsAny<AuthorizationRequestMessage<AccountBalanceRequestMessage>>(),
@@ -90,22 +94,44 @@ namespace StoneAssemblies.MassAuth.Tests.Services
 
                 clientFactoryMock
                     .Setup(
-                        factory => factory
-                            .CreateRequestClient<AuthorizationRequestMessage<AccountBalanceRequestMessage>>(
-                                It.IsAny<RequestTimeout>())).Returns(requestClientMock.Object);
+                        factory => factory.CreateRequestClient<AuthorizationRequestMessage<AccountBalanceRequestMessage>>(
+                            It.IsAny<RequestTimeout>())).Returns(requestClientMock.Object);
 
-                //var nextInvoked = false;
-                //var authorizeByRuleFilter = new AuthorizeByRuleFilter(clientFactoryMock.Object);
-                //var actionExecutionDelegate = new ActionExecutionDelegate(
-                //    () =>
-                //        {
-                //            nextInvoked = true;
-                //            return Task.FromResult<ActionExecutedContext>(null);
-                //        });
+                var nextInvoked = false;
+                var busSelectorMock = new Mock<IBusSelector<AccountBalanceRequestMessage>>();
+                busSelectorMock.Setup(selector => selector.SelectClientFactories(It.IsAny<object>())).Returns(
+                (object @object) => ToAsyncEnumerable(clientFactoryMock.Object));
+                var authorizeByRuleFilter = new AuthorizeByRuleFilter(
+                    new List<IBusSelector>
+                        {
+                            busSelectorMock.Object
+                        });
+                var actionExecutionDelegate = new ActionExecutionDelegate(
+                    () =>
+                        {
+                            nextInvoked = true;
+                            return Task.FromResult<ActionExecutedContext>(null);
+                        });
 
-                //await authorizeByRuleFilter.OnActionExecutionAsync(actionExecutingContext, actionExecutionDelegate);
+                await authorizeByRuleFilter.OnActionExecutionAsync(actionExecutingContext, actionExecutionDelegate);
 
-                //Assert.False(nextInvoked);
+                Assert.False(nextInvoked);
+            }
+
+            /// <summary>
+            /// To async enumerable.
+            /// </summary>
+            /// <param name="object">
+            /// The object.
+            /// </param>
+            /// <typeparam name="T">
+            /// </typeparam>
+            /// <returns>
+            /// The <see cref="IAsyncEnumerable"/>.
+            /// </returns>
+            private static async IAsyncEnumerable<T> ToAsyncEnumerable<T>(T @object)
+            {
+                yield return @object;
             }
 
             /// <summary>

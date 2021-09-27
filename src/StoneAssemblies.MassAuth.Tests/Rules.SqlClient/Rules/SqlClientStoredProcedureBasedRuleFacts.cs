@@ -263,8 +263,14 @@ namespace StoneAssemblies.MassAuth.Tests.Rules.SqlClient.Rules
             }
         }
 
+        /// <summary>
+        /// The name property.
+        /// </summary>
         public class The_Name_Property
         {
+            /// <summary>
+            /// returns the name of the rule.
+            /// </summary>
             [Fact]
             public void Returns_The_Name_Of_The_Rule()
             {
@@ -280,6 +286,9 @@ namespace StoneAssemblies.MassAuth.Tests.Rules.SqlClient.Rules
                 Assert.Contains("TestRule", sqlClientStoredProcedureBasedRule.Name);
             }
 
+            /// <summary>
+            /// Returns the stored procedure name as part of the name of the rule.
+            /// </summary>
             [Fact]
             public void Returns_The_StoredProcedureName_As_Part_Of_The_Name_Of_The_Rule()
             {
@@ -296,8 +305,14 @@ namespace StoneAssemblies.MassAuth.Tests.Rules.SqlClient.Rules
             }
         }
 
+        /// <summary>
+        /// The priory property.
+        /// </summary>
         public class The_Priory_Property
         {
+            /// <summary>
+            /// Returns specified value.
+            /// </summary>
             [Fact]
             public void Returns_Specified_Value()
             {

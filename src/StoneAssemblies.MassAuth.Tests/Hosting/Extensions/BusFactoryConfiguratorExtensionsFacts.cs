@@ -18,10 +18,19 @@ namespace StoneAssemblies.MassAuth.Tests.Hosting.Extensions
 
     using Xunit;
 
+    /// <summary>
+    ///     The bus factory configurator extensions facts.
+    /// </summary>
     public class BusFactoryConfiguratorExtensionsFacts
     {
+        /// <summary>
+        ///     The default receive endpoint method.
+        /// </summary>
         public class The_DefaultReceiveEndpoint_Method
         {
+            /// <summary>
+            ///     Calls the receive endpoint of the configurator with a queue name based on the message type.
+            /// </summary>
             [Fact]
             public void Calls_The_ReceiveEndpoint_Of_The_Configurator_With_A_QueueName_Based_On_The_MessageType()
             {

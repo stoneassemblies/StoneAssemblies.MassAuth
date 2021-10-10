@@ -158,16 +158,23 @@ namespace StoneAssemblies.MassAuth.Tests.Services
                 var clientFactoryMock = new Mock<IClientFactory>();
 
                 var nextInvoked = false;
-                //var authorizeByRuleFilter = new AuthorizeByRuleFilter(clientFactoryMock.Object);
-                //var actionExecutionDelegate = new ActionExecutionDelegate(
-                //    () =>
-                //        {
-                //            nextInvoked = true;
-                //            return Task.FromResult<ActionExecutedContext>(null);
-                //        });
-                //await authorizeByRuleFilter.OnActionExecutionAsync(actionExecutingContext, actionExecutionDelegate);
+                var busSelectorMock = new Mock<IBusSelector<AccountBalanceRequestMessage>>();
+                busSelectorMock.Setup(selector => selector.SelectClientFactories(It.IsAny<object>())).Returns(
+                    (object @object) => ToAsyncEnumerable(clientFactoryMock.Object));
+                var authorizeByRuleFilter = new AuthorizeByRuleFilter(
+                                                new List<IBusSelector>
+                                                    {
+                                                        busSelectorMock.Object
+                                                    }) as IAsyncActionFilter;
+                var actionExecutionDelegate = new ActionExecutionDelegate(
+                    () =>
+                        {
+                            nextInvoked = true;
+                            return Task.FromResult<ActionExecutedContext>(null);
+                        });
+                await authorizeByRuleFilter.OnActionExecutionAsync(actionExecutingContext, actionExecutionDelegate);
 
-                //Assert.True(nextInvoked);
+                Assert.True(nextInvoked);
             }
 
             /// <summary>

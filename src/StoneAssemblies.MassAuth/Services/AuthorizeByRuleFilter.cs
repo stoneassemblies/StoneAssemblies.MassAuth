@@ -50,7 +50,7 @@ namespace StoneAssemblies.MassAuth.Services
         /// <summary>
         ///     On action execution async.
         /// </summary>
-        /// <param name="actionExecutingContext">
+        /// <param name="context">
         ///     The context.
         /// </param>
         /// <param name="next">
@@ -60,17 +60,17 @@ namespace StoneAssemblies.MassAuth.Services
         ///     The <see cref="Task" />.
         /// </returns>
         async Task IAsyncActionFilter.OnActionExecutionAsync(
-            ActionExecutingContext actionExecutingContext, ActionExecutionDelegate next)
+            ActionExecutingContext context, ActionExecutionDelegate next)
         {
-            var httpContext = actionExecutingContext.HttpContext;
-            var messages = actionExecutingContext.ActionArguments.Values.OfType<MessageBase>().ToList();
+            var httpContext = context.HttpContext;
+            var messages = context.ActionArguments.Values.OfType<MessageBase>().ToList();
             if (await this.IsAuthorizedAsync(httpContext, messages))
             {
                 await next();
             }
             else
             {
-                actionExecutingContext.Result = new UnauthorizedResult();
+                context.Result = new UnauthorizedResult();
             }
         }
 

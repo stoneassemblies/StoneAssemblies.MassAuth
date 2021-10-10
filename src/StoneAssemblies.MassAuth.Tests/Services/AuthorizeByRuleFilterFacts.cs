@@ -105,7 +105,7 @@ namespace StoneAssemblies.MassAuth.Tests.Services
                     new List<IBusSelector>
                         {
                             busSelectorMock.Object
-                        });
+                        }) as IAsyncActionFilter;
                 var actionExecutionDelegate = new ActionExecutionDelegate(
                     () =>
                         {

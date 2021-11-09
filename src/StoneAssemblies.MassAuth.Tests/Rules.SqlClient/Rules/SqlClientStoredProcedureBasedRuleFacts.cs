@@ -35,7 +35,7 @@ namespace StoneAssemblies.MassAuth.Tests.Rules.SqlClient.Rules
             ///     The <see cref="Task" />.
             /// </returns>
             [Fact]
-            public async Task Calls_The_Open_ExecuteScalar_Close_And_Dispose_Methods_In_The_Correct_Order()
+            public async Task Calls_The_Open_ExecuteReader_Close_And_Dispose_Methods_In_The_Correct_Order()
             {
                 var connectionFactoryMock = new Mock<IConnectionFactory>();
                 var connectionMock = new Mock<IDbConnection>();
@@ -47,7 +47,11 @@ namespace StoneAssemblies.MassAuth.Tests.Rules.SqlClient.Rules
                 connectionMock.Setup(connection => connection.State).Returns(ConnectionState.Open);
                 var commandMock = new Mock<IDbCommand>();
 
-                commandMock.Setup(command => command.ExecuteScalar()).Callback(() => Assert.Equal(1, order++)).Returns(true);
+                var dataReaderMock = new Mock<IDataReader>();
+                dataReaderMock.Setup(reader => reader.Read()).Returns(true);
+                dataReaderMock.Setup(reader => reader.GetBoolean(0)).Returns(true);
+                dataReaderMock.Setup(reader => reader.FieldCount).Returns(1);
+                commandMock.Setup(command => command.ExecuteReader()).Callback(() => Assert.Equal(1, order++)).Returns(dataReaderMock.Object);
 
                 var parameterMock = new Mock<IDbDataParameter>();
                 commandMock.Setup(command => command.CreateParameter()).Returns(parameterMock.Object);
@@ -79,23 +83,21 @@ namespace StoneAssemblies.MassAuth.Tests.Rules.SqlClient.Rules
                 connectionMock.Verify(connection => connection.Open(), Times.Once);
                 connectionMock.Verify(connection => connection.Close(), Times.Once);
                 connectionMock.Verify(connection => connection.Dispose(), Times.Once);
-                commandMock.Verify(connection => connection.ExecuteScalar(), Times.Once);
+                commandMock.Verify(connection => connection.ExecuteReader(), Times.Once);
             }
 
-            /// <summary>
-            ///     Returns false when execute scalar from command returns 0.
-            /// </summary>
-            /// <returns>
-            ///     The <see cref="Task" />.
-            /// </returns>
             [Fact]
-            public async Task Returns_False_When_ExecuteScalar_From_Command_Returns_0()
+            public async Task Returns_False_When_Read_From_Reader_Returns_False()
             {
                 var connectionFactoryMock = new Mock<IConnectionFactory>();
                 var connectionMock = new Mock<IDbConnection>();
                 connectionMock.Setup(connection => connection.State).Returns(ConnectionState.Open);
                 var commandMock = new Mock<IDbCommand>();
-                commandMock.Setup(command => command.ExecuteScalar()).Returns(0);
+
+                var dataReaderMock = new Mock<IDataReader>();
+                dataReaderMock.Setup(reader => reader.Read()).Returns(false);
+
+                commandMock.Setup(command => command.ExecuteReader()).Returns(dataReaderMock.Object);
 
                 var parameterMock = new Mock<IDbDataParameter>();
                 commandMock.Setup(command => command.CreateParameter()).Returns(parameterMock.Object);
@@ -127,20 +129,69 @@ namespace StoneAssemblies.MassAuth.Tests.Rules.SqlClient.Rules
                 Assert.False(result.Succeeded);
             }
 
-            /// <summary>
-            ///     Returns false when execute scalar from command returns false.
-            /// </summary>
-            /// <returns>
-            ///     The <see cref="Task" />.
-            /// </returns>
             [Fact]
-            public async Task Returns_False_When_ExecuteScalar_From_Command_Returns_False()
+            public async Task Returns_The_ForbiddanceReason_From_The_GetString_From_Reader()
             {
                 var connectionFactoryMock = new Mock<IConnectionFactory>();
                 var connectionMock = new Mock<IDbConnection>();
                 connectionMock.Setup(connection => connection.State).Returns(ConnectionState.Open);
                 var commandMock = new Mock<IDbCommand>();
-                commandMock.Setup(command => command.ExecuteScalar()).Returns(false);
+
+                const string ExpectedForbiddanceReason = "Forbiddance Reason";
+
+                var dataReaderMock = new Mock<IDataReader>();
+                dataReaderMock.Setup(reader => reader.Read()).Returns(true);
+                dataReaderMock.Setup(reader => reader.FieldCount).Returns(2);
+                dataReaderMock.Setup(reader => reader.GetBoolean(0)).Returns(false);
+                dataReaderMock.Setup(reader => reader.GetString(1)).Returns(ExpectedForbiddanceReason);
+
+                commandMock.Setup(command => command.ExecuteReader()).Returns(dataReaderMock.Object);
+
+                var parameterMock = new Mock<IDbDataParameter>();
+                commandMock.Setup(command => command.CreateParameter()).Returns(parameterMock.Object);
+                var parameterCollectionMock = new Mock<IDataParameterCollection>();
+                commandMock.Setup(command => command.Parameters).Returns(parameterCollectionMock.Object);
+
+                connectionMock.Setup(connection => connection.CreateCommand()).Returns(commandMock.Object);
+
+                connectionFactoryMock.Setup(factory => factory.Create(It.IsAny<string>())).Returns(connectionMock.Object);
+
+                var sqlClientStoredProcedureBasedRule =
+                    new SqlClientStoredProcedureBasedRule<AuthorizationRequestMessage<AccountBalanceRequestMessage>>(
+                        connectionFactoryMock.Object,
+                        "TestRule",
+                        typeof(AccountBalanceRequestMessage),
+                        "Server=localhost;",
+                        "sp_Authorize_AccountBalanceRequestMessage",
+                        0);
+
+                var result = await sqlClientStoredProcedureBasedRule.EvaluateAsync(
+                                 new AuthorizationRequestMessage<AccountBalanceRequestMessage>
+                                     {
+                                         Payload = new AccountBalanceRequestMessage
+                                                       {
+                                                           PrimaryAccountNumber = "1341234"
+                                                       }
+                                     });
+
+                Assert.Equal(ExpectedForbiddanceReason, result.Description);
+            }
+
+
+            [Fact]
+            public async Task Returns_False_When_GetBoolean_From_Reader_Returns_False()
+            {
+                var connectionFactoryMock = new Mock<IConnectionFactory>();
+                var connectionMock = new Mock<IDbConnection>();
+                connectionMock.Setup(connection => connection.State).Returns(ConnectionState.Open);
+                var commandMock = new Mock<IDbCommand>();
+
+                var dataReaderMock = new Mock<IDataReader>();
+                dataReaderMock.Setup(reader => reader.Read()).Returns(true);
+                dataReaderMock.Setup(reader => reader.GetBoolean(0)).Returns(false);
+                dataReaderMock.Setup(reader => reader.FieldCount).Returns(1);
+
+                commandMock.Setup(command => command.ExecuteReader()).Returns(dataReaderMock.Object);
 
                 var parameterMock = new Mock<IDbDataParameter>();
                 commandMock.Setup(command => command.CreateParameter()).Returns(parameterMock.Object);
@@ -179,58 +230,20 @@ namespace StoneAssemblies.MassAuth.Tests.Rules.SqlClient.Rules
             ///     The <see cref="Task" />.
             /// </returns>
             [Fact]
-            public async Task Returns_True_When_ExecuteScalar_From_Command_Returns_1()
+            public async Task Returns_True_When_GetBoolean_From_Reader_Returns_True()
             {
                 var connectionFactoryMock = new Mock<IConnectionFactory>();
                 var connectionMock = new Mock<IDbConnection>();
                 connectionMock.Setup(connection => connection.State).Returns(ConnectionState.Open);
+
+                var dataReaderMock = new Mock<IDataReader>();
+                dataReaderMock.Setup(reader => reader.Read()).Returns(true);
+                dataReaderMock.Setup(reader => reader.GetBoolean(0)).Returns(true);
+                dataReaderMock.Setup(reader => reader.FieldCount).Returns(1);
+
+
                 var commandMock = new Mock<IDbCommand>();
-                commandMock.Setup(command => command.ExecuteScalar()).Returns(true);
-
-                var parameterMock = new Mock<IDbDataParameter>();
-                commandMock.Setup(command => command.CreateParameter()).Returns(parameterMock.Object);
-                var parameterCollectionMock = new Mock<IDataParameterCollection>();
-                commandMock.Setup(command => command.Parameters).Returns(parameterCollectionMock.Object);
-
-                connectionMock.Setup(connection => connection.CreateCommand()).Returns(commandMock.Object);
-
-                connectionFactoryMock.Setup(factory => factory.Create(It.IsAny<string>())).Returns(connectionMock.Object);
-
-                var sqlClientStoredProcedureBasedRule =
-                    new SqlClientStoredProcedureBasedRule<AuthorizationRequestMessage<AccountBalanceRequestMessage>>(
-                        connectionFactoryMock.Object,
-                        "TestRule",
-                        typeof(AccountBalanceRequestMessage),
-                        "Server=localhost;",
-                        "sp_Authorize_AccountBalanceRequestMessage",
-                        0);
-
-                var result = await sqlClientStoredProcedureBasedRule.EvaluateAsync(
-                                 new AuthorizationRequestMessage<AccountBalanceRequestMessage>
-                                     {
-                                         Payload = new AccountBalanceRequestMessage
-                                                       {
-                                                           PrimaryAccountNumber = "1341234"
-                                                       }
-                                     });
-
-                Assert.True(result.Succeeded);
-            }
-
-            /// <summary>
-            ///     Returns true when execute scalar from command returns true.
-            /// </summary>
-            /// <returns>
-            ///     The <see cref="Task" />.
-            /// </returns>
-            [Fact]
-            public async Task Returns_True_When_ExecuteScalar_From_Command_Returns_True()
-            {
-                var connectionFactoryMock = new Mock<IConnectionFactory>();
-                var connectionMock = new Mock<IDbConnection>();
-                connectionMock.Setup(connection => connection.State).Returns(ConnectionState.Open);
-                var commandMock = new Mock<IDbCommand>();
-                commandMock.Setup(command => command.ExecuteScalar()).Returns(true);
+                commandMock.Setup(command => command.ExecuteReader()).Returns(dataReaderMock.Object);
 
                 var parameterMock = new Mock<IDbDataParameter>();
                 commandMock.Setup(command => command.CreateParameter()).Returns(parameterMock.Object);

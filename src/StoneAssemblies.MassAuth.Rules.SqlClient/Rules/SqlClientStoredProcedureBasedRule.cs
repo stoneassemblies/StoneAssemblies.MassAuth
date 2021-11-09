@@ -130,7 +130,7 @@ namespace StoneAssemblies.MassAuth.Rules.SqlClient.Rules
                     }
                     else
                     {
-                        return EvaluationResult.Error(reader.FieldCount > 0 ? reader.GetString(1) : string.Empty);
+                        return EvaluationResult.Error(reader.FieldCount > 1 ? reader.GetString(1) : string.Empty);
                     }
                 }
             }

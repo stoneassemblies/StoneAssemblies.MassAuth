@@ -124,7 +124,7 @@ namespace StoneAssemblies.MassAuth.Tests.Rules.SqlClient.Rules
                                                        }
                                      });
 
-                Assert.False(result);
+                Assert.False(result.Succeeded);
             }
 
             /// <summary>
@@ -169,7 +169,7 @@ namespace StoneAssemblies.MassAuth.Tests.Rules.SqlClient.Rules
                                                        }
                                      });
 
-                Assert.False(result);
+                Assert.False(result.Succeeded);
             }
 
             /// <summary>
@@ -214,7 +214,7 @@ namespace StoneAssemblies.MassAuth.Tests.Rules.SqlClient.Rules
                                                        }
                                      });
 
-                Assert.True(result);
+                Assert.True(result.Succeeded);
             }
 
             /// <summary>
@@ -259,7 +259,7 @@ namespace StoneAssemblies.MassAuth.Tests.Rules.SqlClient.Rules
                                                        }
                                      });
 
-                Assert.True(result);
+                Assert.True(result.Succeeded);
             }
         }
 

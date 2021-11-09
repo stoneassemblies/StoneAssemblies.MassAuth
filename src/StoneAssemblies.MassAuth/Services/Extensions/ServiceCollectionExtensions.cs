@@ -6,7 +6,11 @@
 
 namespace StoneAssemblies.MassAuth.Services.Extensions
 {
+    using System;
+
     using Microsoft.Extensions.DependencyInjection;
+
+    using StoneAssemblies.MassAuth.Services.Options;
 
     /// <summary>
     ///     The service collection extensions.
@@ -19,8 +23,15 @@ namespace StoneAssemblies.MassAuth.Services.Extensions
         /// <param name="serviceCollection">
         ///     The service collection.
         /// </param>
-        public static void AddMassAuth(this IServiceCollection serviceCollection)
+        /// <param name="configure">
+        ///     The configuration options.
+        /// </param>
+        public static void AddMassAuth(this IServiceCollection serviceCollection, Action<AuthorizeByRuleFilterConfigurationOptions> configure = null)
         {
+            var authorizeByRuleFilterOptions = new AuthorizeByRuleFilterConfigurationOptions();
+            configure?.Invoke(authorizeByRuleFilterOptions);
+
+            serviceCollection.AddScoped(provider => authorizeByRuleFilterOptions);
             serviceCollection.AddScoped<AuthorizeByRuleFilter>();
         }
     }

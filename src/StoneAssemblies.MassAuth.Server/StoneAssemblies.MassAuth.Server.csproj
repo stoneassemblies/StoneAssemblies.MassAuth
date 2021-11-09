@@ -25,12 +25,12 @@
 
 	<ItemGroup>
 		<PackageReference Include="AsyncEnumerator" Version="4.0.2" />
-		<PackageReference Include="MassTransit.AspNetCore" Version="7.2.2" />
-		<PackageReference Include="MassTransit.Extensions.DependencyInjection" Version="7.2.2" />
-		<PackageReference Include="MassTransit.RabbitMQ" Version="7.2.2" />
+		<PackageReference Include="MassTransit.AspNetCore" Version="7.2.4" />
+		<PackageReference Include="MassTransit.Extensions.DependencyInjection" Version="7.2.4" />
+		<PackageReference Include="MassTransit.RabbitMQ" Version="7.2.4" />
 		<PackageReference Include="Serilog.AspNetCore" Version="4.1.0" />
 		<PackageReference Include="StoneAssemblies.Contrib.MassTransit" Version="1.0.0-alpha0016" />
-		<PackageReference Include="StoneAssemblies.Extensibility" Version="1.0.0-alpha0079" />
+		<PackageReference Include="StoneAssemblies.Extensibility" Version="1.0.0-alpha0080" />
 		<PackageReference Include="StoneAssemblies.Hosting" Version="1.0.0-alpha0005" />
 		<PackageReference Include="System.Reflection.Emit" Version="4.7.0" />
 	</ItemGroup>

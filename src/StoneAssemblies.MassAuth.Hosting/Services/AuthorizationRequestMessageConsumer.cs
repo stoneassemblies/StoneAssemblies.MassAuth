@@ -15,6 +15,7 @@ namespace StoneAssemblies.MassAuth.Hosting.Services
 
     using StoneAssemblies.MassAuth.Hosting.Services.Interfaces;
     using StoneAssemblies.MassAuth.Messages;
+    using StoneAssemblies.MassAuth.Rules.Interfaces;
 
     /// <summary>
     ///     The authorization request message consumer.
@@ -60,21 +61,22 @@ namespace StoneAssemblies.MassAuth.Hosting.Services
             var rules = this.rulesContainer.Rules;
             foreach (var rule in rules)
             {
-                var succeeded = false;
+                EvaluationResult evaluationResult = null;
                 try
                 {
                     Log.Information("Evaluating rule '{RuleName}'", rule.Name);
-                    succeeded = await rule.EvaluateAsync(context.Message);
+                    evaluationResult = await rule.EvaluateAsync(context.Message);
                 }
                 catch (Exception ex)
                 {
                     Log.Error(ex, "Error evaluating rule '{RuleName}'", rule.Name);
                 }
 
-                if (!succeeded)
+                if (evaluationResult == null || !evaluationResult.Succeeded)
                 {
                     Log.Information("Unauthorized by rule '{RuleName}' ", rule.Name);
                     message.IsAuthorized = false;
+                    message.ForbiddanceReason = evaluationResult?.Description;
                     break;
                 }
             }

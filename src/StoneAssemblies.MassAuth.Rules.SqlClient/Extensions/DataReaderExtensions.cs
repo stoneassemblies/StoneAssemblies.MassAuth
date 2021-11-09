@@ -9,6 +9,9 @@ namespace StoneAssemblies.MassAuth.Rules.SqlClient.Extensions
     using System;
     using System.Collections.Generic;
     using System.Data;
+    using System.Data.Common;
+    using System.Threading;
+    using System.Threading.Tasks;
 
     using Serilog;
 
@@ -17,6 +20,51 @@ namespace StoneAssemblies.MassAuth.Rules.SqlClient.Extensions
     /// </summary>
     public static class DataReaderExtensions
     {
+        /// <summary>
+        ///     The read async.
+        /// </summary>
+        /// <param name="dataReader">
+        ///     The data reader.
+        /// </param>
+        /// <param name="cancellationToken">
+        ///     The cancellation token.
+        /// </param>
+        /// <returns>
+        ///     The <see cref="Task" />.
+        /// </returns>
+        public static async Task<bool> ReadAsync(this IDataReader dataReader, CancellationToken cancellationToken = default)
+        {
+            if (dataReader is DbDataReader dbDataReader)
+            {
+                return await dbDataReader.ReadAsync(cancellationToken);
+            }
+
+            return dataReader.Read();
+        }
+
+        /// <summary>
+        ///     Read safety.
+        /// </summary>
+        /// <param name="dataReader">
+        ///     The data reader.
+        /// </param>
+        /// <returns>
+        ///     The <see cref="bool" />.
+        /// </returns>
+        public static bool ReadSafety(this IDataReader dataReader)
+        {
+            try
+            {
+                return dataReader.Read();
+            }
+            catch (Exception ex)
+            {
+                Log.Error(ex, "Error reading the next record from data reader");
+
+                return false;
+            }
+        }
+
         /// <summary>
         ///     Selects records from data reader.
         /// </summary>
@@ -50,29 +98,6 @@ namespace StoneAssemblies.MassAuth.Rules.SqlClient.Extensions
                 }
 
                 yield return value;
-            }
-        }
-
-        /// <summary>
-        ///     Read safety.
-        /// </summary>
-        /// <param name="dataReader">
-        ///     The data reader.
-        /// </param>
-        /// <returns>
-        ///     The <see cref="bool" />.
-        /// </returns>
-        public static bool ReadSafety(this IDataReader dataReader)
-        {
-            try
-            {
-                return dataReader.Read();
-            }
-            catch (Exception ex)
-            {
-                Log.Error(ex, "Error reading the next record from data reader");
-
-                return false;
             }
         }
     }

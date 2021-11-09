@@ -34,7 +34,7 @@
             ruleA.SetupGet(rule => rule.IsEnabled).Returns(true);
             ruleA.Setup(
                     rule => rule.EvaluateAsync(It.IsAny<AuthorizationRequestMessage<AccountBalanceRequestMessage>>()))
-                .ReturnsAsync(true);
+                .ReturnsAsync(EvaluationResult.Success);
             var ruleB = new Mock<IRule<AuthorizationRequestMessage<AccountBalanceRequestMessage>>>();
             ruleB.SetupGet(rule => rule.IsEnabled).Returns(true);
             ruleB.Setup(
@@ -83,12 +83,12 @@
             ruleA.SetupGet(rule => rule.IsEnabled).Returns(true);
             ruleA.Setup(
                     rule => rule.EvaluateAsync(It.IsAny<AuthorizationRequestMessage<AccountBalanceRequestMessage>>()))
-                .ReturnsAsync(true);
+                .ReturnsAsync(EvaluationResult.Success);
             var ruleB = new Mock<IRule<AuthorizationRequestMessage<AccountBalanceRequestMessage>>>();
             ruleB.SetupGet(rule => rule.IsEnabled).Returns(true);
             ruleB.Setup(
                     rule => rule.EvaluateAsync(It.IsAny<AuthorizationRequestMessage<AccountBalanceRequestMessage>>()))
-                .ReturnsAsync(false);
+                .ReturnsAsync(EvaluationResult.Error());
 
             var rules = new List<IRule<AuthorizationRequestMessage<AccountBalanceRequestMessage>>>
                             {
@@ -132,12 +132,12 @@
             ruleA.SetupGet(rule => rule.IsEnabled).Returns(true);
             ruleA.Setup(
                     rule => rule.EvaluateAsync(It.IsAny<AuthorizationRequestMessage<AccountBalanceRequestMessage>>()))
-                .ReturnsAsync(true);
+                .ReturnsAsync(EvaluationResult.Success());
             var ruleB = new Mock<IRule<AuthorizationRequestMessage<AccountBalanceRequestMessage>>>();
             ruleB.SetupGet(rule => rule.IsEnabled).Returns(true);
             ruleB.Setup(
                     rule => rule.EvaluateAsync(It.IsAny<AuthorizationRequestMessage<AccountBalanceRequestMessage>>()))
-                .ReturnsAsync(true);
+                .ReturnsAsync(EvaluationResult.Success());
 
             var rules = new List<IRule<AuthorizationRequestMessage<AccountBalanceRequestMessage>>>
                             {
@@ -182,12 +182,12 @@
             ruleA.SetupGet(rule => rule.IsEnabled).Returns(false);
             ruleA.Setup(
                     rule => rule.EvaluateAsync(It.IsAny<AuthorizationRequestMessage<AccountBalanceRequestMessage>>()))
-                .ReturnsAsync(true);
+                .ReturnsAsync(EvaluationResult.Success());
             var ruleB = new Mock<IRule<AuthorizationRequestMessage<AccountBalanceRequestMessage>>>();
             ruleB.SetupGet(rule => rule.IsEnabled).Returns(true);
             ruleB.Setup(
                     rule => rule.EvaluateAsync(It.IsAny<AuthorizationRequestMessage<AccountBalanceRequestMessage>>()))
-                .ReturnsAsync(false);
+                .ReturnsAsync(EvaluationResult.Error());
 
             var rules = new List<IRule<AuthorizationRequestMessage<AccountBalanceRequestMessage>>>
                             {

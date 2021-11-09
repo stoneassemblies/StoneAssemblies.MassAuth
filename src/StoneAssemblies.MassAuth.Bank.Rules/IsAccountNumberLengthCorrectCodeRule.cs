@@ -90,7 +90,7 @@ namespace StoneAssemblies.MassAuth.Bank.Rules
         /// <returns>
         ///     The <see cref="Task" />.
         /// </returns>
-        public Task<bool> EvaluateAsync(AuthorizationRequestMessage<AccountBalanceRequestMessage> message)
+        public Task<EvaluationResult> EvaluateAsync(AuthorizationRequestMessage<AccountBalanceRequestMessage> message)
         {
             var delegateResult = true;
             try
@@ -105,7 +105,12 @@ namespace StoneAssemblies.MassAuth.Bank.Rules
                 Log.Error(ex, "Error evaluating rules");
             }
 
-            return Task.FromResult(delegateResult);
+            if (!delegateResult)
+            {
+                return Task.FromResult(EvaluationResult.Error("The account number length is incorrect"));
+            }
+
+            return Task.FromResult(EvaluationResult.Success());
         }
     }
 }

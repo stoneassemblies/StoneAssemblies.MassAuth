@@ -21,6 +21,8 @@ namespace StoneAssemblies.MassAuth.Services
     using Microsoft.AspNetCore.Mvc.Filters;
     using Microsoft.AspNetCore.SignalR;
 
+    using Newtonsoft.Json;
+
     using Serilog;
 
     using StoneAssemblies.Contrib.MassTransit.Services.Interfaces;
@@ -28,12 +30,15 @@ namespace StoneAssemblies.MassAuth.Services
     using StoneAssemblies.MassAuth.Messages;
     using StoneAssemblies.MassAuth.Services.Attributes;
     using StoneAssemblies.MassAuth.Services.Extensions;
+    using StoneAssemblies.MassAuth.Services.Options;
 
     /// <summary>
     ///     The authorize by rule filter.
     /// </summary>
     public class AuthorizeByRuleFilter : IAsyncActionFilter, IHubFilter
     {
+        private readonly AuthorizeByRuleFilterConfigurationOptions options;
+
         /// <summary>
         ///     The bus selector.
         /// </summary>
@@ -42,8 +47,9 @@ namespace StoneAssemblies.MassAuth.Services
         /// <summary>
         ///     Initializes a new instance of the <see cref="AuthorizeByRuleFilter" /> class.
         /// </summary>
-        public AuthorizeByRuleFilter(IEnumerable<IBusSelector> busSelectors)
+        public AuthorizeByRuleFilter(AuthorizeByRuleFilterConfigurationOptions options, IEnumerable<IBusSelector> busSelectors)
         {
+            this.options = options;
             this.busSelectors = busSelectors.ToList();
         }
 
@@ -59,18 +65,34 @@ namespace StoneAssemblies.MassAuth.Services
         /// <returns>
         ///     The <see cref="Task" />.
         /// </returns>
-        async Task IAsyncActionFilter.OnActionExecutionAsync(
-            ActionExecutingContext context, ActionExecutionDelegate next)
+        async Task IAsyncActionFilter.OnActionExecutionAsync(ActionExecutingContext context, ActionExecutionDelegate next)
         {
             var httpContext = context.HttpContext;
             var messages = context.ActionArguments.Values.OfType<MessageBase>().ToList();
-            if (await this.IsAuthorizedAsync(httpContext, messages))
+            var authorization = await this.AuthorizationRequestAsync(httpContext, messages);
+            if (authorization.IsAuthorized)
             {
                 await next();
             }
             else
             {
-                context.Result = new UnauthorizedResult();
+                if (this.options.ReturnForbiddanceReason && !string.IsNullOrWhiteSpace(authorization.AuthorizationResponseMessage?.ForbiddanceReason))
+                {
+                    context.Result = new ContentResult
+                                         {
+                                             StatusCode = StatusCodes.Status403Forbidden,
+                                             Content = JsonConvert.SerializeObject(
+                                                 new
+                                                     {
+                                                         ForbiddanceReason = authorization.AuthorizationResponseMessage?.ForbiddanceReason,
+                                                     }),
+                                             ContentType = "application/json",
+                                         };
+                }
+                else
+                {
+                    context.Result = new ForbidResult();
+                }
             }
         }
 
@@ -88,10 +110,14 @@ namespace StoneAssemblies.MassAuth.Services
             var messages = invocationContext.HubMethodArguments.OfType<MessageBase>().ToList();
             var httpContext = invocationContext.Context.Features.Get<IHttpContextFeature>()?.HttpContext;
 
-            if (authorizeByRuleAttribute != null && !await this.IsAuthorizedAsync(httpContext, messages))
+            if (authorizeByRuleAttribute != null)
             {
-                await invocationContext.Hub.Clients.Caller.SendAsync("Unauthorized");
-                throw new HubException("Unauthorized");
+                var authorization = await this.AuthorizationRequestAsync(httpContext, messages);
+                if (!authorization.IsAuthorized)
+                {
+                    await invocationContext.Hub.Clients.Caller.SendAsync("Unauthorized");
+                    throw new HubException("Unauthorized");
+                }
             }
 
             return await next(invocationContext);
@@ -103,17 +129,18 @@ namespace StoneAssemblies.MassAuth.Services
         /// <param name="httpContext">The http context.</param>
         /// <param name="messages">The messages</param>
         /// <returns><c>True</c> whether all messages are authorized, otherwise <c>False</c></returns>
-        private async Task<bool> IsAuthorizedAsync(HttpContext httpContext, List<MessageBase> messages)
+        private async Task<(bool IsAuthorized, AuthorizationResponseMessage AuthorizationResponseMessage)> AuthorizationRequestAsync(HttpContext httpContext, List<MessageBase> messages)
         {
             foreach (var message in messages)
             {
-                if (!await this.IsAuthorizedAsync(httpContext, message))
+                var authorization = await this.AuthorizationRequestAsync(httpContext, message);
+                if (!authorization.IsAuthorized)
                 {
-                    return false;
+                    return authorization;
                 }
             }
 
-            return true;
+            return (true, null);
         }
 
         /// <summary>
@@ -122,7 +149,7 @@ namespace StoneAssemblies.MassAuth.Services
         /// <param name="httpContext">The http context.</param>
         /// <param name="message">The message</param>
         /// <returns><c>True</c> whether the message is authorized, otherwise <c>False</c></returns>
-        private async Task<bool> IsAuthorizedAsync(HttpContext httpContext, MessageBase message)
+        private async Task<(bool IsAuthorized, AuthorizationResponseMessage AuthorizationResponseMessage)> AuthorizationRequestAsync(HttpContext httpContext, MessageBase message)
         {
             var busSelector = this.busSelectors.FirstOrDefault(
                 selector => typeof(IBusSelector<>).MakeGenericType(message.GetType()).IsInstanceOfType(selector));
@@ -154,17 +181,18 @@ namespace StoneAssemblies.MassAuth.Services
 
                 if (tasks.Count == 0)
                 {
-                    return false;
+                    return (false, null);
                 }
 
                 var responses = await Task.WhenAll(tasks);
+                var authorizationResponseMessage = responses.Select(r => r.Message).FirstOrDefault(m => !m.IsAuthorized);
                 if (responses.Any(r => !r.Message.IsAuthorized))
                 {
-                    return false;
+                    return (false, authorizationResponseMessage);
                 }
             }
 
-            return true;
+            return (true, null); ;
         }
     }
 }

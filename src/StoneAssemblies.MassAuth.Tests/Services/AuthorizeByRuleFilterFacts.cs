@@ -6,7 +6,6 @@
 
 namespace StoneAssemblies.MassAuth.Tests.Services
 {
-    using System;
     using System.Collections.Generic;
     using System.Threading;
     using System.Threading.Tasks;
@@ -24,11 +23,12 @@ namespace StoneAssemblies.MassAuth.Tests.Services
 
     using Moq;
 
-    using StoneAssemblies.Contrib.MassTransit.Services;
     using StoneAssemblies.Contrib.MassTransit.Services.Interfaces;
     using StoneAssemblies.MassAuth.Bank.Messages;
     using StoneAssemblies.MassAuth.Messages;
     using StoneAssemblies.MassAuth.Services;
+    using StoneAssemblies.MassAuth.Services.Extensions;
+    using StoneAssemblies.MassAuth.Services.Options;
 
     using Xunit;
 
@@ -101,7 +101,7 @@ namespace StoneAssemblies.MassAuth.Tests.Services
                 var busSelectorMock = new Mock<IBusSelector<AccountBalanceRequestMessage>>();
                 busSelectorMock.Setup(selector => selector.SelectClientFactories(It.IsAny<object>())).Returns(
                 (object @object) => ToAsyncEnumerable(clientFactoryMock.Object));
-                var authorizeByRuleFilter = new AuthorizeByRuleFilter(
+                var authorizeByRuleFilter = new AuthorizeByRuleFilter(new AuthorizeByRuleFilterConfigurationOptions(), 
                     new List<IBusSelector>
                         {
                             busSelectorMock.Object
@@ -162,6 +162,7 @@ namespace StoneAssemblies.MassAuth.Tests.Services
                 busSelectorMock.Setup(selector => selector.SelectClientFactories(It.IsAny<object>())).Returns(
                     (object @object) => ToAsyncEnumerable(clientFactoryMock.Object));
                 var authorizeByRuleFilter = new AuthorizeByRuleFilter(
+                                                new AuthorizeByRuleFilterConfigurationOptions(), 
                                                 new List<IBusSelector>
                                                     {
                                                         busSelectorMock.Object

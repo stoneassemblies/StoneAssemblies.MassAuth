@@ -17,8 +17,8 @@ namespace StoneAssemblies.MassAuth.Messages
         public bool IsAuthorized { get; set; }
 
         /// <summary>
-        ///     Gets or sets the reason.
+        ///     Gets or sets the forbiddance reason.
         /// </summary>
-        public string Reason { get; set; }
+        public string ForbiddanceReason { get; set; }
     }
 }

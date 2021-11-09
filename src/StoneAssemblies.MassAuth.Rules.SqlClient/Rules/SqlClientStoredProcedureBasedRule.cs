@@ -102,7 +102,7 @@ namespace StoneAssemblies.MassAuth.Rules.SqlClient.Rules
         /// <returns>
         ///     <c>true</c> if the evaluation succeeds, otherwise <c>false</c>.
         /// </returns>
-        public async Task<bool> EvaluateAsync(TMessage message)
+        public async Task<EvaluationResult> EvaluateAsync(TMessage message)
         {
             var connection = this.connectionFactory.Create(this.connectionString);
 
@@ -120,10 +120,18 @@ namespace StoneAssemblies.MassAuth.Rules.SqlClient.Rules
             try
             {
                 await connection.OpenAsync();
-                var value = await command.ExecuteScalarAsync();
-                if (value != null)
+                var reader = await command.ExecuteReaderAsync();
+                if (await reader.ReadAsync())
                 {
-                    return Convert.ToBoolean(value);
+                    var succeeded = reader.GetBoolean(0);
+                    if (succeeded)
+                    {
+                        return EvaluationResult.Success();
+                    }
+                    else
+                    {
+                        return EvaluationResult.Error(reader.FieldCount > 0 ? reader.GetString(1) : string.Empty);
+                    }
                 }
             }
             finally
@@ -136,7 +144,7 @@ namespace StoneAssemblies.MassAuth.Rules.SqlClient.Rules
                 await connection.DisposeAsync();
             }
 
-            return false;
+            return EvaluationResult.Error();
         }
     }
 }

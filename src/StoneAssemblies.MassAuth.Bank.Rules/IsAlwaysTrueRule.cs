@@ -41,9 +41,9 @@ namespace StoneAssemblies.MassAuth.Bank.Rules
         /// <returns>
         ///     The <see cref="Task" />.
         /// </returns>
-        public Task<bool> EvaluateAsync(AuthorizationRequestMessage<AccountBalanceRequestMessage> message)
+        public Task<EvaluationResult> EvaluateAsync(AuthorizationRequestMessage<AccountBalanceRequestMessage> message)
         {
-            return Task.FromResult(true);
+            return Task.FromResult(EvaluationResult.Success());
         }
     }
 }

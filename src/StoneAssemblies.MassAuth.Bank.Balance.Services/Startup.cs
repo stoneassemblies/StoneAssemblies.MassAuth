@@ -90,7 +90,11 @@ namespace StoneAssemblies.MassAuth.Bank.Balance.Services
             var serviceDiscovery = ServiceDiscoveryFactory.GetServiceDiscovery();
             services.AddSingleton(serviceDiscovery);
 
-            services.AddMassAuth();
+            services.AddMassAuth(
+                options =>
+                    {
+                        options.ReturnForbiddanceReason = true;
+                    });
 
             // TODO: Use service discovery to resolve address from service name.
             // var serviceDiscovery = serviceCollection.GetRegisteredInstance<IServiceDiscovery>();

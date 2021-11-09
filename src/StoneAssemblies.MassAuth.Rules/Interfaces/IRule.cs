@@ -40,6 +40,6 @@ namespace StoneAssemblies.MassAuth.Rules.Interfaces
         /// <returns>
         ///     The <see cref="Task" />.
         /// </returns>
-        Task<bool> EvaluateAsync(TMessage message);
+        Task<EvaluationResult> EvaluateAsync(TMessage message);
     }
 }

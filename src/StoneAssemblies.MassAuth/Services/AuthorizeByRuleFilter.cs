@@ -174,27 +174,7 @@ namespace StoneAssemblies.MassAuth.Services
                         }
                     }
 
-                    tasks.Add(Task.Run(async () =>
-                        {
-                            AuthorizationResponseMessage responseMessage;
-                            try
-                            {
-                                var response = await clientRequest.GetResponse<AuthorizationResponseMessage>(authorizationMessage);
-                                responseMessage = response.Message;
-                            }
-                            catch (Exception ex)
-                            {
-                                Log.Error(ex,"Error requesting authorization for message type '{MessageType}'", authorizationMessage.GetType());
-
-                                responseMessage =  new AuthorizationResponseMessage
-                                                    {
-                                                        IsAuthorized = false,
-                                                        ForbiddanceReason = "Error requesting authorization",
-                                                    };
-                            }
-
-                            return responseMessage;
-                        }));
+                    tasks.Add(Task.Run(() => clientRequest.GetAuthorizationResponseMessageAsync(authorizationMessage)));
                 }
 
                 if (tasks.Count == 0)
@@ -212,5 +192,6 @@ namespace StoneAssemblies.MassAuth.Services
 
             return AuthorizationResult.Authorized();
         }
+
     }
 }

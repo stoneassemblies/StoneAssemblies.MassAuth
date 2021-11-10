@@ -12,6 +12,8 @@ namespace StoneAssemblies.MassAuth.Rules.SqlClient.Rules
 
     using Newtonsoft.Json;
 
+    using Serilog;
+
     using StoneAssemblies.MassAuth.Rules.Interfaces;
     using StoneAssemblies.MassAuth.Rules.SqlClient.Extensions;
     using StoneAssemblies.MassAuth.Rules.SqlClient.Services.Interfaces;
@@ -70,9 +72,7 @@ namespace StoneAssemblies.MassAuth.Rules.SqlClient.Rules
         /// <param name="priority">
         ///     The priority.
         /// </param>
-        public SqlClientStoredProcedureBasedRule(
-            IConnectionFactory connectionFactory, string ruleName, Type messageType, string connectionString,
-            string storedProcedureName, int priority)
+        public SqlClientStoredProcedureBasedRule(IConnectionFactory connectionFactory, string ruleName, Type messageType, string connectionString, string storedProcedureName, int priority)
         {
             this.connectionFactory = connectionFactory;
             this.ruleName = ruleName;
@@ -104,6 +104,8 @@ namespace StoneAssemblies.MassAuth.Rules.SqlClient.Rules
         /// </returns>
         public async Task<EvaluationResult> EvaluateAsync(TMessage message)
         {
+            var evaluationResult = EvaluationResult.Error();
+
             var connection = this.connectionFactory.Create(this.connectionString);
 
             var command = connection.CreateCommand();
@@ -121,16 +123,49 @@ namespace StoneAssemblies.MassAuth.Rules.SqlClient.Rules
             {
                 await connection.OpenAsync();
                 var reader = await command.ExecuteReaderAsync();
-                if (await reader.ReadAsync())
+                if (await reader.ReadAsync() && reader.FieldCount > 0)
                 {
-                    var succeeded = reader.GetBoolean(0);
-                    if (succeeded)
+                    var succeeded = false;
+
+                    if (reader.GetFieldType(0) == typeof(bool))
                     {
-                        return EvaluationResult.Success();
+                        succeeded = reader.GetBoolean(0);
+                    }
+                    else if (reader.GetFieldType(0) == typeof(short))
+                    {
+                        succeeded = Convert.ToBoolean(reader.GetInt16(0));
+                    }
+                    else if (reader.GetFieldType(0) == typeof(int))
+                    {
+                        succeeded = Convert.ToBoolean(reader.GetInt32(0));
+                    }
+                    else if (reader.GetFieldType(0) == typeof(long))
+                    {
+                        succeeded = Convert.ToBoolean(reader.GetInt64(0));
                     }
                     else
                     {
-                        return EvaluationResult.Error(reader.FieldCount > 1 ? reader.GetString(1) : string.Empty);
+                        Log.Warning(
+                            "Can't read the result of rule '{RuleName}'. The value type must be Boolean or Integer",
+                            this.ruleName);
+                    }
+
+                    if (succeeded)
+                    {
+                        evaluationResult = EvaluationResult.Success();
+                    }
+                    else
+                    {
+                        if (reader.FieldCount > 1 && reader.GetFieldType(1) == typeof(string))
+                        {
+                            evaluationResult = EvaluationResult.Error(reader.GetString(1));
+                        }
+                        else
+                        {
+                            Log.Warning(
+                                "Can't read the error reason of rule '{RuleName}', the value type must be string",
+                                this.ruleName);
+                        }
                     }
                 }
             }
@@ -144,7 +179,7 @@ namespace StoneAssemblies.MassAuth.Rules.SqlClient.Rules
                 await connection.DisposeAsync();
             }
 
-            return EvaluationResult.Error();
+            return evaluationResult;
         }
     }
 }

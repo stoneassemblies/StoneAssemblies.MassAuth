@@ -19,6 +19,7 @@ namespace StoneAssemblies.MassAuth.Tests.Services
     using Microsoft.AspNetCore.Http;
     using Microsoft.AspNetCore.Mvc;
     using Microsoft.AspNetCore.Mvc.Abstractions;
+    using Microsoft.AspNetCore.Mvc.Controllers;
     using Microsoft.AspNetCore.Mvc.Filters;
     using Microsoft.AspNetCore.Routing;
 
@@ -28,6 +29,7 @@ namespace StoneAssemblies.MassAuth.Tests.Services
     using StoneAssemblies.MassAuth.Bank.Messages;
     using StoneAssemblies.MassAuth.Messages;
     using StoneAssemblies.MassAuth.Services;
+    using StoneAssemblies.MassAuth.Services.Attributes;
     using StoneAssemblies.MassAuth.Services.Extensions;
     using StoneAssemblies.MassAuth.Services.Options;
 
@@ -119,6 +121,76 @@ namespace StoneAssemblies.MassAuth.Tests.Services
                 Assert.False(nextInvoked);
             }
 
+            [Fact]
+            public async Task Does_Not_Invoke_Next_Action_Delegate_When_The_Request_Is_Unauthorized_Building_The_Message_From_The_Attribute()
+            {
+                var actionContext = new ActionContext
+                                        {
+                                            HttpContext = new DefaultHttpContext(),
+                                            RouteData = new RouteData(),
+                                            ActionDescriptor = new ControllerActionDescriptor
+                                                                   {
+                                                                       MethodInfo = this.GetType().GetMethod(nameof(ControllerMethod)) 
+                                                                   }
+                                        };
+                var actionArguments = new Dictionary<string, object>
+                                          {
+                                              {
+                                                  "primaryAccountNumber", "123456789012"
+                                              }
+                                          };
+
+                var actionExecutingContext = new ActionExecutingContext(
+                    actionContext,
+                    new List<IFilterMetadata>(),
+                    actionArguments,
+                    new Mock<Controller>());
+
+                var clientFactoryMock = new Mock<IClientFactory>();
+                var requestClientMock = new Mock<IRequestClient<AuthorizationRequestMessage<AccountBalanceRequestMessage>>>();
+                requestClientMock.Setup(
+                    client => client.GetResponse<AuthorizationResponseMessage>(
+                        It.IsAny<AuthorizationRequestMessage<AccountBalanceRequestMessage>>(),
+                        CancellationToken.None,
+                        default)).ReturnsAsync(
+                    () =>
+                        {
+                            var mock = new Mock<ConsumeContext<AuthorizationResponseMessage>>();
+                            mock.Setup(context => context.Message).Returns(
+                                new AuthorizationResponseMessage
+                                    {
+                                        IsAuthorized = false
+                                    });
+                            var messageResponse = new MessageResponse<AuthorizationResponseMessage>(mock.Object);
+                            return messageResponse;
+                        });
+
+                clientFactoryMock
+                    .Setup(
+                        factory => factory.CreateRequestClient<AuthorizationRequestMessage<AccountBalanceRequestMessage>>(
+                            It.IsAny<RequestTimeout>())).Returns(requestClientMock.Object);
+
+                var nextInvoked = false;
+                var busSelectorMock = new Mock<IBusSelector<AccountBalanceRequestMessage>>();
+                busSelectorMock.Setup(selector => selector.SelectClientFactories(It.IsAny<object>())).Returns(
+                (object @object) => ToAsyncEnumerable(clientFactoryMock.Object));
+                var authorizeByRuleFilter = new AuthorizeByRuleFilter(new AuthorizeByRuleFilterConfigurationOptions(), 
+                    new List<IBusSelector>
+                        {
+                            busSelectorMock.Object
+                        }) as IAsyncActionFilter;
+                var actionExecutionDelegate = new ActionExecutionDelegate(
+                    () =>
+                        {
+                            nextInvoked = true;
+                            return Task.FromResult<ActionExecutedContext>(null);
+                        });
+
+                await authorizeByRuleFilter.OnActionExecutionAsync(actionExecutingContext, actionExecutionDelegate);
+
+                Assert.False(nextInvoked);
+            }
+
 
             [Fact]
             public async Task Does_Not_Invoke_Next_Action_Delegate_When_The_Request_Is_Unauthorized_And_ReturnForbiddanceReason_Is_True()
@@ -136,6 +208,80 @@ namespace StoneAssemblies.MassAuth.Tests.Services
                                                                                       {
                                                                                           PrimaryAccountNumber = "123456789012"
                                                                                       }
+                                              }
+                                          };
+
+                var actionExecutingContext = new ActionExecutingContext(
+                    actionContext,
+                    new List<IFilterMetadata>(),
+                    actionArguments,
+                    new Mock<Controller>());
+
+                var clientFactoryMock = new Mock<IClientFactory>();
+                var requestClientMock = new Mock<IRequestClient<AuthorizationRequestMessage<AccountBalanceRequestMessage>>>();
+                requestClientMock.Setup(
+                    client => client.GetResponse<AuthorizationResponseMessage>(
+                        It.IsAny<AuthorizationRequestMessage<AccountBalanceRequestMessage>>(),
+                        CancellationToken.None,
+                        default)).ReturnsAsync(
+                    () =>
+                        {
+                            var mock = new Mock<ConsumeContext<AuthorizationResponseMessage>>();
+                            mock.Setup(context => context.Message).Returns(
+                                new AuthorizationResponseMessage
+                                    {
+                                        IsAuthorized = false,
+                                        ForbiddanceReason = "The Forbiddance Reason"
+                                });
+                            var messageResponse = new MessageResponse<AuthorizationResponseMessage>(mock.Object);
+                            return messageResponse;
+                        });
+
+                clientFactoryMock
+                    .Setup(
+                        factory => factory.CreateRequestClient<AuthorizationRequestMessage<AccountBalanceRequestMessage>>(
+                            It.IsAny<RequestTimeout>())).Returns(requestClientMock.Object);
+
+                var nextInvoked = false;
+                var busSelectorMock = new Mock<IBusSelector<AccountBalanceRequestMessage>>();
+                busSelectorMock.Setup(selector => selector.SelectClientFactories(It.IsAny<object>())).Returns(
+                    (object @object) => ToAsyncEnumerable(clientFactoryMock.Object));
+                var authorizeByRuleFilter = new AuthorizeByRuleFilter(
+                                                new AuthorizeByRuleFilterConfigurationOptions()
+                                                    {
+                                                        ReturnForbiddanceReason = true
+                                                    },
+                                                new List<IBusSelector>
+                                                    {
+                                                        busSelectorMock.Object
+                                                    }) as IAsyncActionFilter;
+                var actionExecutionDelegate = new ActionExecutionDelegate(
+                    () =>
+                        {
+                            nextInvoked = true;
+                            return Task.FromResult<ActionExecutedContext>(null);
+                        });
+
+                await authorizeByRuleFilter.OnActionExecutionAsync(actionExecutingContext, actionExecutionDelegate);
+
+                Assert.False(nextInvoked);
+            }
+            [Fact]
+            public async Task Does_Not_Invoke_Next_Action_Delegate_When_The_Request_Is_Unauthorized_And_ReturnForbiddanceReason_Is_True_Building_The_Message_From_The_Attribute()
+            {
+                var actionContext = new ActionContext
+                                        {
+                                            HttpContext = new DefaultHttpContext(),
+                                            RouteData = new RouteData(),
+                                            ActionDescriptor = new ControllerActionDescriptor
+                                                                   {
+                                                                       MethodInfo = this.GetType().GetMethod(nameof(this.ControllerMethod))
+                                                                   }
+                                        };
+                var actionArguments = new Dictionary<string, object>
+                                          {
+                                              {
+                                                  "primaryAccountNumber", "123456789012"
                                               }
                                           };
 
@@ -396,6 +542,11 @@ namespace StoneAssemblies.MassAuth.Tests.Services
                 await authorizeByRuleFilter.OnActionExecutionAsync(actionExecutingContext, actionExecutionDelegate);
 
                 Assert.True(nextInvoked);
+            }
+
+            [AuthorizeByRule(typeof(AccountBalanceRequestMessage))]
+            public void ControllerMethod(string primaryAccountNumber)
+            {
             }
         }
     }

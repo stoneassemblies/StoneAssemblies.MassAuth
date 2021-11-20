@@ -68,9 +68,8 @@ namespace StoneAssemblies.MassAuth.Services
         /// </returns>
         async Task IAsyncActionFilter.OnActionExecutionAsync(ActionExecutingContext context, ActionExecutionDelegate next)
         {
-            var httpContext = context.HttpContext;
-            var messages = context.ActionArguments.Values.OfType<MessageBase>().ToList();
-            var authorizationResult = await this.AuthorizationRequestAsync(httpContext, messages);
+            var messages = context.GetMessages();
+            var authorizationResult = await this.AuthorizationRequestAsync(context.HttpContext, messages);
             if (authorizationResult.IsAuthorized)
             {
                 await next();

@@ -16,7 +16,7 @@ namespace StoneAssemblies.MassAuth.Bank.Balance.Services.Controllers
     using StoneAssemblies.MassAuth.Services.Attributes;
 
     /// <summary>
-    /// The balance controller.
+    ///     The balance controller.
     /// </summary>
     [ApiController]
     [Route("api/[controller]")]
@@ -32,16 +32,64 @@ namespace StoneAssemblies.MassAuth.Bank.Balance.Services.Controllers
         ///     The <see cref="Task" />.
         /// </returns>
         [AuthorizeByRule]
-        // [Authorize]
-        [HttpGet]
-        public Task<AccountBalance> AccountBalanceRequest(
-            [FromQuery] AccountBalanceRequestMessage accountBalanceRequestMessage)
+        [HttpGet("[action]")]
+        public Task<AccountBalance> FromQueryGet([FromQuery] AccountBalanceRequestMessage accountBalanceRequestMessage)
         {
             var random = new Random();
 
             var accountBalance = new AccountBalance
                                      {
                                          PrimaryAccountNumber = accountBalanceRequestMessage.PrimaryAccountNumber,
+                                         Balance = random.NextDouble() * random.Next(0, 1000),
+                                         DateTime = DateTime.Now,
+                                     };
+
+            return Task.FromResult(accountBalance);
+        }
+
+        /// <summary>
+        /// Gets a balance.
+        /// </summary>
+        /// <param name="primaryAccountNumber">
+        /// The primary account number.
+        /// </param>
+        /// <returns>
+        /// The <see cref="Task"/>.
+        /// </returns>
+        [AuthorizeByRule(typeof(AccountBalanceRequestMessage))]
+        [HttpGet("[action]")]
+        public Task<AccountBalance> Get(string primaryAccountNumber)
+        {
+            var random = new Random();
+
+            var accountBalance = new AccountBalance
+                                     {
+                                         PrimaryAccountNumber = primaryAccountNumber,
+                                         Balance = random.NextDouble() * random.Next(0, 1000),
+                                         DateTime = DateTime.Now,
+                                     };
+
+            return Task.FromResult(accountBalance);
+        }
+
+        /// <summary>
+        /// Gets a balance.
+        /// </summary>
+        /// <param name="primaryAccountNumber">
+        /// The primary account number.
+        /// </param>
+        /// <returns>
+        /// The <see cref="Task"/>.
+        /// </returns>
+        [AuthorizeByRule(typeof(AccountBalanceRequestMessage))]
+        [HttpGet("[action]/{primaryAccountNumber}")]
+        public Task<AccountBalance> GetTemplate(string primaryAccountNumber)
+        {
+            var random = new Random();
+
+            var accountBalance = new AccountBalance
+                                     {
+                                         PrimaryAccountNumber = primaryAccountNumber,
                                          Balance = random.NextDouble() * random.Next(0, 1000),
                                          DateTime = DateTime.Now,
                                      };

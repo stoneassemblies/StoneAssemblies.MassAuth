@@ -9,8 +9,6 @@ namespace StoneAssemblies.MassAuth.Tests.Rules.SqlClient.Extensions
     using System.Collections.Generic;
     using System.Linq;
 
-    using Dasync.Collections;
-
     using Microsoft.Extensions.Configuration;
     using Microsoft.Extensions.DependencyInjection;
 
@@ -22,7 +20,6 @@ namespace StoneAssemblies.MassAuth.Tests.Rules.SqlClient.Extensions
     using StoneAssemblies.MassAuth.Rules.Interfaces;
     using StoneAssemblies.MassAuth.Rules.SqlClient.Extensions;
     using StoneAssemblies.MassAuth.Rules.SqlClient.Models;
-    using StoneAssemblies.MassAuth.Rules.SqlClient.Services;
     using StoneAssemblies.MassAuth.Rules.SqlClient.Services.Interfaces;
 
     using Xunit;

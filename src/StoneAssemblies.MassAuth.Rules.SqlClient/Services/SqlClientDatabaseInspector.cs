@@ -12,6 +12,8 @@ namespace StoneAssemblies.MassAuth.Rules.SqlClient.Services
 
     using Serilog;
 
+    using StoneAssemblies.Data.Extensions;
+    using StoneAssemblies.Data.Services.Interfaces;
     using StoneAssemblies.MassAuth.Rules.SqlClient.Extensions;
     using StoneAssemblies.MassAuth.Rules.SqlClient.Models;
     using StoneAssemblies.MassAuth.Rules.SqlClient.Services.Interfaces;
@@ -21,7 +23,10 @@ namespace StoneAssemblies.MassAuth.Rules.SqlClient.Services
     /// </summary>
     public class SqlClientDatabaseInspector : IDatabaseInspector
     {
-        private readonly IConnectionFactory connectionFactory;
+        /// <summary>
+        /// The database connection factory.
+        /// </summary>
+        private readonly IDbConnectionFactory connectionFactory;
 
         /// <summary>
         ///     Initializes a new instance of the <see cref="SqlClientDatabaseInspector" /> class.
@@ -32,7 +37,7 @@ namespace StoneAssemblies.MassAuth.Rules.SqlClient.Services
         /// <param name="connectionString">
         ///     The connection string.
         /// </param>
-        public SqlClientDatabaseInspector(IConnectionFactory connectionFactory, string connectionString)
+        public SqlClientDatabaseInspector(IDbConnectionFactory connectionFactory, string connectionString)
         {
             this.connectionFactory = connectionFactory;
             this.ConnectionString = connectionString;
@@ -48,8 +53,8 @@ namespace StoneAssemblies.MassAuth.Rules.SqlClient.Services
             foreach (var storedProcedure in storedProcedures)
             {
                 using var connection = this.connectionFactory.Create(this.ConnectionString);
-                var sqlCommand = connection.CreateCommand();
-                sqlCommand.CommandText =
+                var command = connection.CreateCommand();
+                command.CommandText =
                     $"SELECT [RuleName], [MessageTypeName], [StoredProcedure], [Priority] FROM [dbo].[Mappings] WHERE [StoredProcedure]='{storedProcedure}'";
 
                 try
@@ -65,18 +70,20 @@ namespace StoneAssemblies.MassAuth.Rules.SqlClient.Services
                 {
                     if (connection.State == ConnectionState.Open)
                     {
-                        var dataReader = sqlCommand.ExecuteReaderSafety();
+                        var dataReader = command.ExecuteReaderSafety();
                         if (dataReader == null)
                         {
+                            Log.Warning("No data reader for mappings");
+
                             yield break;
                         }
 
-                        var mappings = dataReader.Select(
-                            reader => new Mapping(
-                                dataReader.GetString(0),
-                                dataReader.GetString(1),
-                                dataReader.GetString(2),
-                                dataReader.GetInt32(3)));
+                        var mappings = dataReader.GetAll(
+                                       reader => new Mapping(
+                                           dataReader.GetString(0),
+                                           dataReader.GetString(1),
+                                           dataReader.GetString(2),
+                                           dataReader.GetInt32(3)));
 
                         foreach (var mapping in mappings)
                         {
@@ -120,7 +127,7 @@ namespace StoneAssemblies.MassAuth.Rules.SqlClient.Services
                         yield break;
                     }
 
-                    foreach (var storedProcedure in dataReader.Select(reader => reader.GetString(2)))
+                    foreach (var storedProcedure in dataReader.GetAll(reader => reader.GetString(2)))
                     {
                         yield return storedProcedure;
                     }

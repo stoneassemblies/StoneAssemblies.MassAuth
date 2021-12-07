@@ -11,12 +11,16 @@ namespace StoneAssemblies.MassAuth.Rules.SqlClient.Extensions
     using System.Collections.Generic;
     using System.Linq;
     using System.Text.RegularExpressions;
+    using System.Threading.Tasks;
+
+    using Dasync.Collections;
 
     using Microsoft.Extensions.Configuration;
     using Microsoft.Extensions.DependencyInjection;
 
     using Serilog;
 
+    using StoneAssemblies.Data.SqlClient.Services;
     using StoneAssemblies.Hosting.Extensions;
     using StoneAssemblies.MassAuth.Messages;
     using StoneAssemblies.MassAuth.Rules.Interfaces;
@@ -64,7 +68,7 @@ namespace StoneAssemblies.MassAuth.Rules.SqlClient.Extensions
                 return;
             }
 
-            var sqlClientConnectionFactory = new SqlClientConnectionFactory();
+            var sqlClientConnectionFactory = new SqlConnectionFactory();
             serviceCollection.AddSingleton(sqlClientConnectionFactory);
             foreach (var connectionString in connectionStrings)
             {
@@ -136,7 +140,7 @@ namespace StoneAssemblies.MassAuth.Rules.SqlClient.Extensions
                 var key = $"{connectionString}-{storedProcedureName}-{messageType.Name}";
                 if (!registeredStoredProcedures.Contains(key))
                 {
-                    var sqlClientConnectionFactory = serviceCollection.GetRegisteredInstance<SqlClientConnectionFactory>();
+                    var sqlClientConnectionFactory = serviceCollection.GetRegisteredInstance<SqlConnectionFactory>();
                     var authorizationRequestMessageType = typeof(AuthorizationRequestMessage<>).MakeGenericType(messageType);
                     var ruleInterfaceType = typeof(IRule<>).MakeGenericType(authorizationRequestMessageType);
                     var ruleType = typeof(SqlClientStoredProcedureBasedRule<>).MakeGenericType(authorizationRequestMessageType);
@@ -223,7 +227,8 @@ namespace StoneAssemblies.MassAuth.Rules.SqlClient.Extensions
                 return;
             }
 
-            foreach (var storedProcedureName in databaseInspector.GetStoredProcedures().Distinct())
+            var storedProcedures = databaseInspector.GetStoredProcedures().Distinct().ToList();
+            foreach (var storedProcedureName in storedProcedures)
             {
                 var match = regularExpressions.Select(r => r.Match(storedProcedureName)).FirstOrDefault(m => m.Success);
                 if (match != null && match.Groups.ContainsKey(MessageTypeCapturingGroupName))

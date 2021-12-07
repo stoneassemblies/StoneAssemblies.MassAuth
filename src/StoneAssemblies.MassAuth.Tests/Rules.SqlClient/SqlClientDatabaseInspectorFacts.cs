@@ -9,9 +9,14 @@ namespace StoneAssemblies.MassAuth.Tests.Rules.SqlClient
     using System;
     using System.Data;
     using System.Linq;
+    using System.Threading.Tasks;
+
+    using Dasync.Collections;
 
     using Moq;
 
+    using StoneAssemblies.Data.Services.Interfaces;
+    using StoneAssemblies.Data.SqlClient.Services;
     using StoneAssemblies.MassAuth.Rules.SqlClient.Services;
     using StoneAssemblies.MassAuth.Rules.SqlClient.Services.Interfaces;
 
@@ -35,7 +40,7 @@ namespace StoneAssemblies.MassAuth.Tests.Rules.SqlClient
             {
                 var connectionString =
                     "Server=localhost,321;Database=DB;User Id=User;Password=Password;MultipleActiveResultSets=true;Connection Timeout=30";
-                var sqlClientDatabaseInspector = new SqlClientDatabaseInspector(new SqlClientConnectionFactory(), connectionString);
+                var sqlClientDatabaseInspector = new SqlClientDatabaseInspector(new SqlConnectionFactory(), connectionString);
                 var mappings = sqlClientDatabaseInspector.GetMappings().ToList();
                 Assert.Empty(mappings);
             }
@@ -49,7 +54,7 @@ namespace StoneAssemblies.MassAuth.Tests.Rules.SqlClient
                 var connectionString =
                     "Server=localhost,321;Database=DB;User Id=User;Password=Password;MultipleActiveResultSets=true;Connection Timeout=30";
 
-                var connectionFactoryMock = new Mock<IConnectionFactory>();
+                var connectionFactoryMock = new Mock<IDbConnectionFactory>();
                 var connectionMock = new Mock<IDbConnection>();
                 connectionMock.SetupGet(connection => connection.State).Returns(ConnectionState.Open);
 
@@ -109,7 +114,7 @@ namespace StoneAssemblies.MassAuth.Tests.Rules.SqlClient
                 var connectionString =
                     "Server=localhost,321;Database=DB;User Id=User;Password=Password;MultipleActiveResultSets=true;Connection Timeout=30";
 
-                var connectionFactoryMock = new Mock<IConnectionFactory>();
+                var connectionFactoryMock = new Mock<IDbConnectionFactory>();
                 var connectionMock = new Mock<IDbConnection>();
                 connectionMock.SetupGet(connection => connection.State).Returns(ConnectionState.Open);
 
@@ -155,12 +160,12 @@ namespace StoneAssemblies.MassAuth.Tests.Rules.SqlClient
             ///     The returns a non empty list of mappings.
             /// </summary>
             [Fact]
-            public void Returns_A_Non_Empty_List_Of_Mappings()
+            public async void Returns_A_Non_Empty_List_Of_Mappings()
             {
                 var connectionString =
                     "Server=localhost,321;Database=DB;User Id=User;Password=Password;MultipleActiveResultSets=true;Connection Timeout=30";
 
-                var connectionFactoryMock = new Mock<IConnectionFactory>();
+                var connectionFactoryMock = new Mock<IDbConnectionFactory>();
                 var connectionMock = new Mock<IDbConnection>();
                 connectionMock.SetupGet(connection => connection.State).Returns(ConnectionState.Open);
 
@@ -229,7 +234,7 @@ namespace StoneAssemblies.MassAuth.Tests.Rules.SqlClient
             {
                 var connectionString =
                     "Server=localhost,321;Database=DB;User Id=User;Password=Password;MultipleActiveResultSets=true;Connection Timeout=30";
-                var sqlClientDatabaseInspector = new SqlClientDatabaseInspector(new SqlClientConnectionFactory(), connectionString);
+                var sqlClientDatabaseInspector = new SqlClientDatabaseInspector(new SqlConnectionFactory(), connectionString);
                 var storedProcedures = sqlClientDatabaseInspector.GetStoredProcedures().ToList();
                 Assert.Empty(storedProcedures);
             }
@@ -238,12 +243,12 @@ namespace StoneAssemblies.MassAuth.Tests.Rules.SqlClient
             ///     Returns a non empty list of_ stored procedures names.
             /// </summary>
             [Fact]
-            public void Returns_A_Non_Empty_List_Of_StoredProcedures_Names()
+            public async Task Returns_A_Non_Empty_List_Of_StoredProcedures_Names()
             {
                 var connectionString =
                     "Server=localhost,321;Database=DB;User Id=User;Password=Password;MultipleActiveResultSets=true;Connection Timeout=30";
 
-                var connectionFactoryMock = new Mock<IConnectionFactory>();
+                var connectionFactoryMock = new Mock<IDbConnectionFactory>();
                 var connectionMock = new Mock<IDbConnection>();
                 connectionMock.SetupGet(connection => connection.State).Returns(ConnectionState.Open);
 

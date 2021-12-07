@@ -24,7 +24,7 @@ namespace StoneAssemblies.MassAuth.Tests.Rules.SqlClient.Extensions
         /// <summary>
         ///     The the select method.
         /// </summary>
-        public class The_Select_Method
+        public class The_GetAll_Method
         {
             /// <summary>
             ///     Returns a nom empty enumeration when read does not throw an exception.
@@ -38,7 +38,7 @@ namespace StoneAssemblies.MassAuth.Tests.Rules.SqlClient.Extensions
                 dataReaderMock.Setup(reader => reader.Read()).Callback(() => count++).Returns(() => count < 2);
                 dataReaderMock.Setup(reader => reader.GetString(It.IsAny<int>())).Returns("string data");
 
-                var collection = dataReaderMock.Object.Select(reader => reader.GetString(0)).ToList();
+                var collection = dataReaderMock.Object.GetAll(reader => reader.GetString(0)).ToList();
 
                 Assert.NotEmpty(collection);
             }
@@ -55,7 +55,7 @@ namespace StoneAssemblies.MassAuth.Tests.Rules.SqlClient.Extensions
                 dataReaderMock.Setup(reader => reader.Read()).Callback(() => count++).Returns(() => count < 2);
                 dataReaderMock.Setup(reader => reader.GetString(It.IsAny<int>())).Throws<Exception>();
 
-                var collection = dataReaderMock.Object.Select(reader => reader.GetString(0)).ToList();
+                var collection = dataReaderMock.Object.GetAll(reader => reader.GetString(0)).ToList();
 
                 Assert.Empty(collection);
             }
@@ -70,7 +70,7 @@ namespace StoneAssemblies.MassAuth.Tests.Rules.SqlClient.Extensions
 
                 dataReaderMock.Setup(reader => reader.Read()).Throws<Exception>();
 
-                Assert.Empty(dataReaderMock.Object.Select(reader => reader.GetString(0)));
+                Assert.Empty(dataReaderMock.Object.GetAll(reader => reader.GetString(0)));
             }
         }
     }

@@ -14,6 +14,8 @@ namespace StoneAssemblies.MassAuth.Rules.SqlClient.Rules
 
     using Serilog;
 
+    using StoneAssemblies.Data.Extensions;
+    using StoneAssemblies.Data.Services.Interfaces;
     using StoneAssemblies.MassAuth.Rules.Interfaces;
     using StoneAssemblies.MassAuth.Rules.SqlClient.Extensions;
     using StoneAssemblies.MassAuth.Rules.SqlClient.Services.Interfaces;
@@ -29,7 +31,7 @@ namespace StoneAssemblies.MassAuth.Rules.SqlClient.Rules
         /// <summary>
         ///     The connection factory.
         /// </summary>
-        private readonly IConnectionFactory connectionFactory;
+        private readonly IDbConnectionFactory connectionFactory;
 
         /// <summary>
         ///     The connection string.
@@ -72,7 +74,7 @@ namespace StoneAssemblies.MassAuth.Rules.SqlClient.Rules
         /// <param name="priority">
         ///     The priority.
         /// </param>
-        public SqlClientStoredProcedureBasedRule(IConnectionFactory connectionFactory, string ruleName, Type messageType, string connectionString, string storedProcedureName, int priority)
+        public SqlClientStoredProcedureBasedRule(IDbConnectionFactory connectionFactory, string ruleName, Type messageType, string connectionString, string storedProcedureName, int priority)
         {
             this.connectionFactory = connectionFactory;
             this.ruleName = ruleName;

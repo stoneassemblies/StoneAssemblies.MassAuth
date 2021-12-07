@@ -9,9 +9,6 @@ namespace StoneAssemblies.MassAuth.Rules.SqlClient.Extensions
     using System;
     using System.Collections.Generic;
     using System.Data;
-    using System.Data.Common;
-    using System.Threading;
-    using System.Threading.Tasks;
 
     using Serilog;
 
@@ -20,28 +17,6 @@ namespace StoneAssemblies.MassAuth.Rules.SqlClient.Extensions
     /// </summary>
     public static class DataReaderExtensions
     {
-        /// <summary>
-        ///     The read async.
-        /// </summary>
-        /// <param name="dataReader">
-        ///     The data reader.
-        /// </param>
-        /// <param name="cancellationToken">
-        ///     The cancellation token.
-        /// </param>
-        /// <returns>
-        ///     The <see cref="Task" />.
-        /// </returns>
-        public static async Task<bool> ReadAsync(this IDataReader dataReader, CancellationToken cancellationToken = default)
-        {
-            if (dataReader is DbDataReader dbDataReader)
-            {
-                return await dbDataReader.ReadAsync(cancellationToken);
-            }
-
-            return dataReader.Read();
-        }
-
         /// <summary>
         ///     Read safety.
         /// </summary>
@@ -80,7 +55,7 @@ namespace StoneAssemblies.MassAuth.Rules.SqlClient.Extensions
         /// <returns>
         ///     The <see cref="IEnumerable{T}" />.
         /// </returns>
-        public static IEnumerable<T> Select<T>(this IDataReader dataReader, Func<IDataReader, T> projection)
+        public static IEnumerable<T> GetAll<T>(this IDataReader dataReader, Func<IDataReader, T> projection)
         {
             while (dataReader.ReadSafety())
             {

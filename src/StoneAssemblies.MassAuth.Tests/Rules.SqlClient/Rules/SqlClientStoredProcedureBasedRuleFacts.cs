@@ -11,6 +11,7 @@ namespace StoneAssemblies.MassAuth.Tests.Rules.SqlClient.Rules
 
     using Moq;
 
+    using StoneAssemblies.Data.Services.Interfaces;
     using StoneAssemblies.MassAuth.Bank.Messages;
     using StoneAssemblies.MassAuth.Messages;
     using StoneAssemblies.MassAuth.Rules.SqlClient.Rules;
@@ -37,7 +38,7 @@ namespace StoneAssemblies.MassAuth.Tests.Rules.SqlClient.Rules
             [Fact]
             public async Task Calls_The_Open_ExecuteReader_Close_And_Dispose_Methods_In_The_Correct_Order()
             {
-                var connectionFactoryMock = new Mock<IConnectionFactory>();
+                var connectionFactoryMock = new Mock<IDbConnectionFactory>();
                 var connectionMock = new Mock<IDbConnection>();
                 var order = 0;
                 connectionMock.Setup(connection => connection.Open()).Callback(() => Assert.Equal(0, order++));
@@ -90,7 +91,7 @@ namespace StoneAssemblies.MassAuth.Tests.Rules.SqlClient.Rules
             [Fact]
             public async Task Returns_False_When_GetBoolean_From_Reader_Returns_False()
             {
-                var connectionFactoryMock = new Mock<IConnectionFactory>();
+                var connectionFactoryMock = new Mock<IDbConnectionFactory>();
                 var connectionMock = new Mock<IDbConnection>();
                 connectionMock.Setup(connection => connection.State).Returns(ConnectionState.Open);
                 var commandMock = new Mock<IDbCommand>();
@@ -135,7 +136,7 @@ namespace StoneAssemblies.MassAuth.Tests.Rules.SqlClient.Rules
             [Fact]
             public async Task Returns_False_When_Read_From_Reader_Returns_False()
             {
-                var connectionFactoryMock = new Mock<IConnectionFactory>();
+                var connectionFactoryMock = new Mock<IDbConnectionFactory>();
                 var connectionMock = new Mock<IDbConnection>();
                 connectionMock.Setup(connection => connection.State).Returns(ConnectionState.Open);
                 var commandMock = new Mock<IDbCommand>();
@@ -178,7 +179,7 @@ namespace StoneAssemblies.MassAuth.Tests.Rules.SqlClient.Rules
             [Fact]
             public async Task Returns_The_ForbiddanceReason_From_The_GetString_From_Reader()
             {
-                var connectionFactoryMock = new Mock<IConnectionFactory>();
+                var connectionFactoryMock = new Mock<IDbConnectionFactory>();
                 var connectionMock = new Mock<IDbConnection>();
                 connectionMock.Setup(connection => connection.State).Returns(ConnectionState.Open);
                 var commandMock = new Mock<IDbCommand>();
@@ -234,7 +235,7 @@ namespace StoneAssemblies.MassAuth.Tests.Rules.SqlClient.Rules
             [Fact]
             public async Task Returns_True_When_GetBoolean_From_Reader_Returns_True()
             {
-                var connectionFactoryMock = new Mock<IConnectionFactory>();
+                var connectionFactoryMock = new Mock<IDbConnectionFactory>();
                 var connectionMock = new Mock<IDbConnection>();
                 connectionMock.Setup(connection => connection.State).Returns(ConnectionState.Open);
 
@@ -286,7 +287,7 @@ namespace StoneAssemblies.MassAuth.Tests.Rules.SqlClient.Rules
             [Fact]
             public async Task Returns_True_When_GetInt16_From_Reader_Returns_1()
             {
-                var connectionFactoryMock = new Mock<IConnectionFactory>();
+                var connectionFactoryMock = new Mock<IDbConnectionFactory>();
                 var connectionMock = new Mock<IDbConnection>();
                 connectionMock.Setup(connection => connection.State).Returns(ConnectionState.Open);
 
@@ -338,7 +339,7 @@ namespace StoneAssemblies.MassAuth.Tests.Rules.SqlClient.Rules
             [Fact]
             public async Task Returns_True_When_GetInt32_From_Reader_Returns_1()
             {
-                var connectionFactoryMock = new Mock<IConnectionFactory>();
+                var connectionFactoryMock = new Mock<IDbConnectionFactory>();
                 var connectionMock = new Mock<IDbConnection>();
                 connectionMock.Setup(connection => connection.State).Returns(ConnectionState.Open);
 
@@ -390,7 +391,7 @@ namespace StoneAssemblies.MassAuth.Tests.Rules.SqlClient.Rules
             [Fact]
             public async Task Returns_True_When_GetInt64_From_Reader_Returns_1()
             {
-                var connectionFactoryMock = new Mock<IConnectionFactory>();
+                var connectionFactoryMock = new Mock<IDbConnectionFactory>();
                 var connectionMock = new Mock<IDbConnection>();
                 connectionMock.Setup(connection => connection.State).Returns(ConnectionState.Open);
 
@@ -442,7 +443,7 @@ namespace StoneAssemblies.MassAuth.Tests.Rules.SqlClient.Rules
             [Fact]
             public async Task Returns_False_When_GetInt16_From_Reader_Returns_0()
             {
-                var connectionFactoryMock = new Mock<IConnectionFactory>();
+                var connectionFactoryMock = new Mock<IDbConnectionFactory>();
                 var connectionMock = new Mock<IDbConnection>();
                 connectionMock.Setup(connection => connection.State).Returns(ConnectionState.Open);
 
@@ -494,7 +495,7 @@ namespace StoneAssemblies.MassAuth.Tests.Rules.SqlClient.Rules
             [Fact]
             public async Task Returns_False_When_GetInt32_From_Reader_Returns_0()
             {
-                var connectionFactoryMock = new Mock<IConnectionFactory>();
+                var connectionFactoryMock = new Mock<IDbConnectionFactory>();
                 var connectionMock = new Mock<IDbConnection>();
                 connectionMock.Setup(connection => connection.State).Returns(ConnectionState.Open);
 
@@ -546,7 +547,7 @@ namespace StoneAssemblies.MassAuth.Tests.Rules.SqlClient.Rules
             [Fact]
             public async Task Returns_False_When_GetInt64_From_Reader_Returns_0()
             {
-                var connectionFactoryMock = new Mock<IConnectionFactory>();
+                var connectionFactoryMock = new Mock<IDbConnectionFactory>();
                 var connectionMock = new Mock<IDbConnection>();
                 connectionMock.Setup(connection => connection.State).Returns(ConnectionState.Open);
 
@@ -604,7 +605,7 @@ namespace StoneAssemblies.MassAuth.Tests.Rules.SqlClient.Rules
         {
             var sqlClientStoredProcedureBasedRule =
                 new SqlClientStoredProcedureBasedRule<AuthorizationRequestMessage<AccountBalanceRequestMessage>>(
-                    Mock.Of<IConnectionFactory>(),
+                    Mock.Of<IDbConnectionFactory>(),
                     "TestRule",
                     typeof(AccountBalanceRequestMessage),
                     "Server=localhost;",
@@ -622,7 +623,7 @@ namespace StoneAssemblies.MassAuth.Tests.Rules.SqlClient.Rules
         {
             var sqlClientStoredProcedureBasedRule =
                 new SqlClientStoredProcedureBasedRule<AuthorizationRequestMessage<AccountBalanceRequestMessage>>(
-                    Mock.Of<IConnectionFactory>(),
+                    Mock.Of<IDbConnectionFactory>(),
                     string.Empty,
                     typeof(AccountBalanceRequestMessage),
                     "Server=localhost;",
@@ -646,7 +647,7 @@ namespace StoneAssemblies.MassAuth.Tests.Rules.SqlClient.Rules
         {
             var sqlClientStoredProcedureBasedRule =
                 new SqlClientStoredProcedureBasedRule<AuthorizationRequestMessage<AccountBalanceRequestMessage>>(
-                    Mock.Of<IConnectionFactory>(),
+                    Mock.Of<IDbConnectionFactory>(),
                     "TestRule",
                     typeof(AccountBalanceRequestMessage),
                     "Server=localhost;",

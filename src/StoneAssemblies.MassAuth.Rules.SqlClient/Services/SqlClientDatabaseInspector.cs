@@ -70,7 +70,7 @@ namespace StoneAssemblies.MassAuth.Rules.SqlClient.Services
                 {
                     if (connection.State == ConnectionState.Open)
                     {
-                        var dataReader = command.ExecuteReaderSafety();
+                        var dataReader = command.ExecuteReader(true);
                         if (dataReader == null)
                         {
                             Log.Warning("No data reader for mappings");
@@ -79,11 +79,12 @@ namespace StoneAssemblies.MassAuth.Rules.SqlClient.Services
                         }
 
                         var mappings = dataReader.GetAll(
-                                       reader => new Mapping(
-                                           dataReader.GetString(0),
-                                           dataReader.GetString(1),
-                                           dataReader.GetString(2),
-                                           dataReader.GetInt32(3)));
+                            reader => new Mapping(
+                                dataReader.GetString(0),
+                                dataReader.GetString(1),
+                                dataReader.GetString(2),
+                                dataReader.GetInt32(3)),
+                            true);
 
                         foreach (var mapping in mappings)
                         {
@@ -121,13 +122,13 @@ namespace StoneAssemblies.MassAuth.Rules.SqlClient.Services
             {
                 try
                 {
-                    var dataReader = command.ExecuteReaderSafety();
+                    var dataReader = command.ExecuteReader(true);
                     if (dataReader == null)
                     {
                         yield break;
                     }
 
-                    foreach (var storedProcedure in dataReader.GetAll(reader => reader.GetString(2)))
+                    foreach (var storedProcedure in dataReader.GetAll(reader => reader.GetString(2), true))
                     {
                         yield return storedProcedure;
                     }

@@ -43,7 +43,7 @@ namespace StoneAssemblies.MassAuth.Server
     /// <summary>
     ///     The startup.
     /// </summary>
-        public class Startup
+    public class Startup
     {
         /// <summary>
         ///     Initializes a new instance of the <see cref="Startup" /> class.

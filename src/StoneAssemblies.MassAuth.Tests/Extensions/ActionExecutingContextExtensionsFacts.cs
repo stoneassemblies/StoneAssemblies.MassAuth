@@ -37,6 +37,7 @@ namespace StoneAssemblies.MassAuth.Tests.Extensions
             ///     The primary account number.
             /// </param>
             [AuthorizeByRule(typeof(AccountBalanceRequestMessage))]
+            [Theory]
             public void ControllerMethod(string primaryAccountNumber)
             {
             }
@@ -48,6 +49,7 @@ namespace StoneAssemblies.MassAuth.Tests.Extensions
             ///     The primary account number.
             /// </param>
             [AuthorizeByRule]
+            [Theory]
             public void ControllerMethod2(string primaryAccountNumber)
             {
             }
@@ -59,15 +61,15 @@ namespace StoneAssemblies.MassAuth.Tests.Extensions
             public void Does_Not_Return_Messages_From_Action_Attribute_When_MessagesTypes_Are_Not_Available()
             {
                 var actionContext = new ActionContext
-                                        {
-                                            HttpContext = new DefaultHttpContext(),
-                                            RouteData = new RouteData(),
-                                            ActionDescriptor = new ControllerActionDescriptor
-                                                                   {
-                                                                       MethodInfo = this.GetType()
+                {
+                    HttpContext = new DefaultHttpContext(),
+                    RouteData = new RouteData(),
+                    ActionDescriptor = new ControllerActionDescriptor
+                    {
+                        MethodInfo = this.GetType()
                                                                            .GetMethod(nameof(this.ControllerMethod2)),
-                                                                   },
-                                        };
+                    },
+                };
                 var actionArguments = new Dictionary<string, object>
                                           {
                                               {
@@ -96,15 +98,15 @@ namespace StoneAssemblies.MassAuth.Tests.Extensions
             public void Returns_Messages_From_Action_Attribute()
             {
                 var actionContext = new ActionContext
-                                        {
-                                            HttpContext = new DefaultHttpContext(),
-                                            RouteData = new RouteData(),
-                                            ActionDescriptor = new ControllerActionDescriptor
-                                                                   {
-                                                                       MethodInfo = this.GetType()
+                {
+                    HttpContext = new DefaultHttpContext(),
+                    RouteData = new RouteData(),
+                    ActionDescriptor = new ControllerActionDescriptor
+                    {
+                        MethodInfo = this.GetType()
                                                                            .GetMethod(nameof(this.ControllerMethod)),
-                                                                   },
-                                        };
+                    },
+                };
                 var actionArguments = new Dictionary<string, object>
                                           {
                                               {
@@ -130,15 +132,15 @@ namespace StoneAssemblies.MassAuth.Tests.Extensions
             public void Returns_Messages_From_Action_Attribute_Ignoring_The_Unmatched_Arguments()
             {
                 var actionContext = new ActionContext
-                                        {
-                                            HttpContext = new DefaultHttpContext(),
-                                            RouteData = new RouteData(),
-                                            ActionDescriptor = new ControllerActionDescriptor
-                                                                   {
-                                                                       MethodInfo = this.GetType()
+                {
+                    HttpContext = new DefaultHttpContext(),
+                    RouteData = new RouteData(),
+                    ActionDescriptor = new ControllerActionDescriptor
+                    {
+                        MethodInfo = this.GetType()
                                                                            .GetMethod(nameof(this.ControllerMethod)),
-                                                                   },
-                                        };
+                    },
+                };
                 var actionArguments = new Dictionary<string, object>
                                           {
                                               {
@@ -167,11 +169,11 @@ namespace StoneAssemblies.MassAuth.Tests.Extensions
             public void Returns_Messages_From_Action_MessageBase_Arguments()
             {
                 var actionContext = new ActionContext
-                                        {
-                                            HttpContext = new DefaultHttpContext(),
-                                            RouteData = new RouteData(),
-                                            ActionDescriptor = new ActionDescriptor(),
-                                        };
+                {
+                    HttpContext = new DefaultHttpContext(),
+                    RouteData = new RouteData(),
+                    ActionDescriptor = new ActionDescriptor(),
+                };
                 var actionArguments = new Dictionary<string, object>
                                           {
                                               {

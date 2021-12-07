@@ -142,9 +142,9 @@ namespace StoneAssemblies.MassAuth.Bank.Balance.Services
                         options.RequireHttpsMetadata = !string.IsNullOrWhiteSpace(identityServerAuthority) && identityServerAuthority.StartsWith("https://");
                         options.Audience = "stoneassemblies-massauth-bank-balance-services";
                         options.BackchannelHttpHandler = new HttpClientHandler
-                                                             {
-                                                                 ServerCertificateCustomValidationCallback = delegate { return true; }
-                                                             };
+                        {
+                            ServerCertificateCustomValidationCallback = delegate { return true; }
+                        };
                     });
 
             services.AddControllers();

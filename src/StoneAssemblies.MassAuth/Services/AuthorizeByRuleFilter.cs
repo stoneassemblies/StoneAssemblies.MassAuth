@@ -79,15 +79,15 @@ namespace StoneAssemblies.MassAuth.Services
                 if (this.options.ReturnForbiddanceReason && !string.IsNullOrWhiteSpace(authorizationResult.ForbiddanceReason))
                 {
                     context.Result = new ContentResult
-                                         {
-                                             StatusCode = StatusCodes.Status403Forbidden,
-                                             Content = JsonConvert.SerializeObject(
+                    {
+                        StatusCode = StatusCodes.Status403Forbidden,
+                        Content = JsonConvert.SerializeObject(
                                                  new
-                                                     {
-                                                         ForbiddanceReason = authorizationResult?.ForbiddanceReason,
-                                                     }),
-                                             ContentType = "application/json",
-                                         };
+                                                 {
+                                                     ForbiddanceReason = authorizationResult?.ForbiddanceReason,
+                                                 }),
+                        ContentType = "application/json",
+                    };
                 }
                 else
                 {

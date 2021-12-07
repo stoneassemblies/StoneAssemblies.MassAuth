@@ -28,9 +28,9 @@ namespace StoneAssemblies.MassAuth.Proxy.Services
                 var routeTemplateProvider = new RouteAttribute($"api/authorize/{messageType.Name}");
                 controller.Selectors.Add(
                     new SelectorModel
-                        {
-                            AttributeRouteModel = new AttributeRouteModel(routeTemplateProvider),
-                        });
+                    {
+                        AttributeRouteModel = new AttributeRouteModel(routeTemplateProvider),
+                    });
             }
         }
     }

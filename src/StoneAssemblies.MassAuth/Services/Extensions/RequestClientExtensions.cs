@@ -44,10 +44,10 @@ namespace StoneAssemblies.MassAuth.Services.Extensions
                 Log.Error(ex, "Error requesting authorization for message type '{MessageType}'", authorizationMessage.GetType());
 
                 responseMessage = new AuthorizationResponseMessage
-                                      {
-                                          IsAuthorized = false,
-                                          ForbiddanceReason = "Error requesting authorization",
-                                      };
+                {
+                    IsAuthorized = false,
+                    ForbiddanceReason = "Error requesting authorization",
+                };
             }
 
             return responseMessage;

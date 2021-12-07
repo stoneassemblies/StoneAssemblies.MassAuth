@@ -54,9 +54,9 @@ namespace StoneAssemblies.MassAuth.Hosting.Services
         public async Task Consume(ConsumeContext<TMessage> context)
         {
             var message = new AuthorizationResponseMessage
-                              {
-                                  IsAuthorized = true,
-                              };
+            {
+                IsAuthorized = true,
+            };
 
             var rules = this.rulesContainer.Rules;
             foreach (var rule in rules)

@@ -118,18 +118,18 @@ namespace StoneAssemblies.MassAuth.Rules.SqlClient.Extensions
         ///     The priority.
         /// </param>
         private static void RegisterStoredProcedureBasedRule(
-            this IServiceCollection serviceCollection, 
-            Type messageType, 
-            string ruleName, 
+            this IServiceCollection serviceCollection,
+            Type messageType,
+            string ruleName,
             string connectionString,
-            string storedProcedureName, 
+            string storedProcedureName,
             int priority = 0)
         {
             Log.Information(
                 "Registering stored procedure based rule '{RuleName}' for message type '{MessageTypeName}' using stored procedure '{StoredProcedureName}' with priority {Priority}",
                 ruleName,
                 messageType.Name,
-                storedProcedureName, 
+                storedProcedureName,
                 priority);
 
             var registeredStoredProcedures = RegisteredStoredProcedureRulesPerServiceCollection.GetOrAdd(

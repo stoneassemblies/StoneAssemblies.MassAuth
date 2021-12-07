@@ -55,11 +55,11 @@ namespace StoneAssemblies.MassAuth.Tests.Services
             public async Task Does_Not_Invoke_Next_Action_Delegate_When_The_Request_Is_Unauthorized()
             {
                 var actionContext = new ActionContext
-                                        {
-                                            HttpContext = new DefaultHttpContext(),
-                                            RouteData = new RouteData(),
-                                            ActionDescriptor = new ActionDescriptor()
-                                        };
+                {
+                    HttpContext = new DefaultHttpContext(),
+                    RouteData = new RouteData(),
+                    ActionDescriptor = new ActionDescriptor()
+                };
                 var actionArguments = new Dictionary<string, object>
                                           {
                                               {
@@ -88,9 +88,9 @@ namespace StoneAssemblies.MassAuth.Tests.Services
                             var mock = new Mock<ConsumeContext<AuthorizationResponseMessage>>();
                             mock.Setup(context => context.Message).Returns(
                                 new AuthorizationResponseMessage
-                                    {
-                                        IsAuthorized = false
-                                    });
+                                {
+                                    IsAuthorized = false
+                                });
                             var messageResponse = new MessageResponse<AuthorizationResponseMessage>(mock.Object);
                             return messageResponse;
                         });
@@ -104,7 +104,7 @@ namespace StoneAssemblies.MassAuth.Tests.Services
                 var busSelectorMock = new Mock<IBusSelector<AccountBalanceRequestMessage>>();
                 busSelectorMock.Setup(selector => selector.SelectClientFactories(It.IsAny<object>())).Returns(
                 (object @object) => ToAsyncEnumerable(clientFactoryMock.Object));
-                var authorizeByRuleFilter = new AuthorizeByRuleFilter(new AuthorizeByRuleFilterConfigurationOptions(), 
+                var authorizeByRuleFilter = new AuthorizeByRuleFilter(new AuthorizeByRuleFilterConfigurationOptions(),
                     new List<IBusSelector>
                         {
                             busSelectorMock.Object
@@ -125,14 +125,14 @@ namespace StoneAssemblies.MassAuth.Tests.Services
             public async Task Does_Not_Invoke_Next_Action_Delegate_When_The_Request_Is_Unauthorized_Building_The_Message_From_The_Attribute()
             {
                 var actionContext = new ActionContext
-                                        {
-                                            HttpContext = new DefaultHttpContext(),
-                                            RouteData = new RouteData(),
-                                            ActionDescriptor = new ControllerActionDescriptor
-                                                                   {
-                                                                       MethodInfo = this.GetType().GetMethod(nameof(ControllerMethod)) 
-                                                                   }
-                                        };
+                {
+                    HttpContext = new DefaultHttpContext(),
+                    RouteData = new RouteData(),
+                    ActionDescriptor = new ControllerActionDescriptor
+                    {
+                        MethodInfo = this.GetType().GetMethod(nameof(ControllerMethod))
+                    }
+                };
                 var actionArguments = new Dictionary<string, object>
                                           {
                                               {
@@ -158,9 +158,9 @@ namespace StoneAssemblies.MassAuth.Tests.Services
                             var mock = new Mock<ConsumeContext<AuthorizationResponseMessage>>();
                             mock.Setup(context => context.Message).Returns(
                                 new AuthorizationResponseMessage
-                                    {
-                                        IsAuthorized = false
-                                    });
+                                {
+                                    IsAuthorized = false
+                                });
                             var messageResponse = new MessageResponse<AuthorizationResponseMessage>(mock.Object);
                             return messageResponse;
                         });
@@ -174,7 +174,7 @@ namespace StoneAssemblies.MassAuth.Tests.Services
                 var busSelectorMock = new Mock<IBusSelector<AccountBalanceRequestMessage>>();
                 busSelectorMock.Setup(selector => selector.SelectClientFactories(It.IsAny<object>())).Returns(
                 (object @object) => ToAsyncEnumerable(clientFactoryMock.Object));
-                var authorizeByRuleFilter = new AuthorizeByRuleFilter(new AuthorizeByRuleFilterConfigurationOptions(), 
+                var authorizeByRuleFilter = new AuthorizeByRuleFilter(new AuthorizeByRuleFilterConfigurationOptions(),
                     new List<IBusSelector>
                         {
                             busSelectorMock.Object
@@ -196,11 +196,11 @@ namespace StoneAssemblies.MassAuth.Tests.Services
             public async Task Does_Not_Invoke_Next_Action_Delegate_When_The_Request_Is_Unauthorized_And_ReturnForbiddanceReason_Is_True()
             {
                 var actionContext = new ActionContext
-                                        {
-                                            HttpContext = new DefaultHttpContext(),
-                                            RouteData = new RouteData(),
-                                            ActionDescriptor = new ActionDescriptor()
-                                        };
+                {
+                    HttpContext = new DefaultHttpContext(),
+                    RouteData = new RouteData(),
+                    ActionDescriptor = new ActionDescriptor()
+                };
                 var actionArguments = new Dictionary<string, object>
                                           {
                                               {
@@ -229,9 +229,9 @@ namespace StoneAssemblies.MassAuth.Tests.Services
                             var mock = new Mock<ConsumeContext<AuthorizationResponseMessage>>();
                             mock.Setup(context => context.Message).Returns(
                                 new AuthorizationResponseMessage
-                                    {
-                                        IsAuthorized = false,
-                                        ForbiddanceReason = "The Forbiddance Reason"
+                                {
+                                    IsAuthorized = false,
+                                    ForbiddanceReason = "The Forbiddance Reason"
                                 });
                             var messageResponse = new MessageResponse<AuthorizationResponseMessage>(mock.Object);
                             return messageResponse;
@@ -248,9 +248,9 @@ namespace StoneAssemblies.MassAuth.Tests.Services
                     (object @object) => ToAsyncEnumerable(clientFactoryMock.Object));
                 var authorizeByRuleFilter = new AuthorizeByRuleFilter(
                                                 new AuthorizeByRuleFilterConfigurationOptions()
-                                                    {
-                                                        ReturnForbiddanceReason = true
-                                                    },
+                                                {
+                                                    ReturnForbiddanceReason = true
+                                                },
                                                 new List<IBusSelector>
                                                     {
                                                         busSelectorMock.Object
@@ -270,14 +270,14 @@ namespace StoneAssemblies.MassAuth.Tests.Services
             public async Task Does_Not_Invoke_Next_Action_Delegate_When_The_Request_Is_Unauthorized_And_ReturnForbiddanceReason_Is_True_Building_The_Message_From_The_Attribute()
             {
                 var actionContext = new ActionContext
-                                        {
-                                            HttpContext = new DefaultHttpContext(),
-                                            RouteData = new RouteData(),
-                                            ActionDescriptor = new ControllerActionDescriptor
-                                                                   {
-                                                                       MethodInfo = this.GetType().GetMethod(nameof(this.ControllerMethod))
-                                                                   }
-                                        };
+                {
+                    HttpContext = new DefaultHttpContext(),
+                    RouteData = new RouteData(),
+                    ActionDescriptor = new ControllerActionDescriptor
+                    {
+                        MethodInfo = this.GetType().GetMethod(nameof(this.ControllerMethod))
+                    }
+                };
                 var actionArguments = new Dictionary<string, object>
                                           {
                                               {
@@ -303,9 +303,9 @@ namespace StoneAssemblies.MassAuth.Tests.Services
                             var mock = new Mock<ConsumeContext<AuthorizationResponseMessage>>();
                             mock.Setup(context => context.Message).Returns(
                                 new AuthorizationResponseMessage
-                                    {
-                                        IsAuthorized = false,
-                                        ForbiddanceReason = "The Forbiddance Reason"
+                                {
+                                    IsAuthorized = false,
+                                    ForbiddanceReason = "The Forbiddance Reason"
                                 });
                             var messageResponse = new MessageResponse<AuthorizationResponseMessage>(mock.Object);
                             return messageResponse;
@@ -322,9 +322,9 @@ namespace StoneAssemblies.MassAuth.Tests.Services
                     (object @object) => ToAsyncEnumerable(clientFactoryMock.Object));
                 var authorizeByRuleFilter = new AuthorizeByRuleFilter(
                                                 new AuthorizeByRuleFilterConfigurationOptions()
-                                                    {
-                                                        ReturnForbiddanceReason = true
-                                                    },
+                                                {
+                                                    ReturnForbiddanceReason = true
+                                                },
                                                 new List<IBusSelector>
                                                     {
                                                         busSelectorMock.Object
@@ -345,11 +345,11 @@ namespace StoneAssemblies.MassAuth.Tests.Services
             public async Task Does_Not_Invoke_Next_Action_Delegate_When_The_Request_Throws_An_Exception()
             {
                 var actionContext = new ActionContext
-                                        {
-                                            HttpContext = new DefaultHttpContext(),
-                                            RouteData = new RouteData(),
-                                            ActionDescriptor = new ActionDescriptor()
-                                        };
+                {
+                    HttpContext = new DefaultHttpContext(),
+                    RouteData = new RouteData(),
+                    ActionDescriptor = new ActionDescriptor()
+                };
                 var actionArguments = new Dictionary<string, object>
                                           {
                                               {
@@ -385,9 +385,9 @@ namespace StoneAssemblies.MassAuth.Tests.Services
                     (object @object) => ToAsyncEnumerable(clientFactoryMock.Object));
                 var authorizeByRuleFilter = new AuthorizeByRuleFilter(
                                                 new AuthorizeByRuleFilterConfigurationOptions()
-                                                    {
-                                                        ReturnForbiddanceReason = true
-                                                    },
+                                                {
+                                                    ReturnForbiddanceReason = true
+                                                },
                                                 new List<IBusSelector>
                                                     {
                                                         busSelectorMock.Object
@@ -430,11 +430,11 @@ namespace StoneAssemblies.MassAuth.Tests.Services
             public async Task Invokes_Next_Action_Delegate_When_The_Request_Have_No_Message_As_Parameter()
             {
                 var actionContext = new ActionContext
-                                        {
-                                            HttpContext = new DefaultHttpContext(),
-                                            RouteData = new RouteData(),
-                                            ActionDescriptor = new ActionDescriptor()
-                                        };
+                {
+                    HttpContext = new DefaultHttpContext(),
+                    RouteData = new RouteData(),
+                    ActionDescriptor = new ActionDescriptor()
+                };
                 var actionExecutingContext = new ActionExecutingContext(
                     actionContext,
                     new List<IFilterMetadata>(),
@@ -448,7 +448,7 @@ namespace StoneAssemblies.MassAuth.Tests.Services
                 busSelectorMock.Setup(selector => selector.SelectClientFactories(It.IsAny<object>())).Returns(
                     (object @object) => ToAsyncEnumerable(clientFactoryMock.Object));
                 var authorizeByRuleFilter = new AuthorizeByRuleFilter(
-                                                new AuthorizeByRuleFilterConfigurationOptions(), 
+                                                new AuthorizeByRuleFilterConfigurationOptions(),
                                                 new List<IBusSelector>
                                                     {
                                                         busSelectorMock.Object
@@ -474,11 +474,11 @@ namespace StoneAssemblies.MassAuth.Tests.Services
             public async Task Invokes_Next_Action_Delegate_When_The_Request_Is_Authorized()
             {
                 var actionContext = new ActionContext
-                                        {
-                                            HttpContext = new DefaultHttpContext(),
-                                            RouteData = new RouteData(),
-                                            ActionDescriptor = new ActionDescriptor(),
-                                        };
+                {
+                    HttpContext = new DefaultHttpContext(),
+                    RouteData = new RouteData(),
+                    ActionDescriptor = new ActionDescriptor(),
+                };
 
                 var actionArguments = new Dictionary<string, object>
                                           {
@@ -508,9 +508,9 @@ namespace StoneAssemblies.MassAuth.Tests.Services
                             var mock = new Mock<ConsumeContext<AuthorizationResponseMessage>>();
                             mock.Setup(context => context.Message).Returns(
                                 new AuthorizationResponseMessage
-                                    {
-                                        IsAuthorized = true,
-                                    });
+                                {
+                                    IsAuthorized = true,
+                                });
                             var messageResponse = new MessageResponse<AuthorizationResponseMessage>(mock.Object);
                             return messageResponse;
                         });
@@ -545,6 +545,7 @@ namespace StoneAssemblies.MassAuth.Tests.Services
             }
 
             [AuthorizeByRule(typeof(AccountBalanceRequestMessage))]
+            [Theory]
             public void ControllerMethod(string primaryAccountNumber)
             {
             }

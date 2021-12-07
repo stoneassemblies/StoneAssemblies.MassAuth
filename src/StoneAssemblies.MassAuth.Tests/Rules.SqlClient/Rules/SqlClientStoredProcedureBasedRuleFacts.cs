@@ -74,12 +74,12 @@ namespace StoneAssemblies.MassAuth.Tests.Rules.SqlClient.Rules
 
                 var result = await sqlClientStoredProcedureBasedRule.EvaluateAsync(
                                  new AuthorizationRequestMessage<AccountBalanceRequestMessage>
+                                 {
+                                     Payload = new AccountBalanceRequestMessage
                                      {
-                                         Payload = new AccountBalanceRequestMessage
-                                                       {
-                                                           PrimaryAccountNumber = "1341234",
-                                                       },
-                                     });
+                                         PrimaryAccountNumber = "1341234",
+                                     },
+                                 });
 
                 connectionMock.Verify(connection => connection.Open(), Times.Once);
                 connectionMock.Verify(connection => connection.Close(), Times.Once);
@@ -122,12 +122,12 @@ namespace StoneAssemblies.MassAuth.Tests.Rules.SqlClient.Rules
 
                 var result = await sqlClientStoredProcedureBasedRule.EvaluateAsync(
                                  new AuthorizationRequestMessage<AccountBalanceRequestMessage>
+                                 {
+                                     Payload = new AccountBalanceRequestMessage
                                      {
-                                         Payload = new AccountBalanceRequestMessage
-                                                       {
-                                                           PrimaryAccountNumber = "1341234",
-                                                       },
-                                     });
+                                         PrimaryAccountNumber = "1341234",
+                                     },
+                                 });
 
                 Assert.False(result.Succeeded);
             }
@@ -165,12 +165,12 @@ namespace StoneAssemblies.MassAuth.Tests.Rules.SqlClient.Rules
 
                 var result = await sqlClientStoredProcedureBasedRule.EvaluateAsync(
                                  new AuthorizationRequestMessage<AccountBalanceRequestMessage>
+                                 {
+                                     Payload = new AccountBalanceRequestMessage
                                      {
-                                         Payload = new AccountBalanceRequestMessage
-                                                       {
-                                                           PrimaryAccountNumber = "1341234",
-                                                       },
-                                     });
+                                         PrimaryAccountNumber = "1341234",
+                                     },
+                                 });
 
                 Assert.False(result.Succeeded);
             }
@@ -215,12 +215,12 @@ namespace StoneAssemblies.MassAuth.Tests.Rules.SqlClient.Rules
 
                 var result = await sqlClientStoredProcedureBasedRule.EvaluateAsync(
                                  new AuthorizationRequestMessage<AccountBalanceRequestMessage>
+                                 {
+                                     Payload = new AccountBalanceRequestMessage
                                      {
-                                         Payload = new AccountBalanceRequestMessage
-                                                       {
-                                                           PrimaryAccountNumber = "1341234",
-                                                       },
-                                     });
+                                         PrimaryAccountNumber = "1341234",
+                                     },
+                                 });
 
                 Assert.Equal(ExpectedForbiddanceReason, result.Description);
             }
@@ -267,12 +267,12 @@ namespace StoneAssemblies.MassAuth.Tests.Rules.SqlClient.Rules
 
                 var result = await sqlClientStoredProcedureBasedRule.EvaluateAsync(
                                  new AuthorizationRequestMessage<AccountBalanceRequestMessage>
+                                 {
+                                     Payload = new AccountBalanceRequestMessage
                                      {
-                                         Payload = new AccountBalanceRequestMessage
-                                                       {
-                                                           PrimaryAccountNumber = "1341234",
-                                                       },
-                                     });
+                                         PrimaryAccountNumber = "1341234",
+                                     },
+                                 });
 
                 Assert.True(result.Succeeded);
             }
@@ -319,12 +319,12 @@ namespace StoneAssemblies.MassAuth.Tests.Rules.SqlClient.Rules
 
                 var result = await sqlClientStoredProcedureBasedRule.EvaluateAsync(
                                  new AuthorizationRequestMessage<AccountBalanceRequestMessage>
+                                 {
+                                     Payload = new AccountBalanceRequestMessage
                                      {
-                                         Payload = new AccountBalanceRequestMessage
-                                                       {
-                                                           PrimaryAccountNumber = "1341234",
-                                                       },
-                                     });
+                                         PrimaryAccountNumber = "1341234",
+                                     },
+                                 });
 
                 Assert.True(result.Succeeded);
             }
@@ -371,12 +371,12 @@ namespace StoneAssemblies.MassAuth.Tests.Rules.SqlClient.Rules
 
                 var result = await sqlClientStoredProcedureBasedRule.EvaluateAsync(
                                  new AuthorizationRequestMessage<AccountBalanceRequestMessage>
+                                 {
+                                     Payload = new AccountBalanceRequestMessage
                                      {
-                                         Payload = new AccountBalanceRequestMessage
-                                                       {
-                                                           PrimaryAccountNumber = "1341234",
-                                                       },
-                                     });
+                                         PrimaryAccountNumber = "1341234",
+                                     },
+                                 });
 
                 Assert.True(result.Succeeded);
             }
@@ -423,12 +423,12 @@ namespace StoneAssemblies.MassAuth.Tests.Rules.SqlClient.Rules
 
                 var result = await sqlClientStoredProcedureBasedRule.EvaluateAsync(
                                  new AuthorizationRequestMessage<AccountBalanceRequestMessage>
+                                 {
+                                     Payload = new AccountBalanceRequestMessage
                                      {
-                                         Payload = new AccountBalanceRequestMessage
-                                                       {
-                                                           PrimaryAccountNumber = "1341234",
-                                                       },
-                                     });
+                                         PrimaryAccountNumber = "1341234",
+                                     },
+                                 });
 
                 Assert.True(result.Succeeded);
             }

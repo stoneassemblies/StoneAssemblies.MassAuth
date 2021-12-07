@@ -48,7 +48,7 @@ namespace StoneAssemblies.MassAuth.Hosting.Extensions
         ///     The configure endpoint.
         /// </param>
         public static void DefaultReceiveEndpoint(
-            this IBusFactoryConfigurator busFactoryConfigurator, 
+            this IBusFactoryConfigurator busFactoryConfigurator,
             Type messageType,
             Action<IReceiveEndpointConfigurator> configureEndpoint)
         {

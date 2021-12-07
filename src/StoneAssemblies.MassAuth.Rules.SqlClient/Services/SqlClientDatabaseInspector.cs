@@ -26,7 +26,7 @@ namespace StoneAssemblies.MassAuth.Rules.SqlClient.Services
         /// <summary>
         /// The database connection factory.
         /// </summary>
-        private readonly IDbConnectionFactory connectionFactory;
+        private readonly IConnectionFactory connectionFactory;
 
         /// <summary>
         ///     Initializes a new instance of the <see cref="SqlClientDatabaseInspector" /> class.
@@ -37,7 +37,7 @@ namespace StoneAssemblies.MassAuth.Rules.SqlClient.Services
         /// <param name="connectionString">
         ///     The connection string.
         /// </param>
-        public SqlClientDatabaseInspector(IDbConnectionFactory connectionFactory, string connectionString)
+        public SqlClientDatabaseInspector(IConnectionFactory connectionFactory, string connectionString)
         {
             this.connectionFactory = connectionFactory;
             this.ConnectionString = connectionString;

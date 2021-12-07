@@ -31,7 +31,7 @@ namespace StoneAssemblies.MassAuth.Rules.SqlClient.Rules
         /// <summary>
         ///     The connection factory.
         /// </summary>
-        private readonly IDbConnectionFactory connectionFactory;
+        private readonly IConnectionFactory connectionFactory;
 
         /// <summary>
         ///     The connection string.
@@ -74,7 +74,7 @@ namespace StoneAssemblies.MassAuth.Rules.SqlClient.Rules
         /// <param name="priority">
         ///     The priority.
         /// </param>
-        public SqlClientStoredProcedureBasedRule(IDbConnectionFactory connectionFactory, string ruleName, Type messageType, string connectionString, string storedProcedureName, int priority)
+        public SqlClientStoredProcedureBasedRule(IConnectionFactory connectionFactory, string ruleName, Type messageType, string connectionString, string storedProcedureName, int priority)
         {
             this.connectionFactory = connectionFactory;
             this.ruleName = ruleName;

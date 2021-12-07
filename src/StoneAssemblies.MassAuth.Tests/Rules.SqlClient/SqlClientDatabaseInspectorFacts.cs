@@ -51,7 +51,7 @@ namespace StoneAssemblies.MassAuth.Tests.Rules.SqlClient
                 var connectionString =
                     "Server=localhost,321;Database=DB;User Id=User;Password=Password;MultipleActiveResultSets=true;Connection Timeout=30";
 
-                var connectionFactoryMock = new Mock<IDbConnectionFactory>();
+                var connectionFactoryMock = new Mock<IConnectionFactory>();
                 var connectionMock = new Mock<IDbConnection>();
                 connectionMock.SetupGet(connection => connection.State).Returns(ConnectionState.Open);
 
@@ -111,7 +111,7 @@ namespace StoneAssemblies.MassAuth.Tests.Rules.SqlClient
                 var connectionString =
                     "Server=localhost,321;Database=DB;User Id=User;Password=Password;MultipleActiveResultSets=true;Connection Timeout=30";
 
-                var connectionFactoryMock = new Mock<IDbConnectionFactory>();
+                var connectionFactoryMock = new Mock<IConnectionFactory>();
                 var connectionMock = new Mock<IDbConnection>();
                 connectionMock.SetupGet(connection => connection.State).Returns(ConnectionState.Open);
 
@@ -162,7 +162,7 @@ namespace StoneAssemblies.MassAuth.Tests.Rules.SqlClient
                 var connectionString =
                     "Server=localhost,321;Database=DB;User Id=User;Password=Password;MultipleActiveResultSets=true;Connection Timeout=30";
 
-                var connectionFactoryMock = new Mock<IDbConnectionFactory>();
+                var connectionFactoryMock = new Mock<IConnectionFactory>();
                 var connectionMock = new Mock<IDbConnection>();
                 connectionMock.SetupGet(connection => connection.State).Returns(ConnectionState.Open);
 
@@ -245,7 +245,7 @@ namespace StoneAssemblies.MassAuth.Tests.Rules.SqlClient
                 var connectionString =
                     "Server=localhost,321;Database=DB;User Id=User;Password=Password;MultipleActiveResultSets=true;Connection Timeout=30";
 
-                var connectionFactoryMock = new Mock<IDbConnectionFactory>();
+                var connectionFactoryMock = new Mock<IConnectionFactory>();
                 var connectionMock = new Mock<IDbConnection>();
                 connectionMock.SetupGet(connection => connection.State).Returns(ConnectionState.Open);
 

@@ -545,7 +545,6 @@ namespace StoneAssemblies.MassAuth.Tests.Services
             }
 
             [AuthorizeByRule(typeof(AccountBalanceRequestMessage))]
-            [Theory]
             public void ControllerMethod(string primaryAccountNumber)
             {
             }

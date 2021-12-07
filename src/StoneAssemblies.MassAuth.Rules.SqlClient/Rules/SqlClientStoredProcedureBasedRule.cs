@@ -114,12 +114,7 @@ namespace StoneAssemblies.MassAuth.Rules.SqlClient.Rules
             command.CommandType = CommandType.StoredProcedure;
             command.CommandText = this.storedProcedureName;
 
-            var messageParameter = command.CreateParameter();
-            messageParameter.ParameterName = "@message";
-            messageParameter.DbType = DbType.String;
-            messageParameter.Value = JsonConvert.SerializeObject(message);
-
-            command.Parameters.Add(messageParameter);
+            command.AddParameterWithValue("@message", JsonConvert.SerializeObject(message));
 
             try
             {

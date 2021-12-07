@@ -15,7 +15,6 @@ namespace StoneAssemblies.MassAuth.Tests.Rules.SqlClient.Rules
     using StoneAssemblies.MassAuth.Bank.Messages;
     using StoneAssemblies.MassAuth.Messages;
     using StoneAssemblies.MassAuth.Rules.SqlClient.Rules;
-    using StoneAssemblies.MassAuth.Rules.SqlClient.Services.Interfaces;
 
     using Xunit;
 

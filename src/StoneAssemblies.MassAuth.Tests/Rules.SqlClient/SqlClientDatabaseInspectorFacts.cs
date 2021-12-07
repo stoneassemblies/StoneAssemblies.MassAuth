@@ -11,14 +11,11 @@ namespace StoneAssemblies.MassAuth.Tests.Rules.SqlClient
     using System.Linq;
     using System.Threading.Tasks;
 
-    using Dasync.Collections;
-
     using Moq;
 
     using StoneAssemblies.Data.Services.Interfaces;
     using StoneAssemblies.Data.SqlClient.Services;
     using StoneAssemblies.MassAuth.Rules.SqlClient.Services;
-    using StoneAssemblies.MassAuth.Rules.SqlClient.Services.Interfaces;
 
     using Xunit;
 

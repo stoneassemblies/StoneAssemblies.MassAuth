@@ -10,6 +10,8 @@ namespace StoneAssemblies.MassAuth.Rules.SqlClient.Rules
     using System.Data;
     using System.Threading.Tasks;
 
+    using Microsoft.Data.SqlClient;
+
     using Newtonsoft.Json;
 
     using Serilog;
@@ -108,7 +110,7 @@ namespace StoneAssemblies.MassAuth.Rules.SqlClient.Rules
         {
             var evaluationResult = EvaluationResult.Error();
 
-            var connection = this.connectionFactory.Create(this.connectionString);
+            var connection = this.connectionFactory.Create<SqlConnection>(this.connectionString);
 
             var command = connection.CreateCommand();
             command.CommandType = CommandType.StoredProcedure;

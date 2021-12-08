@@ -14,7 +14,7 @@ namespace StoneAssemblies.MassAuth.Tests.Rules.SqlClient.Extensions
 
     using Moq;
 
-    using StoneAssemblies.Data.SqlClient.Services;
+    using StoneAssemblies.Data.Services;
     using StoneAssemblies.MassAuth.Bank.Messages;
     using StoneAssemblies.MassAuth.Messages;
     using StoneAssemblies.MassAuth.Rules.Interfaces;
@@ -46,7 +46,7 @@ namespace StoneAssemblies.MassAuth.Tests.Rules.SqlClient.Extensions
                 serviceCollection.RegisterSqlClientStoredProcedureBasedRulesFromConfiguration(configuration);
 
                 var serviceProvider = serviceCollection.BuildServiceProvider();
-                var sqlClientConnectionFactory = serviceProvider.GetService<SqlConnectionFactory>();
+                var sqlClientConnectionFactory = serviceProvider.GetService<ConnectionFactory>();
                 Assert.Null(sqlClientConnectionFactory);
             }
 
@@ -66,7 +66,7 @@ namespace StoneAssemblies.MassAuth.Tests.Rules.SqlClient.Extensions
                 serviceCollection.RegisterSqlClientStoredProcedureBasedRulesFromConfiguration(configuration);
 
                 var serviceProvider = serviceCollection.BuildServiceProvider();
-                var sqlClientConnectionFactory = serviceProvider.GetService<SqlConnectionFactory>();
+                var sqlClientConnectionFactory = serviceProvider.GetService<ConnectionFactory>();
                 Assert.NotNull(sqlClientConnectionFactory);
             }
         }

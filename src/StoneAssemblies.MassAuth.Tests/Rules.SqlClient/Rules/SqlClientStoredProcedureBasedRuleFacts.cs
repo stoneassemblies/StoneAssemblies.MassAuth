@@ -9,6 +9,8 @@ namespace StoneAssemblies.MassAuth.Tests.Rules.SqlClient.Rules
     using System.Data;
     using System.Threading.Tasks;
 
+    using Microsoft.Data.SqlClient;
+
     using Moq;
 
     using StoneAssemblies.Data.Services.Interfaces;
@@ -61,7 +63,7 @@ namespace StoneAssemblies.MassAuth.Tests.Rules.SqlClient.Rules
 
                 connectionMock.Setup(connection => connection.CreateCommand()).Returns(commandMock.Object);
 
-                connectionFactoryMock.Setup(factory => factory.Create(It.IsAny<string>())).Returns(connectionMock.Object);
+                connectionFactoryMock.Setup(factory => factory.Create<SqlConnection>(It.IsAny<string>())).Returns(connectionMock.Object);
 
                 var sqlClientStoredProcedureBasedRule =
                     new SqlClientStoredProcedureBasedRule<AuthorizationRequestMessage<AccountBalanceRequestMessage>>(
@@ -109,7 +111,7 @@ namespace StoneAssemblies.MassAuth.Tests.Rules.SqlClient.Rules
 
                 connectionMock.Setup(connection => connection.CreateCommand()).Returns(commandMock.Object);
 
-                connectionFactoryMock.Setup(factory => factory.Create(It.IsAny<string>())).Returns(connectionMock.Object);
+                connectionFactoryMock.Setup(factory => factory.Create<SqlConnection>(It.IsAny<string>())).Returns(connectionMock.Object);
 
                 var sqlClientStoredProcedureBasedRule =
                     new SqlClientStoredProcedureBasedRule<AuthorizationRequestMessage<AccountBalanceRequestMessage>>(
@@ -152,7 +154,7 @@ namespace StoneAssemblies.MassAuth.Tests.Rules.SqlClient.Rules
 
                 connectionMock.Setup(connection => connection.CreateCommand()).Returns(commandMock.Object);
 
-                connectionFactoryMock.Setup(factory => factory.Create(It.IsAny<string>())).Returns(connectionMock.Object);
+                connectionFactoryMock.Setup(factory => factory.Create<SqlConnection>(It.IsAny<string>())).Returns(connectionMock.Object);
 
                 var sqlClientStoredProcedureBasedRule =
                     new SqlClientStoredProcedureBasedRule<AuthorizationRequestMessage<AccountBalanceRequestMessage>>(
@@ -202,7 +204,7 @@ namespace StoneAssemblies.MassAuth.Tests.Rules.SqlClient.Rules
 
                 connectionMock.Setup(connection => connection.CreateCommand()).Returns(commandMock.Object);
 
-                connectionFactoryMock.Setup(factory => factory.Create(It.IsAny<string>())).Returns(connectionMock.Object);
+                connectionFactoryMock.Setup(factory => factory.Create<SqlConnection>(It.IsAny<string>())).Returns(connectionMock.Object);
 
                 var sqlClientStoredProcedureBasedRule =
                     new SqlClientStoredProcedureBasedRule<AuthorizationRequestMessage<AccountBalanceRequestMessage>>(
@@ -254,7 +256,7 @@ namespace StoneAssemblies.MassAuth.Tests.Rules.SqlClient.Rules
 
                 connectionMock.Setup(connection => connection.CreateCommand()).Returns(commandMock.Object);
 
-                connectionFactoryMock.Setup(factory => factory.Create(It.IsAny<string>())).Returns(connectionMock.Object);
+                connectionFactoryMock.Setup(factory => factory.Create<SqlConnection>(It.IsAny<string>())).Returns(connectionMock.Object);
 
                 var sqlClientStoredProcedureBasedRule =
                     new SqlClientStoredProcedureBasedRule<AuthorizationRequestMessage<AccountBalanceRequestMessage>>(
@@ -306,7 +308,7 @@ namespace StoneAssemblies.MassAuth.Tests.Rules.SqlClient.Rules
 
                 connectionMock.Setup(connection => connection.CreateCommand()).Returns(commandMock.Object);
 
-                connectionFactoryMock.Setup(factory => factory.Create(It.IsAny<string>())).Returns(connectionMock.Object);
+                connectionFactoryMock.Setup(factory => factory.Create<SqlConnection>(It.IsAny<string>())).Returns(connectionMock.Object);
 
                 var sqlClientStoredProcedureBasedRule =
                     new SqlClientStoredProcedureBasedRule<AuthorizationRequestMessage<AccountBalanceRequestMessage>>(
@@ -358,7 +360,7 @@ namespace StoneAssemblies.MassAuth.Tests.Rules.SqlClient.Rules
 
                 connectionMock.Setup(connection => connection.CreateCommand()).Returns(commandMock.Object);
 
-                connectionFactoryMock.Setup(factory => factory.Create(It.IsAny<string>())).Returns(connectionMock.Object);
+                connectionFactoryMock.Setup(factory => factory.Create<SqlConnection>(It.IsAny<string>())).Returns(connectionMock.Object);
 
                 var sqlClientStoredProcedureBasedRule =
                     new SqlClientStoredProcedureBasedRule<AuthorizationRequestMessage<AccountBalanceRequestMessage>>(
@@ -410,7 +412,7 @@ namespace StoneAssemblies.MassAuth.Tests.Rules.SqlClient.Rules
 
                 connectionMock.Setup(connection => connection.CreateCommand()).Returns(commandMock.Object);
 
-                connectionFactoryMock.Setup(factory => factory.Create(It.IsAny<string>())).Returns(connectionMock.Object);
+                connectionFactoryMock.Setup(factory => factory.Create<SqlConnection>(It.IsAny<string>())).Returns(connectionMock.Object);
 
                 var sqlClientStoredProcedureBasedRule =
                     new SqlClientStoredProcedureBasedRule<AuthorizationRequestMessage<AccountBalanceRequestMessage>>(
@@ -462,7 +464,7 @@ namespace StoneAssemblies.MassAuth.Tests.Rules.SqlClient.Rules
 
                 connectionMock.Setup(connection => connection.CreateCommand()).Returns(commandMock.Object);
 
-                connectionFactoryMock.Setup(factory => factory.Create(It.IsAny<string>())).Returns(connectionMock.Object);
+                connectionFactoryMock.Setup(factory => factory.Create<SqlConnection>(It.IsAny<string>())).Returns(connectionMock.Object);
 
                 var sqlClientStoredProcedureBasedRule =
                     new SqlClientStoredProcedureBasedRule<AuthorizationRequestMessage<AccountBalanceRequestMessage>>(
@@ -514,7 +516,7 @@ namespace StoneAssemblies.MassAuth.Tests.Rules.SqlClient.Rules
 
                 connectionMock.Setup(connection => connection.CreateCommand()).Returns(commandMock.Object);
 
-                connectionFactoryMock.Setup(factory => factory.Create(It.IsAny<string>())).Returns(connectionMock.Object);
+                connectionFactoryMock.Setup(factory => factory.Create<SqlConnection>(It.IsAny<string>())).Returns(connectionMock.Object);
 
                 var sqlClientStoredProcedureBasedRule =
                     new SqlClientStoredProcedureBasedRule<AuthorizationRequestMessage<AccountBalanceRequestMessage>>(
@@ -566,7 +568,7 @@ namespace StoneAssemblies.MassAuth.Tests.Rules.SqlClient.Rules
 
                 connectionMock.Setup(connection => connection.CreateCommand()).Returns(commandMock.Object);
 
-                connectionFactoryMock.Setup(factory => factory.Create(It.IsAny<string>())).Returns(connectionMock.Object);
+                connectionFactoryMock.Setup(factory => factory.Create<SqlConnection>(It.IsAny<string>())).Returns(connectionMock.Object);
 
                 var sqlClientStoredProcedureBasedRule =
                     new SqlClientStoredProcedureBasedRule<AuthorizationRequestMessage<AccountBalanceRequestMessage>>(

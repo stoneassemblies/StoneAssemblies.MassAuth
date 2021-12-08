@@ -10,6 +10,8 @@ namespace StoneAssemblies.MassAuth.Rules.SqlClient.Services
     using System.Collections.Generic;
     using System.Data;
 
+    using Microsoft.Data.SqlClient;
+
     using Serilog;
 
     using StoneAssemblies.Data.Extensions;
@@ -52,7 +54,7 @@ namespace StoneAssemblies.MassAuth.Rules.SqlClient.Services
             var storedProcedures = this.GetStoredProcedures();
             foreach (var storedProcedure in storedProcedures)
             {
-                using var connection = this.connectionFactory.Create(this.ConnectionString);
+                using var connection = this.connectionFactory.Create<SqlConnection>(this.ConnectionString);
                 var command = connection.CreateCommand();
                 command.CommandText =
                     $"SELECT [RuleName], [MessageTypeName], [StoredProcedure], [Priority] FROM [dbo].[Mappings] WHERE [StoredProcedure]='{storedProcedure}'";
@@ -105,7 +107,7 @@ namespace StoneAssemblies.MassAuth.Rules.SqlClient.Services
         /// <inheritdoc />
         public IEnumerable<string> GetStoredProcedures()
         {
-            using var connection = this.connectionFactory.Create(this.ConnectionString);
+            using var connection = this.connectionFactory.Create<SqlConnection>(this.ConnectionString);
             var command = connection.CreateCommand();
             command.CommandText = "SELECT * FROM INFORMATION_SCHEMA.ROUTINES WHERE ROUTINE_TYPE = 'PROCEDURE'";
 

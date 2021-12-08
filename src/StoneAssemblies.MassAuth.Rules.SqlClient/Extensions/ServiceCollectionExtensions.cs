@@ -20,7 +20,7 @@ namespace StoneAssemblies.MassAuth.Rules.SqlClient.Extensions
 
     using Serilog;
 
-    using StoneAssemblies.Data.SqlClient.Services;
+    using StoneAssemblies.Data.Services;
     using StoneAssemblies.Hosting.Extensions;
     using StoneAssemblies.MassAuth.Messages;
     using StoneAssemblies.MassAuth.Rules.Interfaces;
@@ -68,11 +68,11 @@ namespace StoneAssemblies.MassAuth.Rules.SqlClient.Extensions
                 return;
             }
 
-            var sqlClientConnectionFactory = new SqlConnectionFactory();
-            serviceCollection.AddSingleton(sqlClientConnectionFactory);
+            var connectionFactory = new ConnectionFactory();
+            serviceCollection.AddSingleton(connectionFactory);
             foreach (var connectionString in connectionStrings)
             {
-                var sqlServerDatabaseInspector = new SqlClientDatabaseInspector(sqlClientConnectionFactory, connectionString);
+                var sqlServerDatabaseInspector = new SqlClientDatabaseInspector(connectionFactory, connectionString);
                 serviceCollection.RegisterStoredProcedureBasedRules(sqlServerDatabaseInspector, patterns);
             }
         }
@@ -140,7 +140,7 @@ namespace StoneAssemblies.MassAuth.Rules.SqlClient.Extensions
                 var key = $"{connectionString}-{storedProcedureName}-{messageType.Name}";
                 if (!registeredStoredProcedures.Contains(key))
                 {
-                    var sqlClientConnectionFactory = serviceCollection.GetRegisteredInstance<SqlConnectionFactory>();
+                    var sqlClientConnectionFactory = serviceCollection.GetRegisteredInstance<ConnectionFactory>();
                     var authorizationRequestMessageType = typeof(AuthorizationRequestMessage<>).MakeGenericType(messageType);
                     var ruleInterfaceType = typeof(IRule<>).MakeGenericType(authorizationRequestMessageType);
                     var ruleType = typeof(SqlClientStoredProcedureBasedRule<>).MakeGenericType(authorizationRequestMessageType);

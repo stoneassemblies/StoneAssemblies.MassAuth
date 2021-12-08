@@ -11,10 +11,12 @@ namespace StoneAssemblies.MassAuth.Tests.Rules.SqlClient
     using System.Linq;
     using System.Threading.Tasks;
 
+    using Microsoft.Data.SqlClient;
+
     using Moq;
 
+    using StoneAssemblies.Data.Services;
     using StoneAssemblies.Data.Services.Interfaces;
-    using StoneAssemblies.Data.SqlClient.Services;
     using StoneAssemblies.MassAuth.Rules.SqlClient.Services;
 
     using Xunit;
@@ -37,7 +39,7 @@ namespace StoneAssemblies.MassAuth.Tests.Rules.SqlClient
             {
                 var connectionString =
                     "Server=localhost,321;Database=DB;User Id=User;Password=Password;MultipleActiveResultSets=true;Connection Timeout=30";
-                var sqlClientDatabaseInspector = new SqlClientDatabaseInspector(new SqlConnectionFactory(), connectionString);
+                var sqlClientDatabaseInspector = new SqlClientDatabaseInspector(new ConnectionFactory(), connectionString);
                 var mappings = sqlClientDatabaseInspector.GetMappings().ToList();
                 Assert.Empty(mappings);
             }
@@ -94,7 +96,7 @@ namespace StoneAssemblies.MassAuth.Tests.Rules.SqlClient
                             return mappingsCommandMock.Object;
                         });
 
-                connectionFactoryMock.Setup(factory => factory.Create(connectionString)).Returns(connectionMock.Object);
+                connectionFactoryMock.Setup(factory => factory.Create<SqlConnection>(connectionString)).Returns(connectionMock.Object);
                 var sqlClientDatabaseInspector = new SqlClientDatabaseInspector(connectionFactoryMock.Object, connectionString);
 
                 var mappings = sqlClientDatabaseInspector.GetMappings().ToList();
@@ -145,7 +147,7 @@ namespace StoneAssemblies.MassAuth.Tests.Rules.SqlClient
                             return mappingsCommandMock.Object;
                         });
 
-                connectionFactoryMock.Setup(factory => factory.Create(connectionString)).Returns(connectionMock.Object);
+                connectionFactoryMock.Setup(factory => factory.Create<SqlConnection>(connectionString)).Returns(connectionMock.Object);
                 var sqlClientDatabaseInspector = new SqlClientDatabaseInspector(connectionFactoryMock.Object, connectionString);
 
                 var mappings = sqlClientDatabaseInspector.GetMappings().ToList();
@@ -209,7 +211,7 @@ namespace StoneAssemblies.MassAuth.Tests.Rules.SqlClient
                             return mappingsCommandMock.Object;
                         });
 
-                connectionFactoryMock.Setup(factory => factory.Create(connectionString)).Returns(connectionMock.Object);
+                connectionFactoryMock.Setup(factory => factory.Create<SqlConnection>(connectionString)).Returns(connectionMock.Object);
                 var sqlClientDatabaseInspector = new SqlClientDatabaseInspector(connectionFactoryMock.Object, connectionString);
 
                 var mappings = sqlClientDatabaseInspector.GetMappings().ToList();
@@ -231,7 +233,7 @@ namespace StoneAssemblies.MassAuth.Tests.Rules.SqlClient
             {
                 var connectionString =
                     "Server=localhost,321;Database=DB;User Id=User;Password=Password;MultipleActiveResultSets=true;Connection Timeout=30";
-                var sqlClientDatabaseInspector = new SqlClientDatabaseInspector(new SqlConnectionFactory(), connectionString);
+                var sqlClientDatabaseInspector = new SqlClientDatabaseInspector(new ConnectionFactory(), connectionString);
                 var storedProcedures = sqlClientDatabaseInspector.GetStoredProcedures().ToList();
                 Assert.Empty(storedProcedures);
             }
@@ -263,7 +265,7 @@ namespace StoneAssemblies.MassAuth.Tests.Rules.SqlClient
 
                 commandMock.Setup(command => command.ExecuteReader()).Returns(dataReaderMock.Object);
                 connectionMock.Setup(connection => connection.CreateCommand()).Returns(commandMock.Object);
-                connectionFactoryMock.Setup(factory => factory.Create(connectionString)).Returns(connectionMock.Object);
+                connectionFactoryMock.Setup(factory => factory.Create<SqlConnection>(connectionString)).Returns(connectionMock.Object);
                 var sqlClientDatabaseInspector = new SqlClientDatabaseInspector(connectionFactoryMock.Object, connectionString);
                 var storedProcedures = sqlClientDatabaseInspector.GetStoredProcedures().ToList();
 

@@ -33,16 +33,16 @@ namespace StoneAssemblies.MassAuth.Bank.Balance.Services.Controllers
         /// </returns>
         [AuthorizeByRule]
         [HttpGet("[action]")]
-        public Task<AccountBalance> FromQueryGet([FromQuery] AccountBalanceRequestMessage accountBalanceRequestMessage)
+        public Task<AccountBalance> Get([FromQuery] AccountBalanceRequestMessage accountBalanceRequestMessage)
         {
             var random = new Random();
 
             var accountBalance = new AccountBalance
-                                     {
-                                         PrimaryAccountNumber = accountBalanceRequestMessage.PrimaryAccountNumber,
-                                         Balance = random.NextDouble() * random.Next(0, 1000),
-                                         DateTime = DateTime.Now,
-                                     };
+            {
+                PrimaryAccountNumber = accountBalanceRequestMessage.PrimaryAccountNumber,
+                Balance = random.NextDouble() * random.Next(0, 1000),
+                DateTime = DateTime.Now,
+            };
 
             return Task.FromResult(accountBalance);
         }
@@ -58,16 +58,16 @@ namespace StoneAssemblies.MassAuth.Bank.Balance.Services.Controllers
         /// </returns>
         [AuthorizeByRule(typeof(AccountBalanceRequestMessage))]
         [HttpGet("[action]")]
-        public Task<AccountBalance> Get(string primaryAccountNumber)
+        public Task<AccountBalance> Get1(string primaryAccountNumber)
         {
             var random = new Random();
 
             var accountBalance = new AccountBalance
-                                     {
-                                         PrimaryAccountNumber = primaryAccountNumber,
-                                         Balance = random.NextDouble() * random.Next(0, 1000),
-                                         DateTime = DateTime.Now,
-                                     };
+            {
+                PrimaryAccountNumber = primaryAccountNumber,
+                Balance = random.NextDouble() * random.Next(0, 1000),
+                DateTime = DateTime.Now,
+            };
 
             return Task.FromResult(accountBalance);
         }
@@ -83,16 +83,16 @@ namespace StoneAssemblies.MassAuth.Bank.Balance.Services.Controllers
         /// </returns>
         [AuthorizeByRule(typeof(AccountBalanceRequestMessage))]
         [HttpGet("[action]/{primaryAccountNumber}")]
-        public Task<AccountBalance> GetTemplate(string primaryAccountNumber)
+        public Task<AccountBalance> Get(string primaryAccountNumber)
         {
             var random = new Random();
 
             var accountBalance = new AccountBalance
-                                     {
-                                         PrimaryAccountNumber = primaryAccountNumber,
-                                         Balance = random.NextDouble() * random.Next(0, 1000),
-                                         DateTime = DateTime.Now,
-                                     };
+            {
+                PrimaryAccountNumber = primaryAccountNumber,
+                Balance = random.NextDouble() * random.Next(0, 1000),
+                DateTime = DateTime.Now,
+            };
 
             return Task.FromResult(accountBalance);
         }

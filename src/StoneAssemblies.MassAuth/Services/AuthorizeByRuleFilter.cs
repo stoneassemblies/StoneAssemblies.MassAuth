@@ -99,9 +99,15 @@ namespace StoneAssemblies.MassAuth.Services
         /// <summary>
         ///     Invoke method async
         /// </summary>
-        /// <param name="invocationContext">Invocation context</param>
-        /// <param name="next">Next</param>
-        /// <returns>ValueTask</returns>
+        /// <param name="invocationContext">
+        ///     Invocation context.
+        /// </param>
+        /// <param name="next">
+        ///     The next task.
+        /// </param>
+        /// <returns>
+        ///     The current task.
+        /// </returns>
         async ValueTask<object> IHubFilter.InvokeMethodAsync(
             HubInvocationContext invocationContext, Func<HubInvocationContext, ValueTask<object>> next)
         {
@@ -124,11 +130,17 @@ namespace StoneAssemblies.MassAuth.Services
         }
 
         /// <summary>
-        /// Determines whether all message in the list are authorized.
+        ///     Determines whether all message in the list are authorized.
         /// </summary>
-        /// <param name="httpContext">The http context.</param>
-        /// <param name="messages">The messages</param>
-        /// <returns><c>True</c> whether all messages are authorized, otherwise <c>False</c></returns>
+        /// <param name="httpContext">
+        ///     The http context.
+        /// </param>
+        /// <param name="messages">
+        ///     The messages
+        /// </param>
+        /// <returns>
+        ///     <c>True</c> whether all messages are authorized, otherwise <c>False</c>
+        /// </returns>
         private async Task<AuthorizationResult> AuthorizationRequestAsync(HttpContext httpContext, List<MessageBase> messages)
         {
             var authorizationResult = AuthorizationResult.Authorized();
@@ -141,15 +153,20 @@ namespace StoneAssemblies.MassAuth.Services
         }
 
         /// <summary>
-        /// Determines whether all message in the list are authorized.
+        ///     Determines whether all messages in the list are authorized.
         /// </summary>
-        /// <param name="httpContext">The http context.</param>
-        /// <param name="message">The message</param>
-        /// <returns><c>True</c> whether the message is authorized, otherwise <c>False</c></returns>
+        /// <param name="httpContext">
+        ///     The http context.
+        /// </param>
+        /// <param name="message">
+        ///     The message.
+        /// </param>
+        /// <returns>
+        ///     <c>True</c> whether the message is authorized, otherwise <c>False</c>
+        /// </returns>
         private async Task<AuthorizationResult> AuthorizationRequestAsync(HttpContext httpContext, MessageBase message)
         {
-            var busSelector = this.busSelectors.FirstOrDefault(
-                selector => typeof(IBusSelector<>).MakeGenericType(message.GetType()).IsInstanceOfType(selector));
+            var busSelector = this.busSelectors.FirstOrDefault(selector => typeof(IBusSelector<>).MakeGenericType(message.GetType()).IsInstanceOfType(selector));
             if (busSelector != null)
             {
                 var clientFactories = busSelector.SelectClientFactories(message);

@@ -8,8 +8,8 @@
 		<PackageReference Include="MassTransit.Extensions.DependencyInjection" Version="7.3.1" />
 		<PackageReference Include="Microsoft.Extensions.Hosting.Abstractions" Version="5.0.0" />
 		<PackageReference Include="Serilog" Version="2.10.0" />
-		<PackageReference Include="StoneAssemblies.Contrib.MassTransit" Version="1.0.0-alpha0017" />
-		<PackageReference Include="StoneAssemblies.Extensibility" Version="1.0.0-alpha0080" />
+		<PackageReference Include="StoneAssemblies.Contrib.MassTransit" Version="1.0.0-alpha0018" />
+		<PackageReference Include="StoneAssemblies.Extensibility" Version="1.0.0-alpha0085" />
 		<PackageReference Include="StoneAssemblies.Hosting" Version="1.0.0-alpha0005" />
 		<PackageReference Include="System.Net.Http.Json" Version="5.0.0" />
 	</ItemGroup>

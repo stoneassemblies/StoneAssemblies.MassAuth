@@ -9,7 +9,7 @@
 		<PackageReference Include="AsyncEnumerator" Version="4.0.2" />
 		<PackageReference Include="MassTransit.Extensions.DependencyInjection" Version="7.3.1" />
 		<PackageReference Include="Serilog" Version="2.10.0" />
-		<PackageReference Include="StoneAssemblies.Contrib.MassTransit" Version="1.0.0-alpha0017" />
+		<PackageReference Include="StoneAssemblies.Contrib.MassTransit" Version="1.0.0-alpha0018" />
 	</ItemGroup>
 
 	<ItemGroup>

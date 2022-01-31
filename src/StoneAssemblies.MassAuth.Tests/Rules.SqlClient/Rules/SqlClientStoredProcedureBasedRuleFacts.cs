@@ -178,7 +178,7 @@ namespace StoneAssemblies.MassAuth.Tests.Rules.SqlClient.Rules
             }
 
             [Fact]
-            public async Task Returns_The_ForbiddanceReason_From_The_GetString_From_Reader()
+            public async Task Returns_The_ForbiddanceReason_From_The_FieldName_and_Value_From_Reader()
             {
                 var connectionFactoryMock = new Mock<IConnectionFactory>();
                 var connectionMock = new Mock<IDbConnection>();
@@ -193,7 +193,8 @@ namespace StoneAssemblies.MassAuth.Tests.Rules.SqlClient.Rules
                 dataReaderMock.Setup(reader => reader.GetFieldType(0)).Returns(typeof(bool));
                 dataReaderMock.Setup(reader => reader.GetBoolean(0)).Returns(false);
                 dataReaderMock.Setup(reader => reader.GetFieldType(1)).Returns(typeof(string));
-                dataReaderMock.Setup(reader => reader.GetString(1)).Returns(ExpectedForbiddanceReason);
+                dataReaderMock.Setup(reader => reader.GetName(1)).Returns("Description");
+                dataReaderMock.Setup(reader => reader.GetValue(1)).Returns(ExpectedForbiddanceReason);
 
                 commandMock.Setup(command => command.ExecuteReader()).Returns(dataReaderMock.Object);
 
@@ -224,7 +225,7 @@ namespace StoneAssemblies.MassAuth.Tests.Rules.SqlClient.Rules
                                      },
                                  });
 
-                Assert.Equal(ExpectedForbiddanceReason, result.Description);
+                Assert.Equal(ExpectedForbiddanceReason, result.Data["Description"]);
             }
 
             /// <summary>

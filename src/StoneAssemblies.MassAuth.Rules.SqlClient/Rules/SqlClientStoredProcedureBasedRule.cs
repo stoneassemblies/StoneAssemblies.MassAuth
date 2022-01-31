@@ -7,6 +7,7 @@
 namespace StoneAssemblies.MassAuth.Rules.SqlClient.Rules
 {
     using System;
+    using System.Collections.Generic;
     using System.Data;
     using System.Threading.Tasks;
 
@@ -155,15 +156,19 @@ namespace StoneAssemblies.MassAuth.Rules.SqlClient.Rules
                     }
                     else
                     {
-                        if (reader.FieldCount > 1 && reader.GetFieldType(1) == typeof(string))
+                        if (reader.FieldCount > 1)
                         {
-                            evaluationResult = EvaluationResult.Error(reader.GetString(1));
-                        }
-                        else
-                        {
-                            Log.Warning(
-                                "Can't read the error reason of rule '{RuleName}', the value type must be string",
-                                this.ruleName);
+                            var data = new Dictionary<string, object>();
+
+                            for (var i = 1; i < reader.FieldCount; i++)
+                            {
+                                if (!await reader.IsDBNullAsync(i))
+                                {
+                                    data.Add(reader.GetName(i), reader.GetValue(i));
+                                }
+                            }
+
+                            evaluationResult = EvaluationResult.Error(data);
                         }
                     }
                 }

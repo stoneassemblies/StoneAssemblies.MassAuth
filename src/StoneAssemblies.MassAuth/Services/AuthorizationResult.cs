@@ -6,6 +6,8 @@
 
 namespace StoneAssemblies.MassAuth.Services
 {
+    using System.Collections.Generic;
+
     /// <summary>
     /// The authorization result.
     /// </summary>
@@ -20,7 +22,7 @@ namespace StoneAssemblies.MassAuth.Services
         /// <param name="forbiddanceReason">
         /// The forbiddance reason.
         /// </param>
-        private AuthorizationResult(bool isAuthorized, string forbiddanceReason = "")
+        private AuthorizationResult(bool isAuthorized, Dictionary<string, object> forbiddanceReason = null)
         {
             this.IsAuthorized = isAuthorized;
             this.ForbiddanceReason = forbiddanceReason;
@@ -29,7 +31,7 @@ namespace StoneAssemblies.MassAuth.Services
         /// <summary>
         /// Gets the forbiddance reason.
         /// </summary>
-        public string ForbiddanceReason { get; }
+        public Dictionary<string, object> ForbiddanceReason { get; }
 
         /// <summary>
         /// Gets a value indicating whether is authorized.
@@ -50,15 +52,15 @@ namespace StoneAssemblies.MassAuth.Services
         /// <summary>
         /// The forbidden.
         /// </summary>
-        /// <param name="reason">
-        /// The reason.
+        /// <param name="forbiddanceReason">
+        /// The forbiddance reason.
         /// </param>
         /// <returns>
         /// The <see cref="AuthorizationResult"/>.
         /// </returns>
-        public static AuthorizationResult Forbidden(string reason = "")
+        public static AuthorizationResult Forbidden(Dictionary<string, object> forbiddanceReason = null)
         {
-            return new AuthorizationResult(false, reason);
+            return new AuthorizationResult(false, forbiddanceReason);
         }
     }
 }

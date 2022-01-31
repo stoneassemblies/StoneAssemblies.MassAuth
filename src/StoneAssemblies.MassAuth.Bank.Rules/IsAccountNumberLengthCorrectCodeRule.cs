@@ -7,6 +7,7 @@
 namespace StoneAssemblies.MassAuth.Bank.Rules
 {
     using System;
+    using System.Collections.Generic;
     using System.Linq.Expressions;
     using System.Threading.Tasks;
 
@@ -107,7 +108,17 @@ namespace StoneAssemblies.MassAuth.Bank.Rules
 
             if (!delegateResult)
             {
-                return Task.FromResult(EvaluationResult.Error("The account number length is incorrect"));
+                return Task.FromResult(
+                    EvaluationResult.Error(
+                        new Dictionary<string, object>
+                        {
+                            {
+                                "ErrorCode", 45
+                            },
+                            {
+                                "Description", "The account number length is incorrect"
+                            },
+                        }));
             }
 
             return Task.FromResult(EvaluationResult.Success());

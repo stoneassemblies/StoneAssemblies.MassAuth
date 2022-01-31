@@ -76,7 +76,7 @@ namespace StoneAssemblies.MassAuth.Services
             }
             else
             {
-                if (this.options.ReturnForbiddanceReason && !string.IsNullOrWhiteSpace(authorizationResult.ForbiddanceReason))
+                if (this.options.ReturnForbiddanceReason && authorizationResult.ForbiddanceReason != null)
                 {
                     context.Result = new ContentResult
                     {

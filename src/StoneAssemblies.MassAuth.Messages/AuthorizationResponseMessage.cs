@@ -6,6 +6,9 @@
 
 namespace StoneAssemblies.MassAuth.Messages
 {
+    using System.Collections.Generic;
+    using System.Diagnostics;
+
     /// <summary>
     ///     The authorization response message.
     /// </summary>
@@ -19,6 +22,6 @@ namespace StoneAssemblies.MassAuth.Messages
         /// <summary>
         ///     Gets or sets the forbiddance reason.
         /// </summary>
-        public string ForbiddanceReason { get; set; }
+        public Dictionary<string, object> ForbiddanceReason { get; set; }
     }
 }

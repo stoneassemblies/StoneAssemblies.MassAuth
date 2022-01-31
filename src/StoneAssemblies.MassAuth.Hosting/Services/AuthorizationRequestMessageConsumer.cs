@@ -76,7 +76,7 @@ namespace StoneAssemblies.MassAuth.Hosting.Services
                 {
                     Log.Information("Unauthorized by rule '{RuleName}' ", rule.Name);
                     message.IsAuthorized = false;
-                    message.ForbiddanceReason = evaluationResult?.Description;
+                    message.ForbiddanceReason = evaluationResult?.Data;
                     break;
                 }
             }

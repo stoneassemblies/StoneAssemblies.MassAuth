@@ -7,6 +7,7 @@
 namespace StoneAssemblies.MassAuth.Rules.Interfaces
 {
     using System;
+    using System.Collections.Generic;
 
     /// <summary>
     ///     The evaluation result.
@@ -19,19 +20,19 @@ namespace StoneAssemblies.MassAuth.Rules.Interfaces
         /// <param name="succeeded">
         ///     The succeeded.
         /// </param>
-        /// <param name="description">
-        ///     The description.
+        /// <param name="data">
+        ///     The data.
         /// </param>
-        private EvaluationResult(bool succeeded, string description)
+        private EvaluationResult(bool succeeded, Dictionary<string, object> data)
         {
             this.Succeeded = succeeded;
-            this.Description = description;
+            this.Data = data;
         }
 
         /// <summary>
-        ///     Gets the description.
+        /// Gets the data.
         /// </summary>
-        public string Description { get; }
+        public Dictionary<string, object> Data { get; }
 
         /// <summary>
         ///     Gets a value indicating whether succeeded.
@@ -41,15 +42,15 @@ namespace StoneAssemblies.MassAuth.Rules.Interfaces
         /// <summary>
         ///     The error.
         /// </summary>
-        /// <param name="description">
-        ///     The description.
+        /// <param name="data">
+        ///     The data.
         /// </param>
         /// <returns>
         ///     The <see cref="EvaluationResult" />.
         /// </returns>
-        public static EvaluationResult Error(string description = "")
+        public static EvaluationResult Error(Dictionary<string, object> data = null)
         {
-            return new EvaluationResult(false, description);
+            return new EvaluationResult(false, data);
         }
 
         /// <summary>
@@ -60,7 +61,7 @@ namespace StoneAssemblies.MassAuth.Rules.Interfaces
         /// </returns>
         public static EvaluationResult Success()
         {
-            return new EvaluationResult(true, string.Empty);
+            return new EvaluationResult(true, null);
         }
     }
 }

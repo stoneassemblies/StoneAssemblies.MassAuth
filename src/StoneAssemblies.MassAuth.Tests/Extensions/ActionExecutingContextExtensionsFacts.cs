@@ -37,6 +37,7 @@ namespace StoneAssemblies.MassAuth.Tests.Extensions
             ///     The primary account number.
             /// </param>
             [AuthorizeByRule(typeof(AccountBalanceRequestMessage))]
+            [Theory]
             public void ControllerMethod(string primaryAccountNumber)
             {
             }
@@ -48,6 +49,7 @@ namespace StoneAssemblies.MassAuth.Tests.Extensions
             ///     The primary account number.
             /// </param>
             [AuthorizeByRule]
+            [Theory]
             public void ControllerMethod2(string primaryAccountNumber)
             {
             }

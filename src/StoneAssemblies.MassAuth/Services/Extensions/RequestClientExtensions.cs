@@ -7,6 +7,7 @@
 namespace StoneAssemblies.MassAuth.Services.Extensions
 {
     using System;
+    using System.Collections.Generic;
     using System.Threading.Tasks;
 
     using Serilog;
@@ -46,7 +47,12 @@ namespace StoneAssemblies.MassAuth.Services.Extensions
                 responseMessage = new AuthorizationResponseMessage
                 {
                     IsAuthorized = false,
-                    ForbiddanceReason = "Error requesting authorization",
+                    ForbiddanceReason = new Dictionary<string, object>()
+                                        {
+                                            {
+                                                "Description", "Error requesting authorization"
+                                            },
+                                        },
                 };
             }
 

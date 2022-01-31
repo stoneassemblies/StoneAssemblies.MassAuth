@@ -231,7 +231,12 @@ namespace StoneAssemblies.MassAuth.Tests.Services
                                 new AuthorizationResponseMessage
                                 {
                                     IsAuthorized = false,
-                                    ForbiddanceReason = "The Forbiddance Reason"
+                                    ForbiddanceReason = new Dictionary<string, object>
+                                                        {
+                                                            {
+                                                                "Description", "The Forbiddance Reason"
+                                                            },
+                                                        },
                                 });
                             var messageResponse = new MessageResponse<AuthorizationResponseMessage>(mock.Object);
                             return messageResponse;
@@ -305,7 +310,12 @@ namespace StoneAssemblies.MassAuth.Tests.Services
                                 new AuthorizationResponseMessage
                                 {
                                     IsAuthorized = false,
-                                    ForbiddanceReason = "The Forbiddance Reason"
+                                    ForbiddanceReason = new Dictionary<string, object>
+                                                        {
+                                                            {
+                                                                "Description", "The Forbiddance Reason"
+                                                            },
+                                                        },
                                 });
                             var messageResponse = new MessageResponse<AuthorizationResponseMessage>(mock.Object);
                             return messageResponse;
@@ -545,6 +555,7 @@ namespace StoneAssemblies.MassAuth.Tests.Services
             }
 
             [AuthorizeByRule(typeof(AccountBalanceRequestMessage))]
+            [Theory]
             public void ControllerMethod(string primaryAccountNumber)
             {
             }

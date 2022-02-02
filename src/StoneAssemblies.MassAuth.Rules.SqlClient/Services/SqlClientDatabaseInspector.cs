@@ -16,7 +16,6 @@ namespace StoneAssemblies.MassAuth.Rules.SqlClient.Services
 
     using StoneAssemblies.Data.Extensions;
     using StoneAssemblies.Data.Services.Interfaces;
-    using StoneAssemblies.MassAuth.Rules.SqlClient.Extensions;
     using StoneAssemblies.MassAuth.Rules.SqlClient.Models;
     using StoneAssemblies.MassAuth.Rules.SqlClient.Services.Interfaces;
 

@@ -27,8 +27,8 @@
 		<PackageReference Include="AsyncEnumerator" Version="4.0.2" />
 		<PackageReference Include="MassTransit.RabbitMQ" Version="8.0.5" />
 		<PackageReference Include="Serilog.AspNetCore" Version="6.0.1" />
-		<PackageReference Include="StoneAssemblies.Contrib.MassTransit" Version="1.0.0-alpha0019" />
-		<PackageReference Include="StoneAssemblies.Extensibility" Version="1.0.0-alpha0133" />
+		<PackageReference Include="StoneAssemblies.Contrib.MassTransit" Version="1.0.0-alpha0020" />
+		<PackageReference Include="StoneAssemblies.Extensibility" Version="1.0.0-alpha0134" />
 		<PackageReference Include="StoneAssemblies.Hosting" Version="1.0.0-alpha0005" />
 		<PackageReference Include="System.Reflection.Emit" Version="4.7.0" />
 	</ItemGroup>

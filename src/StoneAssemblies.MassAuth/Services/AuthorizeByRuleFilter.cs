@@ -10,6 +10,7 @@ namespace StoneAssemblies.MassAuth.Services
     using System.Collections.Generic;
     using System.Linq;
     using System.Reflection;
+    using System.Text.Json;
     using System.Threading.Tasks;
 
     using MassTransit;
@@ -20,8 +21,6 @@ namespace StoneAssemblies.MassAuth.Services
     using Microsoft.AspNetCore.Mvc;
     using Microsoft.AspNetCore.Mvc.Filters;
     using Microsoft.AspNetCore.SignalR;
-
-    using Newtonsoft.Json;
 
     using Serilog;
 
@@ -80,7 +79,7 @@ namespace StoneAssemblies.MassAuth.Services
                     context.Result = new ContentResult
                     {
                         StatusCode = StatusCodes.Status403Forbidden,
-                        Content = JsonConvert.SerializeObject(
+                        Content = JsonSerializer.Serialize(
                                                  new
                                                  {
                                                      ForbiddanceReason = authorizationResult?.ForbiddanceReason,

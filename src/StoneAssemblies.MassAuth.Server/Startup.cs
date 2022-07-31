@@ -9,6 +9,7 @@ namespace StoneAssemblies.MassAuth.Server
 {
     using System;
     using System.Collections.Generic;
+    using System.Text.Json.Serialization;
 
     using MassTransit;
 
@@ -144,20 +145,12 @@ namespace StoneAssemblies.MassAuth.Server
                                         });
                             }
 
-                            //cfg.ConfigureJsonSerializer(
-                            //    s =>
-                            //        {
-                            //            s.ReferenceLoopHandling = ReferenceLoopHandling.Ignore;
-                            //            return s;
-                            //        });
-
-                            //cfg.ConfigureJsonDeserializer(
-                            //    s =>
-                            //        {
-                            //            s.ReferenceLoopHandling = ReferenceLoopHandling.Ignore;
-                            //            s.Converters.Add(new ClaimConverter());
-                            //            return s;
-                            //        });
+                            cfg.ConfigureJsonSerializerOptions(
+                                options =>
+                                {
+                                    options.ReferenceHandler = ReferenceHandler.IgnoreCycles;
+                                    return options;
+                                });
 
                             busRegistrationConfigurator.ConfigureAuthorizationRequestConsumers(
                                 (messagesType, consumerType) =>

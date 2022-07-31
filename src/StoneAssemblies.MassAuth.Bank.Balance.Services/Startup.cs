@@ -8,6 +8,8 @@ namespace StoneAssemblies.MassAuth.Bank.Balance.Services
 {
     using System;
     using System.Net.Http;
+    using System.Text.Json.Serialization;
+    using System.Threading.Tasks;
 
     using MassTransit;
 
@@ -106,7 +108,7 @@ namespace StoneAssemblies.MassAuth.Bank.Balance.Services
             services.AddMassTransit("Bank0Bus", sc => AddBus(sc, messageQueueAddress, "Bank0", username, password));
             services.AddMassTransit("Bank1Bus", sc => AddBus(sc, messageQueueAddress, "Bank1", username, password));
             services.AddBusSelector<AccountBalanceRequestMessage>(
-               async (bus, message) =>
+               (bus, message) =>
                    {
                        var parts = bus.Address.AbsolutePath.Split('/');
 
@@ -115,17 +117,17 @@ namespace StoneAssemblies.MassAuth.Bank.Balance.Services
                                "Bank0",
                                StringComparison.InvariantCultureIgnoreCase))
                        {
-                           return true;
+                           return Task.FromResult(true);
                        }
 
                        if (message.PrimaryAccountNumber.StartsWith("1") && virtualHost.Equals(
                                "Bank1",
                                StringComparison.InvariantCultureIgnoreCase))
                        {
-                           return true;
+                           return Task.FromResult(true);
                        }
 
-                       return false;
+                       return Task.FromResult(false);
                    });
 
 
@@ -144,7 +146,6 @@ namespace StoneAssemblies.MassAuth.Bank.Balance.Services
                     });
 
             services.AddControllers();
-            // services.AddMassTransitHostedService();
         }
 
         private static void AddBus(
@@ -164,19 +165,12 @@ namespace StoneAssemblies.MassAuth.Bank.Balance.Services
                                                 configurator.Password(password);
                                             });
 
-                                    //cfg.ConfigureJsonSerializer(
-                                    //    s =>
-                                    //        {
-                                    //            s.ReferenceLoopHandling = ReferenceLoopHandling.Ignore;
-                                    //            return s;
-                                    //        });
-
-                                    //cfg.ConfigureJsonDeserializer(
-                                    //    s =>
-                                    //        {
-                                    //            s.ReferenceLoopHandling = ReferenceLoopHandling.Ignore;
-                                    //            return s;
-                                    //        });
+                                    cfg.ConfigureJsonSerializerOptions(
+                                        options =>
+                                            {
+                                                options.ReferenceHandler = ReferenceHandler.IgnoreCycles;
+                                                return options;
+                                            });
                                 });
 
                         return busControl;

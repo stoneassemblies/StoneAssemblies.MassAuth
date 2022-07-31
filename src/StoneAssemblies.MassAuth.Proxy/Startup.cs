@@ -8,6 +8,7 @@ namespace StoneAssemblies.MassAuth.Proxy
 {
     using System;
     using System.Linq;
+    using System.Text.Json.Serialization;
 
     using MassTransit;
 
@@ -116,19 +117,12 @@ namespace StoneAssemblies.MassAuth.Proxy
                                                     configurator.Password(password);
                                                 });
 
-                                        //cfg.ConfigureJsonSerializer(
-                                        //    s =>
-                                        //        {
-                                        //            s.ReferenceLoopHandling = ReferenceLoopHandling.Ignore;
-                                        //            return s;
-                                        //        });
-
-                                        //cfg.ConfigureJsonDeserializer(
-                                        //    s =>
-                                        //        {
-                                        //            s.ReferenceLoopHandling = ReferenceLoopHandling.Ignore;
-                                        //            return s;
-                                        //        });
+                                        cfg.ConfigureJsonSerializerOptions(
+                                            options =>
+                                            {
+                                                options.ReferenceHandler = ReferenceHandler.IgnoreCycles;
+                                                return options;
+                                            });
                                     }));
 
                         var extensionAssemblies = extensionManager.GetExtensionPackageAssemblies();

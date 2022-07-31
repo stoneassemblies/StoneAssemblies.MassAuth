@@ -9,7 +9,6 @@ namespace StoneAssemblies.MassAuth.Tests.Services
     using System;
 
     using MassTransit;
-    using MassTransit.ExtensionsDependencyInjectionIntegration;
 
     using Moq;
 
@@ -37,7 +36,7 @@ namespace StoneAssemblies.MassAuth.Tests.Services
             [Fact]
             public void Calls_The_AddRequestClient_Of_The_Configurator_For_AuthorizationRequestMessage_For_The_Given_Message()
             {
-                var serviceCollectionBusConfiguratorMock = new Mock<IServiceCollectionBusConfigurator>();
+                var serviceCollectionBusConfiguratorMock = new Mock<IBusRegistrationConfigurator>();
                 var serviceCollectionBusConfigurator = serviceCollectionBusConfiguratorMock.Object;
 
                 serviceCollectionBusConfigurator.AddDefaultAuthorizationRequestClient<AccountBalanceRequestMessage>();
@@ -62,7 +61,7 @@ namespace StoneAssemblies.MassAuth.Tests.Services
             [Fact]
             public void Calls_The_AddRequestClient_Of_The_Configurator_For_The_Given_Message()
             {
-                var serviceCollectionBusConfiguratorMock = new Mock<IServiceCollectionBusConfigurator>();
+                var serviceCollectionBusConfiguratorMock = new Mock<IBusRegistrationConfigurator>();
                 var serviceCollectionBusConfigurator = serviceCollectionBusConfiguratorMock.Object;
 
                 serviceCollectionBusConfigurator.AddDefaultRequestClient<AccountBalanceRequestMessage>();

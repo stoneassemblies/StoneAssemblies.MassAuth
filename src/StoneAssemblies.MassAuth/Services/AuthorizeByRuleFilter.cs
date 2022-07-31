@@ -13,7 +13,6 @@ namespace StoneAssemblies.MassAuth.Services
     using System.Threading.Tasks;
 
     using MassTransit;
-    using MassTransit.Clients;
 
     using Microsoft.AspNetCore.Authentication;
     using Microsoft.AspNetCore.Http;

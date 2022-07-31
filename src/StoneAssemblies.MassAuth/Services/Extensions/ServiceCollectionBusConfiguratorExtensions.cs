@@ -6,10 +6,7 @@
 
 namespace StoneAssemblies.MassAuth.Services.Extensions
 {
-    using System;
-
     using MassTransit;
-    using MassTransit.ExtensionsDependencyInjectionIntegration;
 
     using StoneAssemblies.Contrib.MassTransit.Services.Extensions;
     using StoneAssemblies.MassAuth.Messages;
@@ -32,7 +29,7 @@ namespace StoneAssemblies.MassAuth.Services.Extensions
         ///     The message type
         /// </typeparam>
         public static void AddDefaultAuthorizationRequestClient<TMessage>(
-            this IServiceCollectionBusConfigurator @this, RequestTimeout timeout = default)
+            this IBusRegistrationConfigurator @this, RequestTimeout timeout = default)
             where TMessage : MessageBase
         {
             @this.AddDefaultRequestClient<AuthorizationRequestMessage<TMessage>>(timeout);

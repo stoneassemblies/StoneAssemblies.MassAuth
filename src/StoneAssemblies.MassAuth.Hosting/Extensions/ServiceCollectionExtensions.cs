@@ -16,7 +16,7 @@ namespace StoneAssemblies.MassAuth.Hosting.Extensions
 
     using Serilog;
 
-    using StoneAssemblies.Extensibility.Services.Interfaces;
+    using StoneAssemblies.Extensibility;
     using StoneAssemblies.Hosting.Extensions;
     using StoneAssemblies.MassAuth.Hosting.Services;
     using StoneAssemblies.MassAuth.Hosting.Services.Interfaces;
@@ -206,7 +206,7 @@ namespace StoneAssemblies.MassAuth.Hosting.Extensions
         {
             var discoveredMessageTypes = serviceCollection.GetDiscoveredMessageTypes();
             var extensionManager = serviceCollection.GetRegisteredInstance<IExtensionManager>();
-            foreach (var assembly in extensionManager.GetExtensionAssemblies())
+            foreach (var assembly in extensionManager.GetExtensionPackageAssemblies())
             {
                 foreach (var messageType in serviceCollection.AddRulesFromAssembly(assembly))
                 {

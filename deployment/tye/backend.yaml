@@ -2,7 +2,7 @@ name: stoneassemblies-massauth
 network: stoneassemblies-massauth-network
 services:
 - name: stoneassemblies-massauth-rabbitmq
-  image: rabbitmq:3.8.3-management
+  image: rabbitmq:3.10-management
   bindings:
   - name: rabbitmq
     port: 6002
@@ -39,9 +39,10 @@ services:
     value: queuedemo
   - name: RabbitMQ:Password
     value: queuedemo
-  - name: Extensions:Sources:0
+  - name: Extensions:Sources:0:Uri
     value: ../../output/nuget-symbols/
-  - name: Extensions:Sources:1
-    value: http://localhost:8081/repository/nuget-all/
+  - name: Extensions:Sources:1:Uri
+#    value: http://localhost:8081/repository/nuget-all/
+    value: https://api.nuget.org/v3/index.json
   - name: Extensions:Packages:0
     value: StoneAssemblies.MassAuth.Bank.Rules

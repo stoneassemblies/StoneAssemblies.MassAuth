@@ -10,8 +10,6 @@ namespace StoneAssemblies.MassAuth.Bank.Balance.Services
     using System.Net.Http;
 
     using MassTransit;
-    using MassTransit.ExtensionsDependencyInjectionIntegration;
-    using MassTransit.MultiBus;
 
     using Microsoft.AspNetCore.Authentication.JwtBearer;
     using Microsoft.AspNetCore.Builder;
@@ -20,8 +18,6 @@ namespace StoneAssemblies.MassAuth.Bank.Balance.Services
     using Microsoft.Extensions.DependencyInjection;
     using Microsoft.Extensions.Hosting;
     using Microsoft.IdentityModel.Logging;
-
-    using Newtonsoft.Json;
 
     using StoneAssemblies.Contrib.MassTransit.Extensions;
     using StoneAssemblies.Hosting.Services;
@@ -148,11 +144,11 @@ namespace StoneAssemblies.MassAuth.Bank.Balance.Services
                     });
 
             services.AddControllers();
-            services.AddMassTransitHostedService();
+            // services.AddMassTransitHostedService();
         }
 
         private static void AddBus(
-            IServiceCollectionBusConfigurator sc, string messageQueueAddress, string virtualHost, string username, string password)
+            IBusRegistrationConfigurator sc, string messageQueueAddress, string virtualHost, string username, string password)
         {
             sc.AddBus(
                 context =>
@@ -168,19 +164,19 @@ namespace StoneAssemblies.MassAuth.Bank.Balance.Services
                                                 configurator.Password(password);
                                             });
 
-                                    cfg.ConfigureJsonSerializer(
-                                        s =>
-                                            {
-                                                s.ReferenceLoopHandling = ReferenceLoopHandling.Ignore;
-                                                return s;
-                                            });
+                                    //cfg.ConfigureJsonSerializer(
+                                    //    s =>
+                                    //        {
+                                    //            s.ReferenceLoopHandling = ReferenceLoopHandling.Ignore;
+                                    //            return s;
+                                    //        });
 
-                                    cfg.ConfigureJsonDeserializer(
-                                        s =>
-                                            {
-                                                s.ReferenceLoopHandling = ReferenceLoopHandling.Ignore;
-                                                return s;
-                                            });
+                                    //cfg.ConfigureJsonDeserializer(
+                                    //    s =>
+                                    //        {
+                                    //            s.ReferenceLoopHandling = ReferenceLoopHandling.Ignore;
+                                    //            return s;
+                                    //        });
                                 });
 
                         return busControl;

@@ -9,17 +9,8 @@ namespace StoneAssemblies.MassAuth.Server
 {
     using System;
     using System.Collections.Generic;
-    using System.Linq;
-    using System.Reflection;
-    using System.Reflection.Emit;
-    using System.Threading;
-
-    using GreenPipes;
 
     using MassTransit;
-    using MassTransit.ExtensionsDependencyInjectionIntegration;
-    using MassTransit.ExtensionsDependencyInjectionIntegration.MultiBus;
-    using MassTransit.MultiBus;
 
     using Microsoft.AspNetCore.Builder;
     using Microsoft.AspNetCore.Hosting;
@@ -33,12 +24,10 @@ namespace StoneAssemblies.MassAuth.Server
     using Serilog;
 
     using StoneAssemblies.Contrib.MassTransit.Extensions;
-    using StoneAssemblies.Extensibility.Extensions;
+    using StoneAssemblies.Extensibility;
     using StoneAssemblies.Hosting.Extensions;
-    using StoneAssemblies.MassAuth.Extensions;
     using StoneAssemblies.MassAuth.Hosting.Extensions;
     using StoneAssemblies.MassAuth.Hosting.Services;
-    using StoneAssemblies.MassAuth.Services;
 
     /// <summary>
     ///     The startup.
@@ -101,7 +90,7 @@ namespace StoneAssemblies.MassAuth.Server
         {
             serviceCollection.AddHealthChecks();
             serviceCollection.AddServiceDiscovery();
-            serviceCollection.AddExtensions(this.Configuration);
+            serviceCollection.AddExtensionPackages(this.Configuration);
             serviceCollection.AddRules();
 
             // TODO: Use service discovery to resolve address from service name.
@@ -121,16 +110,16 @@ namespace StoneAssemblies.MassAuth.Server
                         });
             }
 
-            serviceCollection.AddMassTransitHostedService();
+            // serviceCollection.AddMassTransitHostedService();
         }
 
-        private static void AddBus(IServiceCollectionBusConfigurator serviceCollectionConfigurator, string messageQueueAddress, string? virtualHost, string username, string password)
+        private static void AddBus(IBusRegistrationConfigurator busRegistrationConfigurator, string messageQueueAddress, string? virtualHost, string username, string password)
         {
-            serviceCollectionConfigurator.AddAuthorizationRequestConsumers();
+            busRegistrationConfigurator.AddAuthorizationRequestConsumers();
 
             Log.Information("Connecting to message queue server with address '{ServiceAddress}'", messageQueueAddress);
 
-            serviceCollectionConfigurator.AddBus(
+            busRegistrationConfigurator.AddBus(
                 context => Bus.Factory.CreateUsingRabbitMq(
                     cfg =>
                         {
@@ -155,22 +144,22 @@ namespace StoneAssemblies.MassAuth.Server
                                         });
                             }
 
-                            cfg.ConfigureJsonSerializer(
-                                s =>
-                                    {
-                                        s.ReferenceLoopHandling = ReferenceLoopHandling.Ignore;
-                                        return s;
-                                    });
+                            //cfg.ConfigureJsonSerializer(
+                            //    s =>
+                            //        {
+                            //            s.ReferenceLoopHandling = ReferenceLoopHandling.Ignore;
+                            //            return s;
+                            //        });
 
-                            cfg.ConfigureJsonDeserializer(
-                                s =>
-                                    {
-                                        s.ReferenceLoopHandling = ReferenceLoopHandling.Ignore;
-                                        s.Converters.Add(new ClaimConverter());
-                                        return s;
-                                    });
+                            //cfg.ConfigureJsonDeserializer(
+                            //    s =>
+                            //        {
+                            //            s.ReferenceLoopHandling = ReferenceLoopHandling.Ignore;
+                            //            s.Converters.Add(new ClaimConverter());
+                            //            return s;
+                            //        });
 
-                            serviceCollectionConfigurator.ConfigureAuthorizationRequestConsumers(
+                            busRegistrationConfigurator.ConfigureAuthorizationRequestConsumers(
                                 (messagesType, consumerType) =>
                                     {
                                         cfg.DefaultReceiveEndpoint(

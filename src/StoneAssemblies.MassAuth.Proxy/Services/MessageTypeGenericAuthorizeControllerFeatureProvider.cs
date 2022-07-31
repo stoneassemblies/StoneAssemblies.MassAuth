@@ -13,7 +13,7 @@ namespace StoneAssemblies.MassAuth.Proxy.Services
     using Microsoft.AspNetCore.Mvc.ApplicationParts;
     using Microsoft.AspNetCore.Mvc.Controllers;
 
-    using StoneAssemblies.Extensibility.Services.Interfaces;
+    using StoneAssemblies.Extensibility;
     using StoneAssemblies.MassAuth.Messages;
     using StoneAssemblies.MassAuth.Proxy.Controllers;
 
@@ -49,7 +49,7 @@ namespace StoneAssemblies.MassAuth.Proxy.Services
         /// </param>
         public void PopulateFeature(IEnumerable<ApplicationPart> parts, ControllerFeature feature)
         {
-            var extensionAssemblies = this.extensionManager.GetExtensionAssemblies();
+            var extensionAssemblies = this.extensionManager.GetExtensionPackageAssemblies();
             foreach (var extensionAssembly in extensionAssemblies)
             {
                 var messageTypes = extensionAssembly.GetTypes()

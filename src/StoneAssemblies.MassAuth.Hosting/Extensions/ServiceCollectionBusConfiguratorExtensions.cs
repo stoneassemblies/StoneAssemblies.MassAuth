@@ -8,8 +8,12 @@ namespace StoneAssemblies.MassAuth.Hosting.Extensions
 {
     using System;
     using System.Collections.Generic;
+    using System.Reflection;
 
-    using MassTransit.ExtensionsDependencyInjectionIntegration;
+    using MassTransit;
+    using MassTransit.Configuration;
+
+    using Microsoft.Extensions.DependencyInjection;
 
     using Serilog;
 
@@ -31,7 +35,7 @@ namespace StoneAssemblies.MassAuth.Hosting.Extensions
         /// <param name="configurator">
         /// The configurator.
         /// </param>
-        public static void AddAuthorizationRequestConsumers(this IServiceCollectionBusConfigurator configurator)
+        public static void AddAuthorizationRequestConsumers(this IBusRegistrationConfigurator configurator)
         {
             foreach (var messagesType in configurator.GetDiscoveredMessageTypes())
             {
@@ -53,7 +57,7 @@ namespace StoneAssemblies.MassAuth.Hosting.Extensions
         /// <param name="action">
         /// The action.
         /// </param>
-        public static void ConfigureAuthorizationRequestConsumers(this IServiceCollectionBusConfigurator configurator, Action<Type, Type> action)
+        public static void ConfigureAuthorizationRequestConsumers(this IBusRegistrationConfigurator configurator, Action<Type, Type> action)
         {
             foreach (var messageTypeConsumerTypeMapping in MessageTypeConsumerTypeMappings)
             {
@@ -70,9 +74,10 @@ namespace StoneAssemblies.MassAuth.Hosting.Extensions
         /// <returns>
         /// The <see cref="HashSet{Type}"/>.
         /// </returns>
-        private static HashSet<Type> GetDiscoveredMessageTypes(this IServiceCollectionBusConfigurator configurator)
+        private static HashSet<Type> GetDiscoveredMessageTypes(this IBusRegistrationConfigurator configurator)
         {
-            return configurator.Collection.GetDiscoveredMessageTypes();
+            var fieldInfo = typeof(RegistrationConfigurator).GetField("_collection", BindingFlags.Instance | BindingFlags.NonPublic);
+            return (fieldInfo?.GetValue(configurator) as IServiceCollection).GetDiscoveredMessageTypes();
         }
     }
 }

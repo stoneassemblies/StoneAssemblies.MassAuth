@@ -8,7 +8,7 @@
 
     using Moq;
 
-    using StoneAssemblies.Extensibility.Services.Interfaces;
+    using StoneAssemblies.Extensibility;
     using StoneAssemblies.MassAuth.Bank.Messages;
     using StoneAssemblies.MassAuth.Bank.Rules;
     using StoneAssemblies.MassAuth.Hosting.Extensions;
@@ -39,7 +39,7 @@
                                          typeof(Startup).Assembly
                                      };
 
-                extensionManagerMock.Setup(manager => manager.GetExtensionAssemblies()).Returns(assemblies);
+                extensionManagerMock.Setup(manager => manager.GetExtensionPackageAssemblies()).Returns(assemblies);
 
                 var serviceCollection = new ServiceCollection();
                 serviceCollection.AddSingleton(extensionManagerMock.Object);
@@ -62,7 +62,7 @@
                                          typeof(Startup).Assembly
                                      };
 
-                extensionManagerMock.Setup(manager => manager.GetExtensionAssemblies()).Returns(assemblies);
+                extensionManagerMock.Setup(manager => manager.GetExtensionPackageAssemblies()).Returns(assemblies);
 
                 var serviceCollection = new ServiceCollection();
                 serviceCollection.AddSingleton(extensionManagerMock.Object);
@@ -89,7 +89,7 @@
                                          typeof(Startup).Assembly
                                      };
 
-                extensionManagerMock.Setup(manager => manager.GetExtensionAssemblies()).Returns(assemblies);
+                extensionManagerMock.Setup(manager => manager.GetExtensionPackageAssemblies()).Returns(assemblies);
 
                 var serviceCollection = new ServiceCollection();
                 serviceCollection.AddSingleton(extensionManagerMock.Object);

@@ -32,10 +32,10 @@ services:
     value: queuedemo
   - name: RabbitMQ:Password
     value: queuedemo
-  - name: Extensions:Sources:0
+  - name: Extensions:Sources:0:Uri
     value: ../../output/nuget-symbols/
-  - name: Extensions:Sources:1
-    value: http://localhost:8081/repository/nuget-all/
+  - name: Extensions:Sources:1:Uri
+    value: https://api.nuget.org/v3/index.json
   - name: Extensions:Packages:0
     value: StoneAssemblies.MassAuth.Bank.Rules
 - name: stoneassemblies-massauth-rabbitmq
@@ -68,9 +68,9 @@ services:
     value: queuedemo
   - name: RabbitMQ:Password
     value: queuedemo
-  - name: Extensions:Sources:0
+  - name: Extensions:Sources:0:Uri
     value: ../../output/nuget-symbols/
-  - name: Extensions:Sources:1
+  - name: Extensions:Sources:1:Uri
     value: http://localhost:8081/repository/nuget-all/
   - name: Extensions:Packages:0
     value: StoneAssemblies.MassAuth.Bank.Messages

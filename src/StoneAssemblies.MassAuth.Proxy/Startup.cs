@@ -21,8 +21,7 @@ namespace StoneAssemblies.MassAuth.Proxy
     using Newtonsoft.Json;
 
     using StoneAssemblies.Contrib.MassTransit.Extensions;
-    using StoneAssemblies.Extensibility.Extensions;
-    using StoneAssemblies.Extensibility.Services.Interfaces;
+    using StoneAssemblies.Extensibility;
     using StoneAssemblies.Hosting.Extensions;
     using StoneAssemblies.Hosting.Services;
     using StoneAssemblies.MassAuth.Messages;
@@ -91,7 +90,7 @@ namespace StoneAssemblies.MassAuth.Proxy
             var serviceDiscovery = ServiceDiscoveryFactory.GetServiceDiscovery();
             serviceCollection.AddSingleton(serviceDiscovery);
 
-            serviceCollection.AddExtensions(this.Configuration);
+            serviceCollection.AddExtensionPackages(this.Configuration);
             var extensionManager = serviceCollection.GetRegisteredInstance<IExtensionManager>();
 
             serviceCollection.AddScoped<AuthorizeByRuleFilter>();
@@ -117,22 +116,22 @@ namespace StoneAssemblies.MassAuth.Proxy
                                                     configurator.Password(password);
                                                 });
 
-                                        cfg.ConfigureJsonSerializer(
-                                            s =>
-                                                {
-                                                    s.ReferenceLoopHandling = ReferenceLoopHandling.Ignore;
-                                                    return s;
-                                                });
+                                        //cfg.ConfigureJsonSerializer(
+                                        //    s =>
+                                        //        {
+                                        //            s.ReferenceLoopHandling = ReferenceLoopHandling.Ignore;
+                                        //            return s;
+                                        //        });
 
-                                        cfg.ConfigureJsonDeserializer(
-                                            s =>
-                                                {
-                                                    s.ReferenceLoopHandling = ReferenceLoopHandling.Ignore;
-                                                    return s;
-                                                });
+                                        //cfg.ConfigureJsonDeserializer(
+                                        //    s =>
+                                        //        {
+                                        //            s.ReferenceLoopHandling = ReferenceLoopHandling.Ignore;
+                                        //            return s;
+                                        //        });
                                     }));
 
-                        var extensionAssemblies = extensionManager.GetExtensionAssemblies();
+                        var extensionAssemblies = extensionManager.GetExtensionPackageAssemblies();
                         foreach (var extensionAssembly in extensionAssemblies)
                         {
                             var messageTypes = extensionAssembly.GetTypes().Where(type => typeof(MessageBase).IsAssignableFrom(type))
@@ -149,7 +148,7 @@ namespace StoneAssemblies.MassAuth.Proxy
                 .ConfigureApplicationPartManager(
                     manager => manager.FeatureProviders.Add(
                         new MessageTypeGenericAuthorizeControllerFeatureProvider(extensionManager)));
-            serviceCollection.AddMassTransitHostedService();
+            // serviceCollection.AddMassTransitHostedService();
         }
     }
 }

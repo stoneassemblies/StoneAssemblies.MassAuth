@@ -57,10 +57,14 @@
             public void Loads_Rules_From_Already_RegisteredRules()
             {
                 var extensionManagerMock = new Mock<IExtensionManager>();
+                var assembly = typeof(Startup).Assembly;
+
+                var count = assembly.GetTypes().Count(type => typeof(IRule<AuthorizationRequestMessage<AccountBalanceRequestMessage>>).IsAssignableFrom(type));
+
                 var assemblies = new List<Assembly>
-                                     {
-                                         typeof(Startup).Assembly
-                                     };
+                                 {
+                                     assembly
+                                 };
 
                 extensionManagerMock.Setup(manager => manager.GetExtensionPackageAssemblies()).Returns(assemblies);
 
@@ -74,7 +78,7 @@
                 var rules = buildServiceProvider.GetServices<IRule<AuthorizationRequestMessage<AccountBalanceRequestMessage>>>()
                     .ToList();
 
-                Assert.Equal(3, rules.Count);
+                Assert.Equal(count + 1, rules.Count);
             }
 
             /// <summary>
@@ -84,10 +88,15 @@
             public void Loads_Rules_From_The_Extension_Assemblies()
             {
                 var extensionManagerMock = new Mock<IExtensionManager>();
+
+                var assembly = typeof(Startup).Assembly;
+
+                var count = assembly.GetTypes().Count(type => typeof(IRule<AuthorizationRequestMessage<AccountBalanceRequestMessage>>).IsAssignableFrom(type));
+
                 var assemblies = new List<Assembly>
-                                     {
-                                         typeof(Startup).Assembly
-                                     };
+                                 {
+                                     assembly
+                                 };
 
                 extensionManagerMock.Setup(manager => manager.GetExtensionPackageAssemblies()).Returns(assemblies);
 
@@ -99,7 +108,7 @@
                 var rules = buildServiceProvider.GetServices<IRule<AuthorizationRequestMessage<AccountBalanceRequestMessage>>>()
                     .ToList();
 
-                Assert.Equal(2, rules.Count);
+                Assert.Equal(count, rules.Count);
             }
         }
     }

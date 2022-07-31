@@ -6,14 +6,8 @@
 
 namespace StoneAssemblies.MassAuth.Bank.Rules
 {
-    using FluentValidation;
-
-    using Microsoft.AspNetCore.Identity;
     using Microsoft.Extensions.Configuration;
     using Microsoft.Extensions.DependencyInjection;
-
-    using StoneAssemblies.MassAuth.Bank.Messages;
-    using StoneAssemblies.MassAuth.Messages;
 
     /// <summary>
     ///     The startup type.

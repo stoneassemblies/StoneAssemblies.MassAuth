@@ -10,7 +10,9 @@ namespace StoneAssemblies.MassAuth.Hosting.Extensions
 
     using MassTransit;
 
-    using StoneAssemblies.Contrib.MassTransit.Extensions;
+    using StoneAssemblies.MassAuth.Messages.Extensions;
+
+    // using StoneAssemblies.Contrib.MassTransit.Extensions;
 
     /// <summary>
     ///     The bus factory configurator extensions.

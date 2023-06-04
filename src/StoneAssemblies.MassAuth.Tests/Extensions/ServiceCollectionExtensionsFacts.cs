@@ -25,6 +25,23 @@ namespace StoneAssemblies.MassAuth.Tests.Extensions
     {
         public class The_AddBusSelector_Method
         {
+            [Fact]
+            public async Task Registers_BusSelector_Using_Non_Generic_Version()
+            {
+                var serviceCollection = new ServiceCollection();
+                serviceCollection.AddMassTransit("FourBus", cfg => { cfg.UsingInMemory(); });
+                serviceCollection.AddMassTransit("FiveBus", cfg => { cfg.UsingInMemory(); });
+
+                serviceCollection.AddBusSelector(typeof(DemoMessage));
+
+                var busSelector = serviceCollection.BuildServiceProvider().GetService<IBusSelector<DemoMessage>>();
+
+                Assert.NotNull(busSelector);
+            }
+        }
+
+        public class The_AddBusSelector_Generic_Method
+        {
             /// <summary>
             /// The registers_ bus selector.
             /// </summary>

@@ -93,15 +93,23 @@ namespace StoneAssemblies.MassAuth.Extensions
         /// The service collection.
         /// </param>
         /// <param name="messageType">
-        ///The message type.
+        ///  The message type
         /// </param>
         public static void AddBusSelector(this IServiceCollection serviceCollection, Type messageType)
         {
+            var busSelectorType = typeof(IBusSelector<>).MakeGenericType(messageType);
+            var expectedSecondParameterType =
+                typeof(Func<,>).MakeGenericType(typeof(IServiceProvider), busSelectorType);
+
             var type = typeof(ServiceCollectionExtensions);
-            var methodInfo = type
-                .GetMethods(BindingFlags.Static | BindingFlags.Public).First(info => info.Name == nameof(AddBusSelector) && info.GetParameters().Length == 2 && info.GetParameters()[1].Name == "busSelector");
-            var makeGenericMethod = methodInfo.MakeGenericMethod(messageType);
-            makeGenericMethod.Invoke(type, new object[] { serviceCollection, null });
+            var methodInfo = type.GetMethods(BindingFlags.Static | BindingFlags.Public).Select(
+                info => info.Name == nameof(AddBusSelector) && info.IsGenericMethod && info.GetParameters().Length == 2
+                        && info.TryMakeGenericMethod(out var genericMethod, messageType)
+                            ? genericMethod
+                            : null)
+                .First(genericMethodInfo => genericMethodInfo != null && genericMethodInfo.GetParameters()[1].ParameterType == expectedSecondParameterType);
+
+            methodInfo.Invoke(type, new object[] { serviceCollection, null });
         }
 
         /// <summary>

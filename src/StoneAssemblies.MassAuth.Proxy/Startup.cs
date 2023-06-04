@@ -6,31 +6,29 @@
 
 namespace StoneAssemblies.MassAuth.Proxy
 {
-    using System;
     using System.Linq;
+    using System.Reflection;
     using System.Text.Json.Serialization;
+    using System.Threading.Tasks;
 
     using MassTransit;
 
+    using Microsoft.AspNetCore.Authentication;
     using Microsoft.AspNetCore.Builder;
     using Microsoft.AspNetCore.Hosting;
+    using Microsoft.AspNetCore.Http;
     using Microsoft.Extensions.Configuration;
     using Microsoft.Extensions.DependencyInjection;
     using Microsoft.Extensions.Hosting;
     using Microsoft.IdentityModel.Logging;
-
-    using Newtonsoft.Json;
 
     using StoneAssemblies.Extensibility;
     using StoneAssemblies.Hosting.Extensions;
     using StoneAssemblies.Hosting.Services;
     using StoneAssemblies.MassAuth.Extensions;
     using StoneAssemblies.MassAuth.Messages;
-    using StoneAssemblies.MassAuth.Messages.Extensions;
     using StoneAssemblies.MassAuth.Proxy.Services;
-    using StoneAssemblies.MassAuth.Services;
     using StoneAssemblies.MassAuth.Services.Extensions;
-    using StoneAssemblies.MassAuth.Services.Options;
 
     /// <summary>
     ///     The startup.
@@ -75,10 +73,15 @@ namespace StoneAssemblies.MassAuth.Proxy
 
             app.UseRouting();
 
+            // TODO: Try to recover the 
             app.UseAuthentication();
             app.UseAuthorization();
 
-            app.UseEndpoints(endpoints => { endpoints.MapControllers(); });
+            app.UseEndpoints(
+                endpoints =>
+                {
+                    endpoints.MapControllers();
+                });
         }
 
         /// <summary>
@@ -100,9 +103,8 @@ namespace StoneAssemblies.MassAuth.Proxy
             serviceCollection.AddMassAuth(
                 options =>
                 {
+                    // options.ReturnForbiddanceReason = true;
                 });
-
-            // serviceCollection.AddScoped<AuthorizeByRuleFilter>(provider => new AuthorizeByRuleFilter(new AuthorizeByRuleFilterConfigurationOptions(), ));
 
             // TODO: Use service discovery to resolve address from service name.
             // var serviceDiscovery = serviceCollection.GetRegisteredInstance<IServiceDiscovery>();
@@ -133,6 +135,9 @@ namespace StoneAssemblies.MassAuth.Proxy
                                             });
                                     }));
 
+                        var serviceCollectionBusConfiguratorExtensionsType = typeof(ServiceCollectionBusConfiguratorExtensions);
+                        var addDefaultAuthorizationRequestClientMethodInfo = serviceCollectionBusConfiguratorExtensionsType.GetMethods(BindingFlags.Static | BindingFlags.Public).FirstOrDefault(info => info.Name == nameof(ServiceCollectionBusConfiguratorExtensions.AddDefaultAuthorizationRequestClient));
+
                         var extensionAssemblies = extensionManager.GetExtensionPackageAssemblies();
                         foreach (var extensionAssembly in extensionAssemblies)
                         {
@@ -140,8 +145,10 @@ namespace StoneAssemblies.MassAuth.Proxy
                                 .ToList();
                             foreach (var type in messageTypes)
                             {
-                                var makeGenericType = typeof(AuthorizationRequestMessage<>).MakeGenericType(type);
-                                sc.AddRequestClient(makeGenericType, new Uri($"queue:{makeGenericType.GetFlatName()}"));
+                                var makeGenericMethod = addDefaultAuthorizationRequestClientMethodInfo.MakeGenericMethod(type);
+                                makeGenericMethod.Invoke(
+                                    serviceCollectionBusConfiguratorExtensionsType,
+                                    new object[] { sc, default(RequestTimeout) });
                             }
                         }
                     });
@@ -150,7 +157,7 @@ namespace StoneAssemblies.MassAuth.Proxy
                 .ConfigureApplicationPartManager(
                     manager => manager.FeatureProviders.Add(
                         new MessageTypeGenericAuthorizeControllerFeatureProvider(extensionManager)));
-            // serviceCollection.AddMassTransitHostedService();
+
         }
     }
 }

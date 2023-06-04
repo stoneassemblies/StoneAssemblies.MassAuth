@@ -87,6 +87,24 @@ namespace StoneAssemblies.MassAuth.Extensions
         }
 
         /// <summary>
+        /// Adds bus selector.
+        /// </summary>
+        /// <param name="serviceCollection">
+        /// The service collection.
+        /// </param>
+        /// <param name="messageType">
+        ///The message type.
+        /// </param>
+        public static void AddBusSelector(this IServiceCollection serviceCollection, Type messageType)
+        {
+            var type = typeof(ServiceCollectionExtensions);
+            var methodInfo = type
+                .GetMethods(BindingFlags.Static | BindingFlags.Public).First(info => info.Name == nameof(AddBusSelector) && info.GetParameters().Length == 2 && info.GetParameters()[1].Name == "busSelector");
+            var makeGenericMethod = methodInfo.MakeGenericMethod(messageType);
+            makeGenericMethod.Invoke(type, new object[] { serviceCollection, null });
+        }
+
+        /// <summary>
         ///     The add mass transit.
         /// </summary>
         /// <param name="collection">

@@ -10,7 +10,7 @@ services:
   - name: ASPNETCORE_ENVIRONMENT
     value: Development
   - name: RabbitMQ:Address
-    value: rabbitmq://localhost:6002
+    value: rabbitmq://host.docker.internal:6002
   - name: RabbitMQ:Username
     value: queuedemo
   - name: RabbitMQ:Password
@@ -27,7 +27,7 @@ services:
   - name: ASPNETCORE_ENVIRONMENT
     value: Development
   - name: RabbitMQ:Address
-    value: rabbitmq://localhost:6002
+    value: rabbitmq://host.docker.internal:6002
   - name: RabbitMQ:Username
     value: queuedemo
   - name: RabbitMQ:Password
@@ -63,7 +63,7 @@ services:
   - name: ASPNETCORE_ENVIRONMENT
     value: Development
   - name: RabbitMQ:Address
-    value: rabbitmq://localhost:6002
+    value: rabbitmq://host.docker.internal:6002
   - name: RabbitMQ:Username
     value: queuedemo
   - name: RabbitMQ:Password
@@ -71,7 +71,7 @@ services:
   - name: Extensions:Sources:0:Uri
     value: ../../output/nuget-symbols/
   - name: Extensions:Sources:1:Uri
-    value: http://localhost:8081/repository/nuget-all/
+    value: http://host.docker.internal:8081/repository/nuget-all/
   - name: Extensions:Packages:0
     value: StoneAssemblies.MassAuth.Bank.Messages
   bindings:

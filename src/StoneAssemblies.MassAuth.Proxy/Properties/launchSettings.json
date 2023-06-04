@@ -19,14 +19,28 @@
         "ASPNETCORE_ENVIRONMENT": "Development"
       }
     },
-    "StoneAssemblies.MassAuth.Bank.Balance.Services": {
+    "StoneAssemblies.MassAuth.Proxy": {
       "commandName": "Project",
       "launchBrowser": true,
       "launchUrl": "weatherforecast",
       "environmentVariables": {
-        "RabbitMQ:Password": "Password123!",
         "MARATHON_APP_ID": "1234",
-        "RabbitMQ:Username": "admin",
+        "ASPNETCORE_ENVIRONMENT": "Development"
+      },
+      "applicationUrl": "http://localhost:5000"
+    },
+    "StoneAssemblies.MassAuth.Proxy - Benchmark": {
+      "commandName": "Project",
+      "launchBrowser": true,
+      "launchUrl": "weatherforecast",
+      "environmentVariables": {
+        "RabbitMQ:Address": "rabbitmq://host.docker.internal:6002",
+        "RabbitMQ:Username": "queuedemo",
+        "RabbitMQ:Password": "queuedemo",
+        "Extensions:Sources:0:Uri": "c:\\Tmp\\StoneAssemblies.MassAuth.Benchmarks\\output\\nuget-symbols\\",
+        "Extensions:Sources:1:Uri": "http://host.docker.internal:8081/repository/nuget.org-proxy/index.json",
+        "Extensions:Packages:0": "StoneAssemblies.MassAuth.Benchmarks.Messages:1.0.0-alpha0021",
+        "MARATHON_APP_ID": "1234",
         "ASPNETCORE_ENVIRONMENT": "Development"
       },
       "applicationUrl": "http://localhost:5000"

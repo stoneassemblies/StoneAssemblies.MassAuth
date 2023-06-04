@@ -5,11 +5,10 @@
 // --------------------------------------------------------------------------------------------------------------------
 
 #nullable enable
+
 namespace StoneAssemblies.MassAuth.Server
 {
-    using System;
     using System.Collections.Generic;
-    using System.Text.Json.Serialization;
 
     using MassTransit;
 
@@ -20,15 +19,11 @@ namespace StoneAssemblies.MassAuth.Server
     using Microsoft.Extensions.DependencyInjection;
     using Microsoft.Extensions.Hosting;
 
-    using Newtonsoft.Json;
-
-    using Serilog;
-
     using StoneAssemblies.Extensibility;
     using StoneAssemblies.Hosting.Extensions;
     using StoneAssemblies.MassAuth.Extensions;
     using StoneAssemblies.MassAuth.Hosting.Extensions;
-    using StoneAssemblies.MassAuth.Hosting.Services;
+    using StoneAssemblies.MassAuth.Server.Extensions;
 
     /// <summary>
     ///     The startup.
@@ -70,6 +65,7 @@ namespace StoneAssemblies.MassAuth.Server
             app.UseHealthChecks("/health");
 
             app.UseRouting();
+            app.UseRouting();
 
             app.UseEndpoints(
                 endpoints =>
@@ -101,70 +97,23 @@ namespace StoneAssemblies.MassAuth.Server
             var virtualHosts = new List<string>();
             this.Configuration.GetSection("RabbitMQ")?.GetSection("VirtualHosts").Bind(virtualHosts);
             var messageQueueAddress = this.Configuration.GetSection("RabbitMQ")?["Address"] ?? "rabbitmq://localhost";
+            serviceCollection.AddMassTransit(
+                configurator =>
+                {
+                    configurator.AddBus(messageQueueAddress, string.Empty, username, password);
+                });
+
             foreach (var virtualHost in virtualHosts)
             {
                 serviceCollection.AddMassTransit(
                     $"{virtualHost}Bus",
                     serviceCollectionConfigurator =>
-                        {
-                            AddBus(serviceCollectionConfigurator, messageQueueAddress, virtualHost, username, password);
-                        });
+                    {
+                        serviceCollectionConfigurator.AddBus(messageQueueAddress, virtualHost, username, password);
+                    });
             }
 
             // serviceCollection.AddMassTransitHostedService();
-        }
-
-        private static void AddBus(IBusRegistrationConfigurator busRegistrationConfigurator, string messageQueueAddress, string? virtualHost, string username, string password)
-        {
-            busRegistrationConfigurator.AddAuthorizationRequestConsumers();
-
-            Log.Information("Connecting to message queue server with address '{ServiceAddress}'", messageQueueAddress);
-
-            busRegistrationConfigurator.AddBus(
-                context => Bus.Factory.CreateUsingRabbitMq(
-                    cfg =>
-                        {
-                            if (!string.IsNullOrEmpty(virtualHost))
-                            {
-                                cfg.Host(
-                                    new Uri(new Uri(messageQueueAddress), new Uri(virtualHost, UriKind.Relative)),
-                                    configurator =>
-                                        {
-                                            configurator.Username(username);
-                                            configurator.Password(password);
-                                        });
-                            }
-                            else
-                            {
-                                cfg.Host(
-                                    messageQueueAddress,
-                                    configurator =>
-                                        {
-                                            configurator.Username(username);
-                                            configurator.Password(password);
-                                        });
-                            }
-
-                            cfg.ConfigureJsonSerializerOptions(
-                                options =>
-                                {
-                                    options.ReferenceHandler = ReferenceHandler.IgnoreCycles;
-                                    return options;
-                                });
-
-                            busRegistrationConfigurator.ConfigureAuthorizationRequestConsumers(
-                                (messagesType, consumerType) =>
-                                    {
-                                        cfg.DefaultReceiveEndpoint(
-                                            messagesType,
-                                            e =>
-                                                {
-                                                    e.PrefetchCount = 16;
-                                                    e.UseMessageRetry(x => x.Interval(2, 100));
-                                                    e.ConfigureConsumer(context, consumerType);
-                                                });
-                                    });
-                        }));
         }
     }
 }

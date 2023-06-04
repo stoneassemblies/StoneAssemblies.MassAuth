@@ -101,49 +101,34 @@ namespace StoneAssemblies.MassAuth.Bank.Balance.Services
             var messageQueueAddress = this.Configuration.GetSection("RabbitMQ")?["Address"] ?? "rabbitmq://localhost:6002";
 
             //// SingleBus
-            // services.AddMassTransit(sc => AddBus(sc, messageQueueAddress, "first", username, password));
+            services.AddMassTransit(sc => AddBus(sc, messageQueueAddress, string.Empty, username, password));
+
             // services.AddBusSelector<AccountBalanceRequestMessage>();
-
             // MultiBus
-            services.AddMassTransit("Bank0Bus", sc => AddBus(sc, messageQueueAddress, "Bank0", username, password));
-            services.AddMassTransit("Bank1Bus", sc => AddBus(sc, messageQueueAddress, "Bank1", username, password));
-            services.AddBusSelector<AccountBalanceRequestMessage>(
-               (bus, message) =>
-                   {
-                       var parts = bus.Address.AbsolutePath.Split('/');
+            //services.AddMassTransit("Bank0Bus", sc => AddBus(sc, messageQueueAddress, "Bank0", username, password));
+            //services.AddMassTransit("Bank1Bus", sc => AddBus(sc, messageQueueAddress, "Bank1", username, password));
+            //services.AddBusSelector<AccountBalanceRequestMessage>(
+            //   (bus, message) =>
+            //       {
+            //           var parts = bus.Address.AbsolutePath.Split('/');
 
-                       var virtualHost = parts[1];
-                       if (message.PrimaryAccountNumber.StartsWith("0") && virtualHost.Equals(
-                               "Bank0",
-                               StringComparison.InvariantCultureIgnoreCase))
-                       {
-                           return Task.FromResult(true);
-                       }
+            //           var virtualHost = parts[1];
+            //           if (message.PrimaryAccountNumber.StartsWith("0") && virtualHost.Equals(
+            //                   "Bank0",
+            //                   StringComparison.InvariantCultureIgnoreCase))
+            //           {
+            //               return Task.FromResult(true);
+            //           }
 
-                       if (message.PrimaryAccountNumber.StartsWith("1") && virtualHost.Equals(
-                               "Bank1",
-                               StringComparison.InvariantCultureIgnoreCase))
-                       {
-                           return Task.FromResult(true);
-                       }
+            //           if (message.PrimaryAccountNumber.StartsWith("1") && virtualHost.Equals(
+            //                   "Bank1",
+            //                   StringComparison.InvariantCultureIgnoreCase))
+            //           {
+            //               return Task.FromResult(true);
+            //           }
 
-                       return Task.FromResult(false);
-                   });
-
-
-            var identityServerAuthority = this.Configuration.GetSection("IdentityServer")?["Authority"] ?? "http://172.30.64.1:6005/auth/realms/master";
-            services
-                .AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
-                .AddJwtBearer(options =>
-                    {
-                        options.Authority = identityServerAuthority;
-                        options.RequireHttpsMetadata = !string.IsNullOrWhiteSpace(identityServerAuthority) && identityServerAuthority.StartsWith("https://");
-                        options.Audience = "stoneassemblies-massauth-bank-balance-services";
-                        options.BackchannelHttpHandler = new HttpClientHandler
-                        {
-                            ServerCertificateCustomValidationCallback = delegate { return true; }
-                        };
-                    });
+            //           return Task.FromResult(false);
+            //       });
 
             services.AddControllers();
         }

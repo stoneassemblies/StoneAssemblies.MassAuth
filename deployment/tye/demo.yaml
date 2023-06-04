@@ -20,7 +20,26 @@ services:
   volumes:
   - name: stoneassemblies-massauth-rabbitmq-data
     target: /var/lib/rabbitmq
-- name: stoneassemblies-massauth-server-1
+- name: stoneassemblies-massauth-bank-balance-service
+  project: ../../src/StoneAssemblies.MassAuth.Bank.Balance.Services/StoneAssemblies.MassAuth.Bank.Balance.Services.csproj
+  replicas: 1
+  buildProperties: 
+  - name: Configuration
+    value: Debug
+  env:
+  - name: ASPNETCORE_ENVIRONMENT
+    value: Development
+  - name: RabbitMQ:Address
+    value: rabbitmq://host.docker.internal:6002
+  - name: RabbitMQ:Username
+    value: queuedemo
+  - name: RabbitMQ:Password
+    value: queuedemo
+  bindings:
+  - port: 6004
+    containerPort: 80
+    protocol: http
+- name: stoneassemblies-massauth-server
   project: ../../src/StoneAssemblies.MassAuth.Server/StoneAssemblies.MassAuth.Server.csproj
   replicas: 1
   buildProperties: 
@@ -31,10 +50,6 @@ services:
     value: Development
   - name: RabbitMQ:Address
     value: rabbitmq://host.docker.internal:6002
-  - name: RabbitMQ:VirtualHosts:0
-    value: Bank0
-  - name: RabbitMQ:VirtualHosts:1
-    value: Bank1
   - name: RabbitMQ:Username
     value: queuedemo
   - name: RabbitMQ:Password

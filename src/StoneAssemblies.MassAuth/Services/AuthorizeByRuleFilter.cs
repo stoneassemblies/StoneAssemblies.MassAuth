@@ -18,6 +18,7 @@ namespace StoneAssemblies.MassAuth.Services
     using Microsoft.AspNetCore.Http.Connections.Features;
     using Microsoft.AspNetCore.Mvc;
     using Microsoft.AspNetCore.Mvc.Filters;
+    using Microsoft.AspNetCore.Server.HttpSys;
     using Microsoft.AspNetCore.SignalR;
     using Microsoft.Extensions.DependencyInjection;
 
@@ -101,7 +102,13 @@ namespace StoneAssemblies.MassAuth.Services
                 }
                 else
                 {
-                    context.Result = new ForbidResult();
+                    // TODO: Improve this.
+                    context.Result = new ContentResult
+                    {
+                        StatusCode = StatusCodes.Status403Forbidden,
+                        Content = string.Empty,
+                        ContentType = "application/json",
+                    };
                 }
             }
         }
@@ -176,8 +183,9 @@ namespace StoneAssemblies.MassAuth.Services
         /// </returns>
         private async Task<AuthorizationResult> AuthorizationRequestAsync(HttpContext httpContext, MessageBase message)
         {
-            var busSelector = this.busSelectors.FirstOrDefault(selector => typeof(IBusSelector<>).MakeGenericType(message.GetType()).IsInstanceOfType(selector))
-                              ?? (IBusSelector)ActivatorUtilities.CreateInstance(this.serviceProvider, typeof(DefaultBusSelector<>).MakeGenericType(message.GetType()));
+            var messageType = message.GetType();
+            var busSelector = this.busSelectors.FirstOrDefault(selector => typeof(IBusSelector<>).MakeGenericType(messageType).IsInstanceOfType(selector)) ??
+                              (IBusSelector) ActivatorUtilities.CreateInstance(this.serviceProvider, typeof(DefaultBusSelector<>).MakeGenericType(messageType));
 
             var clientFactories = busSelector.SelectClientFactories(message);
             var authorizationMessage = AuthorizationRequestMessageFactory.From(message);

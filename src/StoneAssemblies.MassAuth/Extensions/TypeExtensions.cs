@@ -10,10 +10,9 @@ namespace StoneAssemblies.MassAuth.Extensions
     using System.Collections.Concurrent;
     using System.Linq;
     using System.Reflection;
-    using System.Text;
+
     using MassTransit;
 
-    using StoneAssemblies.Contrib.MassTransit.Extensions;
     using StoneAssemblies.MassAuth.Messages;
 
     /// <summary>

@@ -21,9 +21,9 @@ namespace StoneAssemblies.MassAuth.Bank.Balance.Services
     using Microsoft.Extensions.Hosting;
     using Microsoft.IdentityModel.Logging;
 
-    using StoneAssemblies.Contrib.MassTransit.Extensions;
     using StoneAssemblies.Hosting.Services;
     using StoneAssemblies.MassAuth.Bank.Messages;
+    using StoneAssemblies.MassAuth.Extensions;
     using StoneAssemblies.MassAuth.Services.Extensions;
 
     /// <summary>

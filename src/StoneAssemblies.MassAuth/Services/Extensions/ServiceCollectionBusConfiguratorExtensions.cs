@@ -6,10 +6,12 @@
 
 namespace StoneAssemblies.MassAuth.Services.Extensions
 {
+    using System;
+
     using MassTransit;
 
-    using StoneAssemblies.Contrib.MassTransit.Services.Extensions;
     using StoneAssemblies.MassAuth.Messages;
+    using StoneAssemblies.MassAuth.Messages.Extensions;
 
     /// <summary>
     ///     The service collection bus configurator extensions.
@@ -33,6 +35,24 @@ namespace StoneAssemblies.MassAuth.Services.Extensions
             where TMessage : MessageBase
         {
             @this.AddDefaultRequestClient<AuthorizationRequestMessage<TMessage>>(timeout);
+        }
+        
+        /// <summary>
+        ///     Adds request client for a message.
+        /// </summary>
+        /// <param name="this">
+        ///     The instance.
+        /// </param>
+        /// <param name="timeout">
+        ///     The timeout.
+        /// </param>
+        /// <typeparam name="TMessage">
+        ///     The message type
+        /// </typeparam>
+        public static void AddDefaultRequestClient<TMessage>(this IBusRegistrationConfigurator @this, RequestTimeout timeout = default)
+            where TMessage : class
+        {
+            @this.AddRequestClient<TMessage>(new Uri($"queue:{typeof(TMessage).GetFlatName()}"), timeout);
         }
     }
 }

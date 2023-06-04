@@ -21,13 +21,16 @@ namespace StoneAssemblies.MassAuth.Proxy
 
     using Newtonsoft.Json;
 
-    using StoneAssemblies.Contrib.MassTransit.Extensions;
     using StoneAssemblies.Extensibility;
     using StoneAssemblies.Hosting.Extensions;
     using StoneAssemblies.Hosting.Services;
+    using StoneAssemblies.MassAuth.Extensions;
     using StoneAssemblies.MassAuth.Messages;
+    using StoneAssemblies.MassAuth.Messages.Extensions;
     using StoneAssemblies.MassAuth.Proxy.Services;
     using StoneAssemblies.MassAuth.Services;
+    using StoneAssemblies.MassAuth.Services.Extensions;
+    using StoneAssemblies.MassAuth.Services.Options;
 
     /// <summary>
     ///     The startup.
@@ -94,7 +97,12 @@ namespace StoneAssemblies.MassAuth.Proxy
             serviceCollection.AddExtensionPackages(this.Configuration);
             var extensionManager = serviceCollection.GetRegisteredInstance<IExtensionManager>();
 
-            serviceCollection.AddScoped<AuthorizeByRuleFilter>();
+            serviceCollection.AddMassAuth(
+                options =>
+                {
+                });
+
+            // serviceCollection.AddScoped<AuthorizeByRuleFilter>(provider => new AuthorizeByRuleFilter(new AuthorizeByRuleFilterConfigurationOptions(), ));
 
             // TODO: Use service discovery to resolve address from service name.
             // var serviceDiscovery = serviceCollection.GetRegisteredInstance<IServiceDiscovery>();

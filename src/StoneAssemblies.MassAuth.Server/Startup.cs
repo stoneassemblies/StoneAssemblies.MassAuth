@@ -24,9 +24,9 @@ namespace StoneAssemblies.MassAuth.Server
 
     using Serilog;
 
-    using StoneAssemblies.Contrib.MassTransit.Extensions;
     using StoneAssemblies.Extensibility;
     using StoneAssemblies.Hosting.Extensions;
+    using StoneAssemblies.MassAuth.Extensions;
     using StoneAssemblies.MassAuth.Hosting.Extensions;
     using StoneAssemblies.MassAuth.Hosting.Services;
 

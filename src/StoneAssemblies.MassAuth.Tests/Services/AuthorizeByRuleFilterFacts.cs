@@ -25,12 +25,12 @@ namespace StoneAssemblies.MassAuth.Tests.Services
 
     using Moq;
 
-    using StoneAssemblies.Contrib.MassTransit.Services.Interfaces;
     using StoneAssemblies.MassAuth.Bank.Messages;
     using StoneAssemblies.MassAuth.Messages;
     using StoneAssemblies.MassAuth.Services;
     using StoneAssemblies.MassAuth.Services.Attributes;
     using StoneAssemblies.MassAuth.Services.Extensions;
+    using StoneAssemblies.MassAuth.Services.Interfaces;
     using StoneAssemblies.MassAuth.Services.Options;
 
     using Xunit;
@@ -106,9 +106,9 @@ namespace StoneAssemblies.MassAuth.Tests.Services
                 (object @object) => ToAsyncEnumerable(clientFactoryMock.Object));
                 var authorizeByRuleFilter = new AuthorizeByRuleFilter(new AuthorizeByRuleFilterConfigurationOptions(),
                     new List<IBusSelector>
-                        {
-                            busSelectorMock.Object
-                        }) as IAsyncActionFilter;
+                    {
+                        busSelectorMock.Object
+                    }, new Mock<IServiceProvider>().Object) as IAsyncActionFilter;
                 var actionExecutionDelegate = new ActionExecutionDelegate(
                     () =>
                         {
@@ -176,9 +176,9 @@ namespace StoneAssemblies.MassAuth.Tests.Services
                 (object @object) => ToAsyncEnumerable(clientFactoryMock.Object));
                 var authorizeByRuleFilter = new AuthorizeByRuleFilter(new AuthorizeByRuleFilterConfigurationOptions(),
                     new List<IBusSelector>
-                        {
-                            busSelectorMock.Object
-                        }) as IAsyncActionFilter;
+                    {
+                        busSelectorMock.Object
+                    }, new Mock<IServiceProvider>().Object) as IAsyncActionFilter;
                 var actionExecutionDelegate = new ActionExecutionDelegate(
                     () =>
                         {
@@ -257,9 +257,9 @@ namespace StoneAssemblies.MassAuth.Tests.Services
                                                     ReturnForbiddanceReason = true
                                                 },
                                                 new List<IBusSelector>
-                                                    {
-                                                        busSelectorMock.Object
-                                                    }) as IAsyncActionFilter;
+                                                {
+                                                    busSelectorMock.Object
+                                                }, new Mock<IServiceProvider>().Object) as IAsyncActionFilter;
                 var actionExecutionDelegate = new ActionExecutionDelegate(
                     () =>
                         {
@@ -336,9 +336,9 @@ namespace StoneAssemblies.MassAuth.Tests.Services
                                                     ReturnForbiddanceReason = true
                                                 },
                                                 new List<IBusSelector>
-                                                    {
-                                                        busSelectorMock.Object
-                                                    }) as IAsyncActionFilter;
+                                                {
+                                                    busSelectorMock.Object
+                                                }, new Mock<IServiceProvider>().Object) as IAsyncActionFilter;
                 var actionExecutionDelegate = new ActionExecutionDelegate(
                     () =>
                         {
@@ -399,9 +399,9 @@ namespace StoneAssemblies.MassAuth.Tests.Services
                                                     ReturnForbiddanceReason = true
                                                 },
                                                 new List<IBusSelector>
-                                                    {
-                                                        busSelectorMock.Object
-                                                    }) as IAsyncActionFilter;
+                                                {
+                                                    busSelectorMock.Object
+                                                }, new Mock<IServiceProvider>().Object) as IAsyncActionFilter;
                 var actionExecutionDelegate = new ActionExecutionDelegate(
                     () =>
                         {
@@ -460,9 +460,9 @@ namespace StoneAssemblies.MassAuth.Tests.Services
                 var authorizeByRuleFilter = new AuthorizeByRuleFilter(
                                                 new AuthorizeByRuleFilterConfigurationOptions(),
                                                 new List<IBusSelector>
-                                                    {
-                                                        busSelectorMock.Object
-                                                    }) as IAsyncActionFilter;
+                                                {
+                                                    busSelectorMock.Object
+                                                }, new Mock<IServiceProvider>().Object) as IAsyncActionFilter;
                 var actionExecutionDelegate = new ActionExecutionDelegate(
                     () =>
                         {
@@ -539,9 +539,9 @@ namespace StoneAssemblies.MassAuth.Tests.Services
                 var authorizeByRuleFilter = new AuthorizeByRuleFilter(
                                                 new AuthorizeByRuleFilterConfigurationOptions(),
                                                 new List<IBusSelector>
-                                                    {
-                                                        busSelectorMock.Object,
-                                                    }) as IAsyncActionFilter;
+                                                {
+                                                    busSelectorMock.Object,
+                                                }, new Mock<IServiceProvider>().Object) as IAsyncActionFilter;
                 var actionExecutionDelegate = new ActionExecutionDelegate(
                     () =>
                         {

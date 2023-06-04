@@ -13,22 +13,21 @@ namespace StoneAssemblies.MassAuth.Services
     using System.Text.Json;
     using System.Threading.Tasks;
 
-    using MassTransit;
-
     using Microsoft.AspNetCore.Authentication;
     using Microsoft.AspNetCore.Http;
     using Microsoft.AspNetCore.Http.Connections.Features;
     using Microsoft.AspNetCore.Mvc;
     using Microsoft.AspNetCore.Mvc.Filters;
     using Microsoft.AspNetCore.SignalR;
+    using Microsoft.Extensions.DependencyInjection;
 
     using Serilog;
 
-    using StoneAssemblies.Contrib.MassTransit.Services.Interfaces;
     using StoneAssemblies.MassAuth.Extensions;
     using StoneAssemblies.MassAuth.Messages;
     using StoneAssemblies.MassAuth.Services.Attributes;
     using StoneAssemblies.MassAuth.Services.Extensions;
+    using StoneAssemblies.MassAuth.Services.Interfaces;
     using StoneAssemblies.MassAuth.Services.Options;
 
     /// <summary>
@@ -38,6 +37,8 @@ namespace StoneAssemblies.MassAuth.Services
     {
         private readonly AuthorizeByRuleFilterConfigurationOptions options;
 
+        private readonly IServiceProvider serviceProvider;
+
         /// <summary>
         ///     The bus selector.
         /// </summary>
@@ -46,10 +47,21 @@ namespace StoneAssemblies.MassAuth.Services
         /// <summary>
         ///     Initializes a new instance of the <see cref="AuthorizeByRuleFilter" /> class.
         /// </summary>
-        public AuthorizeByRuleFilter(AuthorizeByRuleFilterConfigurationOptions options, IEnumerable<IBusSelector> busSelectors)
+        public AuthorizeByRuleFilter(
+            AuthorizeByRuleFilterConfigurationOptions options, IEnumerable<IBusSelector> busSelectors,
+            IServiceProvider serviceProvider)
         {
             this.options = options;
+            this.serviceProvider = serviceProvider;
             this.busSelectors = busSelectors.ToList();
+        }
+
+        /// <summary>
+        ///     Initializes a new instance of the <see cref="AuthorizeByRuleFilter" /> class.
+        /// </summary>
+        public AuthorizeByRuleFilter(AuthorizeByRuleFilterConfigurationOptions options, IServiceProvider serviceProvider)
+            : this(options, Array.Empty<IBusSelector>(), serviceProvider)
+        {
         }
 
         /// <summary>
@@ -164,44 +176,43 @@ namespace StoneAssemblies.MassAuth.Services
         /// </returns>
         private async Task<AuthorizationResult> AuthorizationRequestAsync(HttpContext httpContext, MessageBase message)
         {
-            var busSelector = this.busSelectors.FirstOrDefault(selector => typeof(IBusSelector<>).MakeGenericType(message.GetType()).IsInstanceOfType(selector));
-            if (busSelector != null)
+            var busSelector = this.busSelectors.FirstOrDefault(selector => typeof(IBusSelector<>).MakeGenericType(message.GetType()).IsInstanceOfType(selector))
+                              ?? (IBusSelector)ActivatorUtilities.CreateInstance(this.serviceProvider, typeof(DefaultBusSelector<>).MakeGenericType(message.GetType()));
+
+            var clientFactories = busSelector.SelectClientFactories(message);
+            var authorizationMessage = AuthorizationRequestMessageFactory.From(message);
+
+            var tasks = new List<Task<AuthorizationResponseMessage>>();
+            await foreach (var factory in clientFactories)
             {
-                var clientFactories = busSelector.SelectClientFactories(message);
-                var authorizationMessage = AuthorizationRequestMessageFactory.From(message);
-
-                var tasks = new List<Task<AuthorizationResponseMessage>>();
-                await foreach (var factory in clientFactories)
+                var clientRequest = factory.CreateRequestClient(authorizationMessage.GetType());
+                if (httpContext != null)
                 {
-                    var clientRequest = factory.CreateRequestClient(authorizationMessage.GetType());
-                    if (httpContext != null)
+                    authorizationMessage.UserId = httpContext.User?.GetUserId();
+                    authorizationMessage.Claims = httpContext.User?.Claims;
+                    try
                     {
-                        authorizationMessage.UserId = httpContext.User?.GetUserId();
-                        authorizationMessage.Claims = httpContext.User?.Claims;
-                        try
-                        {
-                            authorizationMessage.AccessToken = await httpContext.GetTokenAsync("access_token");
-                        }
-                        catch (Exception ex)
-                        {
-                            Log.Warning(ex, "Error getting the access token");
-                        }
+                        authorizationMessage.AccessToken = await httpContext.GetTokenAsync("access_token");
                     }
-
-                    tasks.Add(Task.Run(() => clientRequest.GetAuthorizationResponseMessageAsync(authorizationMessage)));
+                    catch (Exception ex)
+                    {
+                        Log.Warning(ex, "Error getting the access token");
+                    }
                 }
 
-                if (tasks.Count == 0)
-                {
-                    return AuthorizationResult.Forbidden();
-                }
+                tasks.Add(Task.Run(() => clientRequest.GetAuthorizationResponseMessageAsync(authorizationMessage)));
+            }
 
-                var messages = await Task.WhenAll(tasks);
-                var authorizationResponseMessage = messages.FirstOrDefault(responseMessage => !responseMessage.IsAuthorized);
-                if (authorizationResponseMessage != null)
-                {
-                    return AuthorizationResult.Forbidden(authorizationResponseMessage.ForbiddanceReason);
-                }
+            if (tasks.Count == 0)
+            {
+                return AuthorizationResult.Forbidden();
+            }
+
+            var messages = await Task.WhenAll(tasks);
+            var authorizationResponseMessage = messages.FirstOrDefault(responseMessage => !responseMessage.IsAuthorized);
+            if (authorizationResponseMessage != null)
+            {
+                return AuthorizationResult.Forbidden(authorizationResponseMessage.ForbiddanceReason);
             }
 
             return AuthorizationResult.Authorized();

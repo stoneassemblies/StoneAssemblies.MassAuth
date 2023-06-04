@@ -12,10 +12,9 @@ namespace StoneAssemblies.MassAuth.Tests.Services
 
     using Moq;
 
-    using StoneAssemblies.Contrib.MassTransit.Extensions;
-    using StoneAssemblies.Contrib.MassTransit.Services.Extensions;
     using StoneAssemblies.MassAuth.Bank.Messages;
     using StoneAssemblies.MassAuth.Messages;
+    using StoneAssemblies.MassAuth.Messages.Extensions;
     using StoneAssemblies.MassAuth.Services.Extensions;
 
     using Xunit;

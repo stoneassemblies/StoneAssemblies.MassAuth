@@ -35,6 +35,8 @@ services:
     value: queuedemo
   - name: RabbitMQ:Password
     value: queuedemo
+  - name: MassAuth:ReturnForbiddanceReason
+    value: false
   bindings:
   - port: 6004
     containerPort: 80

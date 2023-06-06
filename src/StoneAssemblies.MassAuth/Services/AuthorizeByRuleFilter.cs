@@ -18,9 +18,11 @@ namespace StoneAssemblies.MassAuth.Services
     using Microsoft.AspNetCore.Http.Connections.Features;
     using Microsoft.AspNetCore.Mvc;
     using Microsoft.AspNetCore.Mvc.Filters;
+    using Microsoft.AspNetCore.Mvc.ModelBinding;
     using Microsoft.AspNetCore.Server.HttpSys;
     using Microsoft.AspNetCore.SignalR;
     using Microsoft.Extensions.DependencyInjection;
+    using Microsoft.Extensions.Options;
 
     using Serilog;
 
@@ -87,29 +89,22 @@ namespace StoneAssemblies.MassAuth.Services
             }
             else
             {
-                if (this.options.ReturnForbiddanceReason && authorizationResult.ForbiddanceReason != null)
+                var problemDetails = new ProblemDetails
                 {
-                    context.Result = new ContentResult
-                    {
-                        StatusCode = StatusCodes.Status403Forbidden,
-                        Content = JsonSerializer.Serialize(
-                                                 new
-                                                 {
-                                                     ForbiddanceReason = authorizationResult?.ForbiddanceReason,
-                                                 }),
-                        ContentType = "application/json",
-                    };
-                }
-                else
+                    Type = "https://tools.ietf.org/html/rfc7235#section-3.1",
+                    Title = "Unauthorized",
+                    Status = StatusCodes.Status401Unauthorized,
+                };
+
+                if (this.options.ReturnForbiddanceReason)
                 {
-                    // TODO: Improve this.
-                    context.Result = new ContentResult
-                    {
-                        StatusCode = StatusCodes.Status403Forbidden,
-                        Content = string.Empty,
-                        ContentType = "application/json",
-                    };
+                    problemDetails.Detail = JsonSerializer.Serialize(authorizationResult.ForbiddanceReason);
                 }
+
+                context.Result = new ObjectResult(problemDetails)
+                {
+                    StatusCode = StatusCodes.Status401Unauthorized
+                };
             }
         }
 
@@ -185,7 +180,7 @@ namespace StoneAssemblies.MassAuth.Services
         {
             var messageType = message.GetType();
             var busSelector = this.busSelectors.FirstOrDefault(selector => typeof(IBusSelector<>).MakeGenericType(messageType).IsInstanceOfType(selector)) ??
-                              (IBusSelector) ActivatorUtilities.CreateInstance(this.serviceProvider, typeof(DefaultBusSelector<>).MakeGenericType(messageType));
+                              (IBusSelector)ActivatorUtilities.CreateInstance(this.serviceProvider, typeof(DefaultBusSelector<>).MakeGenericType(messageType));
 
             var clientFactories = busSelector.SelectClientFactories(message);
             var authorizationMessage = AuthorizationRequestMessageFactory.From(message);

@@ -19,11 +19,8 @@ namespace StoneAssemblies.MassAuth.Services
     using Microsoft.AspNetCore.Http.Connections.Features;
     using Microsoft.AspNetCore.Mvc;
     using Microsoft.AspNetCore.Mvc.Filters;
-    using Microsoft.AspNetCore.Mvc.ModelBinding;
-    using Microsoft.AspNetCore.Server.HttpSys;
     using Microsoft.AspNetCore.SignalR;
     using Microsoft.Extensions.DependencyInjection;
-    using Microsoft.Extensions.Options;
 
     using Serilog;
 

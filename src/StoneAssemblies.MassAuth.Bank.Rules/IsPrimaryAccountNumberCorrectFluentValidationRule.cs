@@ -1,5 +1,5 @@
 ﻿// --------------------------------------------------------------------------------------------------------------------
-// <copyright file="AccountBalanceRequestMessageFluentValidationRule.cs" company="Stone Assemblies">
+// <copyright file="IsPrimaryAccountNumberCorrectFluentValidationRule.cs" company="Stone Assemblies">
 // Copyright © 2021 - 2021 Stone Assemblies. All rights reserved.
 // </copyright>
 // --------------------------------------------------------------------------------------------------------------------
@@ -27,6 +27,7 @@ namespace StoneAssemblies.MassAuth.Bank.Rules
         {
             this.RuleFor(message => message.Payload.PrimaryAccountNumber)
                 .Matches("^\\d+$")
+                .WithErrorCode("42")
                 .NotNull()
                 .NotEmpty();
         }
@@ -65,6 +66,7 @@ namespace StoneAssemblies.MassAuth.Bank.Rules
                                ["ErrorCode"] = validationResult.Errors[0].ErrorCode, 
                                ["Description"] = validationResult.Errors[0].ErrorMessage
                            };
+
                 return EvaluationResult.Error(data);
             }
 

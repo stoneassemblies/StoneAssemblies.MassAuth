@@ -29,8 +29,8 @@ namespace StoneAssemblies.MassAuth.Tests.Extensions
             public async Task Registers_BusSelector_Using_Non_Generic_Version()
             {
                 var serviceCollection = new ServiceCollection();
-                serviceCollection.AddMassTransit("FourBus", cfg => { cfg.UsingInMemory(); });
-                serviceCollection.AddMassTransit("FiveBus", cfg => { cfg.UsingInMemory(); });
+                serviceCollection.AddMassTransit("EightBus", cfg => { cfg.UsingInMemory(); });
+                serviceCollection.AddMassTransit("NineBus", cfg => { cfg.UsingInMemory(); });
 
                 serviceCollection.AddBusSelector(typeof(DemoMessage));
 

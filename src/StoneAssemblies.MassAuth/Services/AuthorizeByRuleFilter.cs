@@ -8,6 +8,7 @@ namespace StoneAssemblies.MassAuth.Services
 {
     using System;
     using System.Collections.Generic;
+    using System.Diagnostics;
     using System.Linq;
     using System.Reflection;
     using System.Text.Json;
@@ -95,6 +96,8 @@ namespace StoneAssemblies.MassAuth.Services
                     Title = "Unauthorized",
                     Status = StatusCodes.Status401Unauthorized,
                 };
+
+                problemDetails.Extensions.Add("traceId", Activity.Current?.Id ?? context.HttpContext.TraceIdentifier);
 
                 if (this.options.ReturnForbiddanceReason)
                 {

@@ -1,19 +1,16 @@
 ﻿// --------------------------------------------------------------------------------------------------------------------
 // <copyright file="Startup.cs" company="Stone Assemblies">
-// Copyright Â© 2021 - 2021 Stone Assemblies. All rights reserved.
+// Copyright © 2021 - 2021 Stone Assemblies. All rights reserved.
 // </copyright>
 // --------------------------------------------------------------------------------------------------------------------
 
 namespace StoneAssemblies.MassAuth.Bank.Balance.Services
 {
     using System;
-    using System.Net.Http;
     using System.Text.Json.Serialization;
-    using System.Threading.Tasks;
 
     using MassTransit;
 
-    using Microsoft.AspNetCore.Authentication.JwtBearer;
     using Microsoft.AspNetCore.Builder;
     using Microsoft.AspNetCore.Hosting;
     using Microsoft.Extensions.Configuration;
@@ -23,7 +20,6 @@ namespace StoneAssemblies.MassAuth.Bank.Balance.Services
 
     using StoneAssemblies.Hosting.Services;
     using StoneAssemblies.MassAuth.Bank.Messages;
-    using StoneAssemblies.MassAuth.Extensions;
     using StoneAssemblies.MassAuth.Services.Extensions;
 
     /// <summary>
@@ -91,7 +87,7 @@ namespace StoneAssemblies.MassAuth.Bank.Balance.Services
             services.AddMassAuth(
                 options =>
                     {
-                        options.ReturnForbiddanceReason = true;
+                        options.ReturnForbiddanceReason = false;
                     });
 
             // TODO: Use service discovery to resolve address from service name.

@@ -45,26 +45,20 @@ namespace StoneAssemblies.MassAuth.Bank.Rules
         public Task<EvaluationResult> EvaluateAsync(AuthorizationRequestMessage<AccountBalanceRequestMessage> message)
         {
             var accounts = new List<string> { "12345", "54321" };
+            var error = new Dictionary<string, object>
+                        {
+                            ["ErrorCode"] = 23,
+                            ["Description"] = "You are not the account owner"
+                        };
+
             if (message.UserId == "alexfdezsauco" && !accounts.Contains(message.Payload.PrimaryAccountNumber))
             {
-                var dictionary = new Dictionary<string, object>
-                                 {
-                                     ["ErrorCode"] = 23, 
-                                     ["Description"] = "You are not the account owner"
-                                 };
-
-                return Task.FromResult(EvaluationResult.Error(dictionary));
+                return Task.FromResult(EvaluationResult.Error(error));
             }
 
             if (message.UserId == "jane.doe" && accounts.Contains(message.Payload.PrimaryAccountNumber))
             {
-                var dictionary = new Dictionary<string, object>
-                                 {
-                                     ["ErrorCode"] = 23,
-                                     ["Description"] = "You are not the account owner"
-                                 };
-
-                return Task.FromResult(EvaluationResult.Error(dictionary));
+                return Task.FromResult(EvaluationResult.Error(error));
             }
 
             return Task.FromResult(EvaluationResult.Success());

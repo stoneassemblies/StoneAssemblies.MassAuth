@@ -19,6 +19,8 @@ namespace StoneAssemblies.MassAuth.Server
     using Microsoft.Extensions.DependencyInjection;
     using Microsoft.Extensions.Hosting;
 
+    using Newtonsoft.Json;
+
     using StoneAssemblies.Extensibility;
     using StoneAssemblies.Hosting.Extensions;
     using StoneAssemblies.MassAuth.Extensions;

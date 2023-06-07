@@ -7,9 +7,12 @@ namespace StoneAssemblies.MassAuth.Server.Extensions
 
     using MassTransit;
 
+    using Newtonsoft.Json;
+
     using Serilog;
 
     using StoneAssemblies.MassAuth.Hosting.Extensions;
+    using StoneAssemblies.MassAuth.Hosting.Services;
 
     public static class ServiceCollectionConfiguratorExtensions
     {
@@ -46,12 +49,29 @@ namespace StoneAssemblies.MassAuth.Server.Extensions
                                 });
                         }
 
-                        cfg.ConfigureJsonSerializerOptions(
-                            options =>
+                        cfg.UseNewtonsoftJsonSerializer();
+                        cfg.UseNewtonsoftJsonDeserializer();
+
+                        cfg.ConfigureNewtonsoftJsonSerializer(
+                            settings =>
                             {
-                                options.ReferenceHandler = ReferenceHandler.IgnoreCycles;
-                                return options;
+                                settings.ReferenceLoopHandling = ReferenceLoopHandling.Ignore;
+                                return settings;
                             });
+
+                        cfg.ConfigureNewtonsoftJsonDeserializer(
+                            settings =>
+                            {
+                                settings.Converters.Add(new ClaimConverter());
+                                return settings;
+                            });
+
+                        //cfg.ConfigureJsonSerializerOptions(
+                        //    options =>
+                        //    {
+                        //        options.ReferenceHandler = ReferenceHandler.IgnoreCycles;
+                        //        return options;
+                        //    });
 
                         busRegistrationConfigurator.ConfigureAuthorizationRequestConsumers(
                             (messagesType, consumerType) =>

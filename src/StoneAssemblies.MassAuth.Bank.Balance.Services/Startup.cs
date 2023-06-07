@@ -7,16 +7,20 @@
 namespace StoneAssemblies.MassAuth.Bank.Balance.Services
 {
     using System;
+    using System.Net.Http;
     using System.Text.Json.Serialization;
 
     using MassTransit;
 
+    using Microsoft.AspNetCore.Authentication.JwtBearer;
     using Microsoft.AspNetCore.Builder;
     using Microsoft.AspNetCore.Hosting;
     using Microsoft.Extensions.Configuration;
     using Microsoft.Extensions.DependencyInjection;
     using Microsoft.Extensions.Hosting;
     using Microsoft.IdentityModel.Logging;
+
+    using Newtonsoft.Json;
 
     using StoneAssemblies.Hosting.Services;
     using StoneAssemblies.MassAuth.Bank.Messages;
@@ -79,6 +83,12 @@ namespace StoneAssemblies.MassAuth.Bank.Balance.Services
         /// </param>
         public void ConfigureServices(IServiceCollection services)
         {
+            JsonConvert.DefaultSettings = () =>
+                new JsonSerializerSettings()
+                {
+                    ReferenceLoopHandling = ReferenceLoopHandling.Ignore
+                };
+
             services.AddHealthChecks();
 
             var serviceDiscovery = ServiceDiscoveryFactory.GetServiceDiscovery();
@@ -105,6 +115,19 @@ namespace StoneAssemblies.MassAuth.Bank.Balance.Services
 
             //// SingleBus
             services.AddMassTransit(sc => AddBus(sc, messageQueueAddress, string.Empty, username, password));
+
+            var authority = this.Configuration.GetSection("IdentityServer")?["Authority"];
+            if (!string.IsNullOrWhiteSpace(authority))
+            {
+                services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme).AddJwtBearer(
+                    JwtBearerDefaults.AuthenticationScheme,
+                    options =>
+                    {
+                        options.Authority = authority;
+                        options.Audience = "stone-assemblies-balance-service";
+                        options.RequireHttpsMetadata = authority.StartsWith("https://");
+                    });
+            }
 
             // services.AddBusSelector<AccountBalanceRequestMessage>();
             // MultiBus
@@ -133,6 +156,8 @@ namespace StoneAssemblies.MassAuth.Bank.Balance.Services
             //           return Task.FromResult(false);
             //       });
 
+
+
             services.AddControllers();
         }
 
@@ -153,12 +178,21 @@ namespace StoneAssemblies.MassAuth.Bank.Balance.Services
                                                 configurator.Password(password);
                                             });
 
-                                    cfg.ConfigureJsonSerializerOptions(
-                                        options =>
-                                            {
-                                                options.ReferenceHandler = ReferenceHandler.IgnoreCycles;
-                                                return options;
-                                            });
+                                    cfg.UseNewtonsoftJsonSerializer();
+                                    cfg.UseNewtonsoftJsonDeserializer();
+                                    cfg.ConfigureNewtonsoftJsonSerializer(
+                                        settings =>
+                                        {
+                                            settings.ReferenceLoopHandling = ReferenceLoopHandling.Ignore;
+                                            return settings;
+                                        });
+
+                                    //cfg.ConfigureJsonSerializerOptions(
+                                    //    options =>
+                                    //        {
+                                    //            options.ReferenceHandler = ReferenceHandler.IgnoreCycles;
+                                    //            return options;
+                                    //        });
                                 });
 
                         return busControl;

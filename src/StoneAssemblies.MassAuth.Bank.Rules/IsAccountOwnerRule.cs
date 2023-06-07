@@ -56,7 +56,7 @@ namespace StoneAssemblies.MassAuth.Bank.Rules
                 return Task.FromResult(EvaluationResult.Error(error));
             }
 
-            if (message.UserId == "jane.doe" && accounts.Contains(message.Payload.PrimaryAccountNumber))
+            if (accounts.Contains(message.Payload.PrimaryAccountNumber))
             {
                 return Task.FromResult(EvaluationResult.Error(error));
             }
